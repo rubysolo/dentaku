@@ -2,7 +2,7 @@ require "dentaku/calculator"
 require "dentaku/version"
 
 module Dentaku
-  def self.[](expression, data={})
+  def self.evaluate(expression, data={})
     calculator.evaluate(expression, data)
   end
 
@@ -11,4 +11,8 @@ module Dentaku
   def self.calculator
     @calculator ||= Dentaku::Calculator.new
   end
+end
+
+def Dentaku(expression, data={})
+  Dentaku.evaluate(expression, data)
 end

@@ -36,10 +36,10 @@ evaluate expressions against those stored values:
 
 For maximum CS geekery, `bind` is an alias of `store`.
 
-If you're too lazy to be building calculator objects, there's a module-method
-shortcut just for you:
+If you're too lazy to be building calculator objects, there's a shortcut just
+for you:
 
-    Dentaku['plums * 1.5', {:plums => 2}]
+    Dentaku('plums * 1.5', {:plums => 2})
     => 3.0
 
 
