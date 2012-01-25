@@ -60,11 +60,12 @@ for you:
     => 3.0
 
 
-SUPPORTED OPERATORS
--------------------
+SUPPORTED OPERATORS AND FUNCTIONS
+---------------------------------
 
-Math: `+ - * /`
-Logic: `< > <= >= <> != = AND OR`
+Math: `+ - * /`  
+Logic: `< > <= >= <> != = AND OR`  
+Functions: `IF`
 
 THANKS
 ------
