@@ -8,3 +8,6 @@ task :spec do
     t.pattern = 'spec/*_spec.rb'
   end
 end
+
+desc "Default: run specs."
+task :default => :spec
