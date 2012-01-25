@@ -100,12 +100,12 @@ module Dentaku
     end
 
     def if(*args)
-      _, open, cond, _, true_value, _, false_value, close = args
+      _, open, condition, _, true_value, _, false_value, close = args
 
-      if evaluate_token_stream([cond])
-        evaluate_token_stream([true_value])
+      if condition.value
+        true_value
       else
-        evaluate_token_stream([false_value])
+        false_value
       end
     end
   end

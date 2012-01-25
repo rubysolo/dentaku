@@ -36,6 +36,23 @@ evaluate expressions against those stored values:
 
 For maximum CS geekery, `bind` is an alias of `store`.
 
+Dentaku understands precedence order and using parentheses to group expressions
+to ensure proper evaluation:
+
+    calculator.evaluate('5 + 3 * 2')
+    => 11
+    calculator.evaluate('(5 + 3) * 2')
+    => 16
+
+A number of functions are also supported.  Okay, the number is currently one,
+but more will be added soon.  The current function is `if`, which works like
+Excel's `if`:
+
+    calculator.evaluate('if (pears < 10, 10, 20)', :pears => 5)
+    => 10
+    calculator.evaluate('if (pears < 10, 10, 20)', :pears => 15)
+    => 20
+
 If you're too lazy to be building calculator objects, there's a shortcut just
 for you:
 
