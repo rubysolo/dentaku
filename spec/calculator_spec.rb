@@ -49,4 +49,10 @@ describe Dentaku::Calculator do
     calculator.evaluate('foo * 2', :foo => 2).should eq(4)
     calculator.evaluate('foo * 2', 'foo' => 4).should eq(8)
   end
+
+  describe 'functions' do
+    it 'should include IF' do
+      calculator.evaluate('if (foo < 10, 10, 20)', :foo => 2).should eq(10)
+    end
+  end
 end

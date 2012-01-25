@@ -15,8 +15,12 @@ module Dentaku
         when '/' then :divide
         end
       end),
-      TokenScanner.new(:grouping,   '\(|\)', lambda do |raw|
-        raw == '(' ? :open : :close
+      TokenScanner.new(:grouping,   '\(|\)|,', lambda do |raw|
+        case raw
+        when '(' then :open
+        when ')' then :close
+        when ',' then :comma
+        end
       end),
       TokenScanner.new(:comparator, '<=|>=|!=|<>|<|>|=', lambda do |raw|
         case raw
@@ -30,6 +34,7 @@ module Dentaku
         end
       end),
       TokenScanner.new(:combinator, '(and|or)\b', lambda {|raw| raw.strip.to_sym }),
+      TokenScanner.new(:function,   '(if)\b',     lambda {|raw| raw.strip.to_sym }),
       TokenScanner.new(:identifier, '[A-Za-z_]+', lambda {|raw| raw.to_sym })
     ]
 

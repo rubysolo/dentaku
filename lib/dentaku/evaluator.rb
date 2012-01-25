@@ -9,9 +9,11 @@ module Dentaku
     T_COMPARATOR = TokenMatcher.new(:comparator)
     T_OPEN       = TokenMatcher.new(:grouping, :open)
     T_CLOSE      = TokenMatcher.new(:grouping, :close)
+    T_COMMA      = TokenMatcher.new(:grouping, :comma)
     T_NON_GROUP  = TokenMatcher.new(:grouping).invert
     T_LOGICAL    = TokenMatcher.new(:logical)
     T_COMBINATOR = TokenMatcher.new(:combinator)
+    T_IF         = TokenMatcher.new(:function, :if)
 
     P_GROUP      = [T_OPEN,    T_NON_GROUP,  T_CLOSE]
     P_MATH_ADD   = [T_NUMERIC, T_ADDSUB,     T_NUMERIC]
@@ -19,12 +21,15 @@ module Dentaku
     P_COMPARISON = [T_NUMERIC, T_COMPARATOR, T_NUMERIC]
     P_COMBINE    = [T_LOGICAL, T_COMBINATOR, T_LOGICAL]
 
+    P_IF         = [T_IF, T_OPEN, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_CLOSE]
+
     RULES = [
       [P_GROUP,      :evaluate_group],
       [P_MATH_MUL,   :apply],
       [P_MATH_ADD,   :apply],
       [P_COMPARISON, :apply],
-      [P_COMBINE,    :apply]
+      [P_COMBINE,    :apply],
+      [P_IF,         :if],
     ]
 
     def evaluate(tokens)
@@ -91,6 +96,16 @@ module Dentaku
 
       else
         raise "unknown comparator '#{ comparator }'"
+      end
+    end
+
+    def if(*args)
+      _, open, cond, _, true_value, _, false_value, close = args
+
+      if evaluate_token_stream([cond])
+        evaluate_token_stream([true_value])
+      else
+        evaluate_token_stream([false_value])
       end
     end
   end

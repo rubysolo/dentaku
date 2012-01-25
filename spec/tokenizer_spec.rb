@@ -66,4 +66,13 @@ describe Dentaku::Tokenizer do
     tokens.map(&:category).should eq([:identifier, :comparator, :numeric])
     tokens.map(&:value).should eq([:andover, :lt, 10])
   end
+
+  describe 'functions' do
+    it 'include IF' do
+      tokens = tokenizer.tokenize('if(x < 10, y, z)')
+      tokens.length.should eq(10)
+      tokens.map(&:category).should eq([:function, :grouping, :identifier, :comparator, :numeric, :grouping, :identifier, :grouping, :identifier, :grouping])
+      tokens.map(&:value).should eq([:if, :open, :x, :lt, 10, :comma, :y, :comma, :z, :close])
+    end
+  end
 end
