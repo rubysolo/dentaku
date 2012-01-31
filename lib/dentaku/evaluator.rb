@@ -4,6 +4,7 @@ require 'dentaku/token_matcher'
 module Dentaku
   class Evaluator
     T_NUMERIC    = TokenMatcher.new(:numeric)
+    T_STRING     = TokenMatcher.new(:string)
     T_ADDSUB     = TokenMatcher.new(:operator, [:add, :subtract])
     T_MULDIV     = TokenMatcher.new(:operator, [:multiply, :divide])
     T_COMPARATOR = TokenMatcher.new(:comparator)
@@ -18,7 +19,8 @@ module Dentaku
     P_GROUP      = [T_OPEN,    T_NON_GROUP,  T_CLOSE]
     P_MATH_ADD   = [T_NUMERIC, T_ADDSUB,     T_NUMERIC]
     P_MATH_MUL   = [T_NUMERIC, T_MULDIV,     T_NUMERIC]
-    P_COMPARISON = [T_NUMERIC, T_COMPARATOR, T_NUMERIC]
+    P_NUM_COMP   = [T_NUMERIC, T_COMPARATOR, T_NUMERIC]
+    P_STR_COMP   = [T_STRING,  T_COMPARATOR, T_STRING]
     P_COMBINE    = [T_LOGICAL, T_COMBINATOR, T_LOGICAL]
 
     P_IF         = [T_IF, T_OPEN, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_CLOSE]
@@ -27,7 +29,8 @@ module Dentaku
       [P_GROUP,      :evaluate_group],
       [P_MATH_MUL,   :apply],
       [P_MATH_ADD,   :apply],
-      [P_COMPARISON, :apply],
+      [P_NUM_COMP,   :apply],
+      [P_STR_COMP,   :apply],
       [P_COMBINE,    :apply],
       [P_IF,         :if],
     ]

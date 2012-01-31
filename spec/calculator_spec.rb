@@ -50,6 +50,11 @@ describe Dentaku::Calculator do
     calculator.evaluate('foo * 2', 'foo' => 4).should eq(8)
   end
 
+  it 'should compare string literals with string variables' do
+    calculator.evaluate('fruit = "apple"', :fruit => 'apple').should be_true
+    calculator.evaluate('fruit = "apple"', :fruit => 'pear').should be_false
+  end
+
   describe 'functions' do
     it 'should include IF' do
       calculator.evaluate('if (foo < 8, 10, 20)', :foo => 2).should eq(10)

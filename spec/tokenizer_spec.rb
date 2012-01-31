@@ -37,6 +37,18 @@ describe Dentaku::Tokenizer do
     tokens.map(&:value).should eq([:monkeys, :gt, 1500])
   end
 
+  it 'should recognize double-quoted strings' do
+    tokens = tokenizer.tokenize('animal = "giraffe"')
+    tokens.map(&:category).should eq([:identifier, :comparator, :string])
+    tokens.map(&:value).should eq([:animal, :eq, 'giraffe'])
+  end
+
+  it 'should recognize single-quoted strings' do
+    tokens = tokenizer.tokenize("animal = 'giraffe'")
+    tokens.map(&:category).should eq([:identifier, :comparator, :string])
+    tokens.map(&:value).should eq([:animal, :eq, 'giraffe'])
+  end
+
   it 'should match "<=" before "<"' do
     tokens = tokenizer.tokenize('perimeter <= 7500')
     tokens.map(&:category).should eq([:identifier, :comparator, :numeric])

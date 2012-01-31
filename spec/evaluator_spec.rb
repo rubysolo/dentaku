@@ -22,6 +22,7 @@ describe Dentaku::Evaluator do
 
     it 'single numeric should return value' do
       evaluator.evaluate([Dentaku::Token.new(:numeric, 10)]).should eq(10)
+      evaluator.evaluate([Dentaku::Token.new(:string,  'a')]).should eq('a')
     end
 
     it 'should evaluate one apply step' do

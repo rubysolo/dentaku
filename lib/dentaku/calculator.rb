@@ -58,11 +58,18 @@ module Dentaku
     def replace_identifiers_with_values
       @tokens.map do |token|
         if token.is?(:identifier)
-          Token.new(:numeric, memory(token.value))
+          value = memory(token.value)
+          type  = type_for_value(value)
+
+          Token.new(type, value)
         else
           token
         end
       end
+    end
+
+    def type_for_value(value)
+      value.is_a?(String) ? :string : :numeric
     end
   end
 end
