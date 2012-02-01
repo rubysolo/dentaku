@@ -3,6 +3,7 @@ require 'dentaku/token_matcher'
 
 module Dentaku
   class Evaluator
+    # tokens
     T_NUMERIC    = TokenMatcher.new(:numeric)
     T_STRING     = TokenMatcher.new(:string)
     T_ADDSUB     = TokenMatcher.new(:operator, [:add, :subtract])
@@ -15,7 +16,9 @@ module Dentaku
     T_LOGICAL    = TokenMatcher.new(:logical)
     T_COMBINATOR = TokenMatcher.new(:combinator)
     T_IF         = TokenMatcher.new(:function, :if)
+    T_ROUND      = TokenMatcher.new(:function, :round)
 
+    # patterns
     P_GROUP      = [T_OPEN,    T_NON_GROUP,  T_CLOSE]
     P_MATH_ADD   = [T_NUMERIC, T_ADDSUB,     T_NUMERIC]
     P_MATH_MUL   = [T_NUMERIC, T_MULDIV,     T_NUMERIC]
@@ -24,15 +27,20 @@ module Dentaku
     P_COMBINE    = [T_LOGICAL, T_COMBINATOR, T_LOGICAL]
 
     P_IF         = [T_IF, T_OPEN, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_CLOSE]
+    P_ROUND_ONE  = [T_ROUND, T_OPEN, T_NUMERIC, T_CLOSE]
+    P_ROUND_TWO  = [T_ROUND, T_OPEN, T_NUMERIC, T_COMMA, T_NUMERIC, T_CLOSE]
 
     RULES = [
+      [P_IF,         :if],
+      [P_ROUND_ONE,  :round],
+      [P_ROUND_TWO,  :round],
+
       [P_GROUP,      :evaluate_group],
       [P_MATH_MUL,   :apply],
       [P_MATH_ADD,   :apply],
       [P_NUM_COMP,   :apply],
       [P_STR_COMP,   :apply],
-      [P_COMBINE,    :apply],
-      [P_IF,         :if],
+      [P_COMBINE,    :apply]
     ]
 
     def evaluate(tokens)
@@ -110,6 +118,20 @@ module Dentaku
       else
         false_value
       end
+    end
+
+    def round(*args)
+      function = args.shift
+      open     = args.shift
+      input    = args.shift.value
+      places   = 0
+
+      if args.length > 1
+        comma  = args.shift
+        places = args.shift.value
+      end
+
+      Token.new(:numeric, input.round(places))
     end
   end
 end

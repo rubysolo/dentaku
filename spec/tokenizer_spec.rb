@@ -86,5 +86,17 @@ describe Dentaku::Tokenizer do
       tokens.map(&:category).should eq([:function, :grouping, :identifier, :comparator, :numeric, :grouping, :identifier, :grouping, :identifier, :grouping])
       tokens.map(&:value).should eq([:if, :open, :x, :lt, 10, :comma, :y, :comma, :z, :close])
     end
+
+    it 'include ROUND' do
+      tokens = tokenizer.tokenize('round(8.2)')
+      tokens.length.should eq(4)
+      tokens.map(&:category).should eq([:function, :grouping, :numeric, :grouping])
+      tokens.map(&:value).should eq([:round, :open, 8.2, :close])
+
+      tokens = tokenizer.tokenize('round(8.75, 1)')
+      tokens.length.should eq(6)
+      tokens.map(&:category).should eq([:function, :grouping, :numeric, :grouping, :numeric, :grouping])
+      tokens.map(&:value).should eq([:round, :open, 8.75, :comma, 1, :close])
+    end
   end
 end

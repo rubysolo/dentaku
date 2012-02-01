@@ -36,7 +36,7 @@ module Dentaku
         end
       end),
       TokenScanner.new(:combinator, '(and|or)\b', lambda {|raw| raw.strip.to_sym }),
-      TokenScanner.new(:function,   '(if)\b',     lambda {|raw| raw.strip.to_sym }),
+      TokenScanner.new(:function,   '(if|round)\b', lambda {|raw| raw.strip.to_sym }),
       TokenScanner.new(:identifier, '[A-Za-z_]+', lambda {|raw| raw.to_sym })
     ]
 

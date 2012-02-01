@@ -60,5 +60,11 @@ describe Dentaku::Calculator do
       calculator.evaluate('if (foo < 8, 10, 20)', :foo => 2).should eq(10)
       calculator.evaluate('if (foo < 8, 10, 20)', :foo => 9).should eq(20)
     end
+
+    it 'should include ROUND' do
+      calculator.evaluate('round(8.2)').should eq(8)
+      calculator.evaluate('round(8.8)').should eq(9)
+      calculator.evaluate('round(8.75, 1)').should eq(8.8)
+    end
   end
 end
