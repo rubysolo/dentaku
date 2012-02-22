@@ -55,6 +55,11 @@ describe Dentaku::Calculator do
     calculator.evaluate('fruit = "apple"', :fruit => 'pear').should be_false
   end
 
+  it 'should do case-sensitive comparison' do
+    calculator.evaluate('fruit = "Apple"', :fruit => 'apple').should be_false
+    calculator.evaluate('fruit = "Apple"', :fruit => 'Apple').should be_true
+  end
+
   describe 'functions' do
     it 'should include IF' do
       calculator.evaluate('if (foo < 8, 10, 20)', :foo => 2).should eq(10)

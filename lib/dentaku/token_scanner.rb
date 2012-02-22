@@ -4,7 +4,7 @@ module Dentaku
   class TokenScanner
     def initialize(category, regexp, converter=nil)
       @category  = category
-      @regexp    = %r{\A(#{ regexp })}
+      @regexp    = %r{\A(#{ regexp })}i
       @converter = converter
     end
 

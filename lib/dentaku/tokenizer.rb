@@ -7,8 +7,8 @@ module Dentaku
     SCANNERS = [
       TokenScanner.new(:whitespace, '\s+'),
       TokenScanner.new(:numeric,    '(\d+(\.\d+)?|\.\d+)', lambda{|raw| raw =~ /\./ ? raw.to_f : raw.to_i }),
-      TokenScanner.new(:string,     '"[^"]*"', lambda{|raw| raw.gsub(/^"|"$/, '') }),
-      TokenScanner.new(:string,     "'[^']*'", lambda{|raw| raw.gsub(/^'|'$/, '') }),
+      TokenScanner.new(:string,     '"[^"]*"',    lambda{|raw| raw.gsub(/^"|"$/, '') }),
+      TokenScanner.new(:string,     "'[^']*'",    lambda{|raw| raw.gsub(/^'|'$/, '') }),
       TokenScanner.new(:operator,   '\+|-|\*|\/', lambda do |raw|
         case raw
         when '+' then :add
@@ -35,9 +35,9 @@ module Dentaku
         when '='  then :eq
         end
       end),
-      TokenScanner.new(:combinator, '(and|or)\b', lambda {|raw| raw.strip.to_sym }),
+      TokenScanner.new(:combinator, '(and|or)\b',   lambda {|raw| raw.strip.downcase.to_sym }),
       TokenScanner.new(:function,   '(if|round)\b', lambda {|raw| raw.strip.to_sym }),
-      TokenScanner.new(:identifier, '[A-Za-z_]+', lambda {|raw| raw.to_sym })
+      TokenScanner.new(:identifier, '[a-z_]+',      lambda {|raw| raw.downcase.to_sym })
     ]
 
     LPAREN = TokenMatcher.new(:grouping, :open)
@@ -46,7 +46,7 @@ module Dentaku
     def tokenize(string)
       nesting = 0
       tokens  = []
-      input   = string.dup.downcase
+      input   = string.dup
 
       until input.empty?
         raise "parse error at: '#{ input }'" unless SCANNERS.any? do |scanner|
