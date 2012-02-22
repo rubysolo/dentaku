@@ -131,7 +131,13 @@ module Dentaku
         places = args.shift.value
       end
 
-      Token.new(:numeric, input.round(places))
+      begin
+        value = input.round(places)
+      rescue ArgumentError
+        value = (input * 10 ** places).round / (10 ** places).to_f
+      end
+
+      Token.new(:numeric, value)
     end
   end
 end
