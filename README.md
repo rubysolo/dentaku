@@ -45,7 +45,7 @@ to ensure proper evaluation:
     => 16
 
 A number of functions are also supported.  Okay, the number is currently two,
-but more will be added soon.  The current function are `round` and `if`, and
+but more will be added soon.  The current functions are `round` and `if`, and
 they work like their counterparts in Excel:
 
     calculator.evaluate('if (pears < 10, 10, 20)', :pears => 5)
