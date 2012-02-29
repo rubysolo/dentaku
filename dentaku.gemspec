@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "dentaku"
 
+  s.add_development_dependency('rake')
   s.add_development_dependency('rspec')
 
   s.files         = `git ls-files`.split("\n")
