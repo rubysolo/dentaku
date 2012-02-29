@@ -17,6 +17,7 @@ module Dentaku
     end
 
     def ==(token)
+      return false if token.nil?
       (category_match(token.category) && value_match(token.value)) ^ @invert
     end
 

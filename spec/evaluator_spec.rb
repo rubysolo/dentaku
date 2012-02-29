@@ -6,9 +6,10 @@ describe Dentaku::Evaluator do
 
   describe 'rule scanning' do
     it 'should find a matching rule' do
-      rule   = [Dentaku::Token.new(:numeric, nil)]
+      rule   = [Dentaku::TokenMatcher.new(:numeric, nil)]
       stream = [Dentaku::Token.new(:numeric, 1), Dentaku::Token.new(:operator, :add), Dentaku::Token.new(:numeric, 1)]
-      evaluator.find_rule_match(rule, stream).should eq(0)
+      position, match = evaluator.find_rule_match(rule, stream)
+      position.should eq(0)
     end
   end
 

@@ -28,6 +28,7 @@ describe Dentaku::Calculator do
 
   it 'should evaluate a statement with no variables' do
     calculator.evaluate('5+3').should eq(8)
+    calculator.evaluate('(1+1+1)/3*100').should eq(100)
   end
 
   it 'should fail to evaluate unbound statements' do

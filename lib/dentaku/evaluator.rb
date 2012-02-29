@@ -51,8 +51,10 @@ module Dentaku
       while tokens.length > 1
         matched = false
         RULES.each do |pattern, evaluator|
-          if pos = find_rule_match(pattern, tokens)
-            tokens = evaluate_step(tokens, pos, pattern.length, evaluator)
+          pos, match = find_rule_match(pattern, tokens)
+
+          if pos
+            tokens = evaluate_step(tokens, pos, match.length, evaluator)
             matched = true
             break
           end
@@ -73,11 +75,21 @@ module Dentaku
 
     def find_rule_match(pattern, token_stream)
       position = 0
-      while position <= token_stream.length - pattern.length
-        substream = token_stream.slice(position, pattern.length)
-        return position if pattern == substream
+
+      while position <= token_stream.length
+        matches = []
+        matched = true
+
+        pattern.each do |matcher|
+          match = matcher.match(token_stream, position + matches.length)
+          matched &&= match.matched?
+          matches += match
+        end
+
+        return position, matches if matched
         position += 1
       end
+
       nil
     end
 
