@@ -18,13 +18,15 @@ module Dentaku
     T_IF         = TokenMatcher.new(:function, :if)
     T_ROUND      = TokenMatcher.new(:function, :round)
 
+    T_NON_GROUP_STAR = TokenMatcher.new(:grouping).invert.star
+
     # patterns
-    P_GROUP      = [T_OPEN,    T_NON_GROUP,  T_CLOSE]
-    P_MATH_ADD   = [T_NUMERIC, T_ADDSUB,     T_NUMERIC]
-    P_MATH_MUL   = [T_NUMERIC, T_MULDIV,     T_NUMERIC]
-    P_NUM_COMP   = [T_NUMERIC, T_COMPARATOR, T_NUMERIC]
-    P_STR_COMP   = [T_STRING,  T_COMPARATOR, T_STRING]
-    P_COMBINE    = [T_LOGICAL, T_COMBINATOR, T_LOGICAL]
+    P_GROUP      = [T_OPEN,    T_NON_GROUP_STAR, T_CLOSE]
+    P_MATH_ADD   = [T_NUMERIC, T_ADDSUB,         T_NUMERIC]
+    P_MATH_MUL   = [T_NUMERIC, T_MULDIV,         T_NUMERIC]
+    P_NUM_COMP   = [T_NUMERIC, T_COMPARATOR,     T_NUMERIC]
+    P_STR_COMP   = [T_STRING,  T_COMPARATOR,     T_STRING]
+    P_COMBINE    = [T_LOGICAL, T_COMBINATOR,     T_LOGICAL]
 
     P_IF         = [T_IF, T_OPEN, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_CLOSE]
     P_ROUND_ONE  = [T_ROUND, T_OPEN, T_NUMERIC, T_CLOSE]
