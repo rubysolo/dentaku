@@ -9,8 +9,9 @@ module Dentaku
       TokenScanner.new(:numeric,    '(\d+(\.\d+)?|\.\d+)', lambda { |raw| raw =~ /\./ ? raw.to_f : raw.to_i }),
       TokenScanner.new(:string,     '"[^"]*"',    lambda { |raw| raw.gsub(/^"|"$/, '') }),
       TokenScanner.new(:string,     "'[^']*'",    lambda { |raw| raw.gsub(/^'|'$/, '') }),
-      TokenScanner.new(:operator,   '\+|-|\*|\/', lambda do |raw|
+      TokenScanner.new(:operator,   '\^|\+|-|\*|\/', lambda do |raw|
         case raw
+        when '^' then :pow
         when '+' then :add
         when '-' then :subtract
         when '*' then :multiply

@@ -8,6 +8,7 @@ module Dentaku
     T_STRING     = TokenMatcher.new(:string)
     T_ADDSUB     = TokenMatcher.new(:operator, [:add, :subtract])
     T_MULDIV     = TokenMatcher.new(:operator, [:multiply, :divide])
+    T_POW        = TokenMatcher.new(:operator, :pow)
     T_COMPARATOR = TokenMatcher.new(:comparator)
     T_COMP_GT    = TokenMatcher.new(:comparator, [:gt, :ge])
     T_COMP_LT    = TokenMatcher.new(:comparator, [:lt, :le])
@@ -26,6 +27,7 @@ module Dentaku
     P_GROUP      = [T_OPEN,    T_NON_GROUP_STAR, T_CLOSE]
     P_MATH_ADD   = [T_NUMERIC, T_ADDSUB,         T_NUMERIC]
     P_MATH_MUL   = [T_NUMERIC, T_MULDIV,         T_NUMERIC]
+    P_MATH_POW   = [T_NUMERIC, T_POW,            T_NUMERIC]
     P_RANGE_ASC  = [T_NUMERIC, T_COMP_LT,        T_NUMERIC, T_COMP_LT, T_NUMERIC]
     P_RANGE_DESC = [T_NUMERIC, T_COMP_GT,        T_NUMERIC, T_COMP_GT, T_NUMERIC]
     P_NUM_COMP   = [T_NUMERIC, T_COMPARATOR,     T_NUMERIC]
@@ -42,6 +44,7 @@ module Dentaku
       [P_ROUND_TWO,  :round],
 
       [P_GROUP,      :evaluate_group],
+      [P_MATH_POW,   :apply],
       [P_MATH_MUL,   :apply],
       [P_MATH_ADD,   :apply],
       [P_RANGE_ASC,  :expand_range],
@@ -110,6 +113,7 @@ module Dentaku
       r = rvalue.value
 
       case operator.value
+      when :pow      then Token.new(:numeric, l ** r)
       when :add      then Token.new(:numeric, l + r)
       when :subtract then Token.new(:numeric, l - r)
       when :multiply then Token.new(:numeric, l * r)
