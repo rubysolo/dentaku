@@ -60,6 +60,17 @@ describe Dentaku::Evaluator do
         evaluator.evaluate(token_stream(5, :gt, 1)).should be_true
       end
 
+      it 'should expand inequality ranges' do
+        stream   = token_stream(5, :lt, 10, :le, 10)
+        expected = token_stream(5, :lt, 10, :and, 10, :le, 10)
+        evaluator.evaluate_step(stream, 0, 5, :expand_range).should eq(expected)
+
+        evaluator.evaluate(token_stream(5, :lt, 10, :le, 10)).should be_true
+        evaluator.evaluate(token_stream(3, :gt,  5, :ge,  1)).should be_false
+
+        lambda { evaluator.evaluate(token_stream(3, :gt,  2, :lt,   1)) }.should raise_error
+      end
+
       it 'should evaluate combined conditionals' do
         evaluator.evaluate(token_stream(5, :gt, 1, :or, :false)).should be_true
         evaluator.evaluate(token_stream(5, :gt, 1, :and, :false)).should be_false

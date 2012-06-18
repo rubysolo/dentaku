@@ -9,6 +9,8 @@ module Dentaku
     T_ADDSUB     = TokenMatcher.new(:operator, [:add, :subtract])
     T_MULDIV     = TokenMatcher.new(:operator, [:multiply, :divide])
     T_COMPARATOR = TokenMatcher.new(:comparator)
+    T_COMP_GT    = TokenMatcher.new(:comparator, [:gt, :ge])
+    T_COMP_LT    = TokenMatcher.new(:comparator, [:lt, :le])
     T_OPEN       = TokenMatcher.new(:grouping, :open)
     T_CLOSE      = TokenMatcher.new(:grouping, :close)
     T_COMMA      = TokenMatcher.new(:grouping, :comma)
@@ -24,6 +26,8 @@ module Dentaku
     P_GROUP      = [T_OPEN,    T_NON_GROUP_STAR, T_CLOSE]
     P_MATH_ADD   = [T_NUMERIC, T_ADDSUB,         T_NUMERIC]
     P_MATH_MUL   = [T_NUMERIC, T_MULDIV,         T_NUMERIC]
+    P_RANGE_ASC  = [T_NUMERIC, T_COMP_LT,        T_NUMERIC, T_COMP_LT, T_NUMERIC]
+    P_RANGE_DESC = [T_NUMERIC, T_COMP_GT,        T_NUMERIC, T_COMP_GT, T_NUMERIC]
     P_NUM_COMP   = [T_NUMERIC, T_COMPARATOR,     T_NUMERIC]
     P_STR_COMP   = [T_STRING,  T_COMPARATOR,     T_STRING]
     P_COMBINE    = [T_LOGICAL, T_COMBINATOR,     T_LOGICAL]
@@ -40,6 +44,8 @@ module Dentaku
       [P_GROUP,      :evaluate_group],
       [P_MATH_MUL,   :apply],
       [P_MATH_ADD,   :apply],
+      [P_RANGE_ASC,  :expand_range],
+      [P_RANGE_DESC, :expand_range],
       [P_NUM_COMP,   :apply],
       [P_STR_COMP,   :apply],
       [P_COMBINE,    :apply]
@@ -72,7 +78,7 @@ module Dentaku
 
     def evaluate_step(token_stream, start, length, evaluator)
       expr = token_stream.slice!(start, length)
-      token_stream.insert start, self.send(evaluator, *expr)
+      token_stream.insert start, *self.send(evaluator, *expr)
     end
 
     def find_rule_match(pattern, token_stream)
@@ -122,6 +128,10 @@ module Dentaku
       else
         raise "unknown comparator '#{ comparator }'"
       end
+    end
+
+    def expand_range(left, oper1, middle, oper2, right)
+      [left, oper1, middle, Token.new(:combinator, :and), middle, oper2, right]
     end
 
     def if(*args)
