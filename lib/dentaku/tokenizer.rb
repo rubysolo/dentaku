@@ -6,7 +6,7 @@ module Dentaku
   class Tokenizer
     SCANNERS = [
       TokenScanner.new(:whitespace, '\s+'),
-      TokenScanner.new(:numeric,    '(\d+(\.\d+)?|\.\d+)', lambda { |raw| raw =~ /\./ ? raw.to_f : raw.to_i }),
+      TokenScanner.new(:numeric,    '(\b|\.)(\d+(\.\d+)?|\.\d+)\b', lambda{|raw| raw =~ /\./ ? raw.to_f : raw.to_i }),
       TokenScanner.new(:string,     '"[^"]*"',    lambda { |raw| raw.gsub(/^"|"$/, '') }),
       TokenScanner.new(:string,     "'[^']*'",    lambda { |raw| raw.gsub(/^'|'$/, '') }),
       TokenScanner.new(:operator,   '\^|\+|-|\*|\/', lambda do |raw|
@@ -36,9 +36,9 @@ module Dentaku
         when '='  then :eq
         end
       end),
-      TokenScanner.new(:combinator, '(and|or)\b',   lambda { |raw| raw.strip.downcase.to_sym }),
-      TokenScanner.new(:function,   '(if|round)\b', lambda { |raw| raw.strip.to_sym }),
-      TokenScanner.new(:identifier, '[a-z_]+',      lambda { |raw| raw.downcase.to_sym })
+      TokenScanner.new(:combinator, '(and|or)\b',                  lambda {|raw| raw.strip.downcase.to_sym }),
+      TokenScanner.new(:function,   '(if|round)\b',                lambda {|raw| raw.strip.to_sym }),
+      TokenScanner.new(:identifier, '[a-z0-9_]*[a-z_]+[a-z0-9_]*', lambda {|raw| raw.downcase.to_sym })
     ]
 
     LPAREN = TokenMatcher.new(:grouping, :open)
