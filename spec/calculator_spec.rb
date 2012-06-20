@@ -51,6 +51,13 @@ describe Dentaku::Calculator do
     calculator.evaluate('foo * 2', 'foo' => 4).should eq(8)
   end
 
+  it 'should accept digits in identifiers' do
+    calculator.evaluate('foo1 * 2', :foo1 => 2).should eq(4)
+    calculator.evaluate('foo1 * 2', 'foo1' => 4).should eq(8)
+    calculator.evaluate('1foo * 2', '1foo' => 2).should eq(4)
+    calculator.evaluate('fo1o * 2', :fo1o => 4).should eq(8)
+  end
+
   it 'should compare string literals with string variables' do
     calculator.evaluate('fruit = "apple"', :fruit => 'apple').should be_true
     calculator.evaluate('fruit = "apple"', :fruit => 'pear').should be_false
