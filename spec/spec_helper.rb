@@ -22,6 +22,8 @@ def type_for(value)
     :combinator
   when :true, :false
     :logical
+  when :if, :round, :not
+    :function
   else
     :identifier
   end

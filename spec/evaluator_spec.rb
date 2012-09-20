@@ -75,6 +75,11 @@ describe Dentaku::Evaluator do
         evaluator.evaluate(token_stream(5, :gt, 1, :or, :false)).should be_true
         evaluator.evaluate(token_stream(5, :gt, 1, :and, :false)).should be_false
       end
+
+      it 'should support negation of a logical value' do
+        evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :or,  :false, :close)).should be_false
+        evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :and, :false, :close)).should be_true
+      end
     end
   end
 end

@@ -98,5 +98,12 @@ describe Dentaku::Tokenizer do
       tokens.map(&:category).should eq([:function, :grouping, :numeric, :grouping, :numeric, :grouping])
       tokens.map(&:value).should eq([:round, :open, 8.75, :comma, 1, :close])
     end
+
+    it 'include NOT' do
+      tokens = tokenizer.tokenize('not(8 < 5)')
+      tokens.length.should eq(6)
+      tokens.map(&:category).should eq([:function, :grouping, :numeric, :comparator, :numeric, :grouping])
+      tokens.map(&:value).should eq([:not, :open, 8, :lt, 5, :close])
+    end
   end
 end
