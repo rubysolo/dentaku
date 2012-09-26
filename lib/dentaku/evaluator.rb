@@ -36,8 +36,8 @@ module Dentaku
     P_COMBINE    = [T_LOGICAL, T_COMBINATOR,     T_LOGICAL]
 
     P_IF         = [T_IF, T_OPEN, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_CLOSE]
-    P_ROUND_ONE  = [T_ROUND, T_OPEN, T_NUMERIC, T_CLOSE]
-    P_ROUND_TWO  = [T_ROUND, T_OPEN, T_NUMERIC, T_COMMA, T_NUMERIC, T_CLOSE]
+    P_ROUND_ONE  = [T_ROUND, T_OPEN, T_NON_GROUP_STAR, T_CLOSE]
+    P_ROUND_TWO  = [T_ROUND, T_OPEN, T_NON_GROUP_STAR, T_COMMA, T_NUMERIC, T_CLOSE]
     P_NOT        = [T_NOT, T_OPEN, T_NON_GROUP_STAR, T_CLOSE]
 
     RULES = [
@@ -152,18 +152,18 @@ module Dentaku
     end
 
     def round(*args)
-      function = args.shift
-      open     = args.shift
-      input    = args.shift.value
-      places   = 0
+      _, _, *tokens, _ = args
 
-      if args.length > 1
-        comma  = args.shift
-        places = args.shift.value
+      input_tokens = tokens.take_while { |a| a.category != :grouping }
+      input_value  = evaluate_token_stream(input_tokens).value
+      places       = 0
+
+      if places_token = tokens.drop_while { |a| a.category != :grouping }.last
+        places = places_token.value
       end
 
       begin
-        value = input.round(places)
+        value = input_value.round(places)
       rescue ArgumentError
         value = (input * 10 ** places).round / (10 ** places).to_f
       end

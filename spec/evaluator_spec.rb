@@ -55,6 +55,12 @@ describe Dentaku::Evaluator do
       end
     end
 
+    describe 'functions' do
+      it 'should evaluate function' do
+        evaluator.evaluate(token_stream(:round, :open, 5, :divide, 3.0, :close)).should eq 2
+      end
+    end
+
     describe 'logic' do
       it 'should evaluate conditional' do
         evaluator.evaluate(token_stream(5, :gt, 1)).should be_true
