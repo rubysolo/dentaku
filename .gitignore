@@ -1,5 +1,6 @@
 *.gem
 .bundle
+.rbenv-version
 Gemfile.lock
 bin/*
 pkg/*

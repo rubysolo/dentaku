@@ -78,6 +78,8 @@ describe Dentaku::Calculator do
       calculator.evaluate('round(8.2)').should eq(8)
       calculator.evaluate('round(8.8)').should eq(9)
       calculator.evaluate('round(8.75, 1)').should eq(8.8)
+
+      calculator.evaluate('ROUND(apples * 0.93)', { :apples => 10 }).should eq(9)
     end
   end
 end
