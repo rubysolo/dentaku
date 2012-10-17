@@ -57,7 +57,9 @@ describe Dentaku::Evaluator do
 
     describe 'functions' do
       it 'should evaluate function' do
-        evaluator.evaluate(token_stream(:round, :open, 5, :divide, 3.0, :close)).should eq 2
+        evaluator.evaluate(token_stream(:round,     :open, 5, :divide, 3.0, :close)).should eq 2
+        evaluator.evaluate(token_stream(:roundup,   :open, 5, :divide, 1.2, :close)).should eq 5
+        evaluator.evaluate(token_stream(:rounddown, :open, 5, :divide, 1.2, :close)).should eq 4
       end
     end
 

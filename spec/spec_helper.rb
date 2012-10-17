@@ -22,7 +22,7 @@ def type_for(value)
     :combinator
   when :true, :false
     :logical
-  when :if, :round, :not
+  when :if, :round, :roundup, :rounddown, :not
     :function
   else
     :identifier

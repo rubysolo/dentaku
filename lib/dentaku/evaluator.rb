@@ -20,6 +20,8 @@ module Dentaku
     T_COMBINATOR = TokenMatcher.new(:combinator)
     T_IF         = TokenMatcher.new(:function, :if)
     T_ROUND      = TokenMatcher.new(:function, :round)
+    T_ROUNDUP    = TokenMatcher.new(:function, :roundup)
+    T_ROUNDDOWN  = TokenMatcher.new(:function, :rounddown)
     T_NOT        = TokenMatcher.new(:function, :not)
 
     T_NON_GROUP_STAR = TokenMatcher.new(:grouping).invert.star
@@ -38,12 +40,16 @@ module Dentaku
     P_IF         = [T_IF, T_OPEN, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_COMMA, T_NON_GROUP, T_CLOSE]
     P_ROUND_ONE  = [T_ROUND, T_OPEN, T_NON_GROUP_STAR, T_CLOSE]
     P_ROUND_TWO  = [T_ROUND, T_OPEN, T_NON_GROUP_STAR, T_COMMA, T_NUMERIC, T_CLOSE]
+    P_ROUNDUP    = [T_ROUNDUP, T_OPEN, T_NON_GROUP_STAR, T_CLOSE]
+    P_ROUNDDOWN  = [T_ROUNDDOWN, T_OPEN, T_NON_GROUP_STAR, T_CLOSE]
     P_NOT        = [T_NOT, T_OPEN, T_NON_GROUP_STAR, T_CLOSE]
 
     RULES = [
       [P_IF,         :if],
       [P_ROUND_ONE,  :round],
       [P_ROUND_TWO,  :round],
+      [P_ROUNDUP,    :roundup],
+      [P_ROUNDDOWN,  :rounddown],
       [P_NOT,        :not],
 
       [P_GROUP,      :evaluate_group],
@@ -169,6 +175,20 @@ module Dentaku
       end
 
       Token.new(:numeric, value)
+    end
+
+    def roundup(*args)
+      _, _, *tokens, _ = args
+
+      value = evaluate_token_stream(tokens).value
+      Token.new(:numeric, value.ceil)
+    end
+
+    def rounddown(*args)
+      _, _, *tokens, _ = args
+
+      value = evaluate_token_stream(tokens).value
+      Token.new(:numeric, value.floor)
     end
 
     def not(*args)

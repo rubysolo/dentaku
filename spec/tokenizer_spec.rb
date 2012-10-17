@@ -87,7 +87,7 @@ describe Dentaku::Tokenizer do
       tokens.map(&:value).should eq([:if, :open, :x, :lt, 10, :comma, :y, :comma, :z, :close])
     end
 
-    it 'include ROUND' do
+    it 'include ROUND/UP/DOWN' do
       tokens = tokenizer.tokenize('round(8.2)')
       tokens.length.should eq(4)
       tokens.map(&:category).should eq([:function, :grouping, :numeric, :grouping])
@@ -97,6 +97,16 @@ describe Dentaku::Tokenizer do
       tokens.length.should eq(6)
       tokens.map(&:category).should eq([:function, :grouping, :numeric, :grouping, :numeric, :grouping])
       tokens.map(&:value).should eq([:round, :open, 8.75, :comma, 1, :close])
+
+      tokens = tokenizer.tokenize('ROUNDUP(8.2)')
+      tokens.length.should eq(4)
+      tokens.map(&:category).should eq([:function, :grouping, :numeric, :grouping])
+      tokens.map(&:value).should eq([:roundup, :open, 8.2, :close])
+
+      tokens = tokenizer.tokenize('RoundDown(8.2)')
+      tokens.length.should eq(4)
+      tokens.map(&:category).should eq([:function, :grouping, :numeric, :grouping])
+      tokens.map(&:value).should eq([:rounddown, :open, 8.2, :close])
     end
 
     it 'include NOT' do
