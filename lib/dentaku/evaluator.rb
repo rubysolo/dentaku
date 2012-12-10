@@ -126,7 +126,7 @@ module Dentaku
       when :add      then Token.new(:numeric, l + r)
       when :subtract then Token.new(:numeric, l - r)
       when :multiply then Token.new(:numeric, l * r)
-      when :divide   then Token.new(:numeric, l / r)
+      when :divide   then Token.new(:numeric, divide(l, r))
 
       when :le       then Token.new(:logical, l <= r)
       when :ge       then Token.new(:logical, l >= r)
@@ -141,6 +141,12 @@ module Dentaku
       else
         raise "unknown comparator '#{ comparator }'"
       end
+    end
+
+    def divide(numerator, denominator)
+      quotient, remainder = numerator.divmod(denominator)
+      return quotient if remainder == 0
+      numerator.to_f / denominator.to_f
     end
 
     def expand_range(left, oper1, middle, oper2, right)

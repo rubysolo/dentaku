@@ -53,6 +53,10 @@ describe Dentaku::Evaluator do
       it 'should respect explicit grouping' do
         evaluator.evaluate(token_stream(:open, 1, :add, 1, :close, :multiply, 5)).should eq(10)
       end
+
+      it 'should return floating point from division when there is a remainder' do
+        evaluator.evaluate(token_stream(5, :divide, 4)).should eq(1.25)
+      end
     end
 
     describe 'functions' do
