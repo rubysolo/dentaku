@@ -1,4 +1,5 @@
 require 'dentaku/rules'
+require 'dentaku/binary_operation'
 
 module Dentaku
   class Evaluator
@@ -62,35 +63,9 @@ module Dentaku
     end
 
     def apply(lvalue, operator, rvalue)
-      l = lvalue.value
-      r = rvalue.value
-
-      case operator.value
-      when :pow      then Token.new(:numeric, l ** r)
-      when :add      then Token.new(:numeric, l + r)
-      when :subtract then Token.new(:numeric, l - r)
-      when :multiply then Token.new(:numeric, l * r)
-      when :divide   then Token.new(:numeric, divide(l, r))
-
-      when :le       then Token.new(:logical, l <= r)
-      when :ge       then Token.new(:logical, l >= r)
-      when :lt       then Token.new(:logical, l <  r)
-      when :gt       then Token.new(:logical, l >  r)
-      when :ne       then Token.new(:logical, l != r)
-      when :eq       then Token.new(:logical, l == r)
-
-      when :and      then Token.new(:logical, l && r)
-      when :or       then Token.new(:logical, l || r)
-
-      else
-        raise "unknown comparator '#{ comparator }'"
-      end
-    end
-
-    def divide(numerator, denominator)
-      quotient, remainder = numerator.divmod(denominator)
-      return quotient if remainder == 0
-      numerator.to_f / denominator.to_f
+      operation = BinaryOperation.new(lvalue.value, rvalue.value)
+      raise "unknown operation #{ operator.value }" unless operation.respond_to?(operator.value)
+      Token.new(*operation.send(operator.value))
     end
 
     def expand_range(left, oper1, middle, oper2, right)
