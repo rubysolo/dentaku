@@ -8,17 +8,7 @@ module Dentaku
 
     def evaluate_token_stream(tokens)
       while tokens.length > 1
-        matched = false
-        Rules.each do |pattern, evaluator|
-          pos, match = find_rule_match(pattern, tokens)
-
-          if pos
-            tokens = evaluate_step(tokens, pos, match.length, evaluator)
-            matched = true
-            break
-          end
-        end
-
+        matched, tokens = match_rule_pattern(tokens)
         raise "no rule matched #{ tokens.map(&:category).inspect }" unless matched
       end
 
@@ -27,9 +17,19 @@ module Dentaku
       tokens.first
     end
 
-    def evaluate_step(token_stream, start, length, evaluator)
-      expr = token_stream.slice!(start, length)
-      token_stream.insert start, *self.send(evaluator, *expr)
+    def match_rule_pattern(tokens)
+      matched = false
+      Rules.each do |pattern, evaluator|
+        pos, match = find_rule_match(pattern, tokens)
+
+        if pos
+          tokens = evaluate_step(tokens, pos, match.length, evaluator)
+          matched = true
+          break
+        end
+      end
+
+      [matched, tokens]
     end
 
     def find_rule_match(pattern, token_stream)
@@ -50,6 +50,11 @@ module Dentaku
       end
 
       nil
+    end
+
+    def evaluate_step(token_stream, start, length, evaluator)
+      expr = token_stream.slice!(start, length)
+      token_stream.insert start, *self.send(evaluator, *expr)
     end
 
     def evaluate_group(*args)
