@@ -127,18 +127,17 @@ module Dentaku
       Token.new(:numeric, value)
     end
 
-    def roundup(*args)
-      _, _, *tokens, _ = args
+    def round_int(*args)
+      function, _, *tokens, _ = args
 
       value = evaluate_token_stream(tokens).value
-      Token.new(:numeric, value.ceil)
-    end
+      rounded = if function.value == :roundup
+        value.ceil
+      else
+        value.floor
+      end
 
-    def rounddown(*args)
-      _, _, *tokens, _ = args
-
-      value = evaluate_token_stream(tokens).value
-      Token.new(:numeric, value.floor)
+      Token.new(:numeric, rounded)
     end
 
     def not(*args)

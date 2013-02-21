@@ -49,8 +49,8 @@ module Dentaku
         [P_IF,         :if],
         [P_ROUND_ONE,  :round],
         [P_ROUND_TWO,  :round],
-        [P_ROUNDUP,    :roundup],
-        [P_ROUNDDOWN,  :rounddown],
+        [P_ROUNDUP,    :round_int],
+        [P_ROUNDDOWN,  :round_int],
         [P_NOT,        :not],
 
         [P_GROUP,      :evaluate_group],
