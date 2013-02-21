@@ -18,5 +18,66 @@ module Dentaku
 
       false
     end
+
+    class << self
+      def scanners
+        @scanners ||= [
+          whitespace,
+          numeric,
+          double_quoted_string,
+          single_quoted_string,
+          operator,
+          grouping,
+          comparator,
+          combinator,
+          function,
+          identifier
+        ]
+      end
+
+      def whitespace
+        new(:whitespace, '\s+')
+      end
+
+      def numeric
+        new(:numeric, '(\d+(\.\d+)?|\.\d+)\b', lambda { |raw| raw =~ /\./ ? raw.to_f : raw.to_i })
+      end
+
+      def double_quoted_string
+        new(:string, '"[^"]*"', lambda { |raw| raw.gsub(/^"|"$/, '') })
+      end
+
+      def single_quoted_string
+        new(:string, "'[^']*'", lambda { |raw| raw.gsub(/^'|'$/, '') })
+      end
+
+      def operator
+        names = { pow: '^', add: '+', subtract: '-', multiply: '*', divide: '/' }.invert
+        new(:operator, '\^|\+|-|\*|\/', lambda { |raw| names[raw] })
+      end
+
+      def grouping
+        names = { open: '(', close: ')', comma: ',' }.invert
+        new(:grouping, '\(|\)|,', lambda { |raw| names[raw] })
+      end
+
+      def comparator
+        names = { le: '<=', ge: '>=', ne: '!=', lt: '<', gt: '>', eq: '=' }.invert
+        alternate = { ne: '<>' }.invert
+        new(:comparator, '<=|>=|!=|<>|<|>|=', lambda { |raw| names[raw] || alternate[raw] })
+      end
+
+      def combinator
+        new(:combinator, '(and|or)\b', lambda {|raw| raw.strip.downcase.to_sym })
+      end
+
+      def function
+        new(:function, '(if|round(up|down)?|not)\b', lambda {|raw| raw.strip.downcase.to_sym })
+      end
+
+      def identifier
+        new(:identifier, '\w+\b', lambda {|raw| raw.strip.downcase.to_sym })
+      end
+    end
   end
 end

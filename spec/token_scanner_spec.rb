@@ -19,5 +19,9 @@ describe Dentaku::TokenScanner do
     token.category.should eq(:numeric)
     token.value.should eq(5)
   end
+
+  it 'should return a list of all configured scanners' do
+    described_class.scanners.length.should eq 10
+  end
 end
 
