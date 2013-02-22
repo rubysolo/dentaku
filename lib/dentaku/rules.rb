@@ -27,28 +27,31 @@ module Dentaku
     end
 
     def self.t(name)
-      @matchers ||= {
-        numeric:        TokenMatcher.new(:numeric),
-        string:         TokenMatcher.new(:string),
-        addsub:         TokenMatcher.new(:operator, [:add, :subtract]),
-        muldiv:         TokenMatcher.new(:operator, [:multiply, :divide]),
-        pow:            TokenMatcher.new(:operator, :pow),
-        comparator:     TokenMatcher.new(:comparator),
-        comp_gt:        TokenMatcher.new(:comparator, [:gt, :ge]),
-        comp_lt:        TokenMatcher.new(:comparator, [:lt, :le]),
-        open:           TokenMatcher.new(:grouping, :open),
-        close:          TokenMatcher.new(:grouping, :close),
-        comma:          TokenMatcher.new(:grouping, :comma),
-        logical:        TokenMatcher.new(:logical),
-        combinator:     TokenMatcher.new(:combinator),
-        if:             TokenMatcher.new(:function, :if),
-        round:          TokenMatcher.new(:function, :round),
-        roundup:        TokenMatcher.new(:function, :roundup),
-        rounddown:      TokenMatcher.new(:function, :rounddown),
-        not:            TokenMatcher.new(:function, :not),
-        non_group:      TokenMatcher.new(:grouping).invert,
-        non_group_star: TokenMatcher.new(:grouping).invert.star
-      }
+      @matchers ||= [
+        [:numeric,        [:numeric]],
+        [:string,         [:string]],
+        [:addsub,         [:operator, [:add, :subtract]]],
+        [:muldiv,         [:operator, [:multiply, :divide]]],
+        [:pow,            [:operator, :pow]],
+        [:comparator,     [:comparator]],
+        [:comp_gt,        [:comparator, [:gt, :ge]]],
+        [:comp_lt,        [:comparator, [:lt, :le]]],
+        [:open,           [:grouping, :open]],
+        [:close,          [:grouping, :close]],
+        [:comma,          [:grouping, :comma]],
+        [:logical,        [:logical]],
+        [:combinator,     [:combinator]],
+        [:if,             [:function, :if]],
+        [:round,          [:function, :round]],
+        [:roundup,        [:function, :roundup]],
+        [:rounddown,      [:function, :rounddown]],
+        [:not,            [:function, :not]],
+      ].each_with_object({}) do |(key, args), matchers|
+        matchers[key] = TokenMatcher.new(*args)
+      end
+
+      @matchers[:non_group]      ||= TokenMatcher.new(:grouping).invert
+      @matchers[:non_group_star] ||= TokenMatcher.new(:grouping).invert.star
 
       @matchers[name]
     end
