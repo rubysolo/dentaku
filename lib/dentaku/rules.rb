@@ -28,30 +28,15 @@ module Dentaku
 
     def self.t(name)
       @matchers ||= [
-        [:numeric,        [:numeric]],
-        [:string,         [:string]],
-        [:addsub,         [:operator, [:add, :subtract]]],
-        [:muldiv,         [:operator, [:multiply, :divide]]],
-        [:pow,            [:operator, :pow]],
-        [:comparator,     [:comparator]],
-        [:comp_gt,        [:comparator, [:gt, :ge]]],
-        [:comp_lt,        [:comparator, [:lt, :le]]],
-        [:open,           [:grouping, :open]],
-        [:close,          [:grouping, :close]],
-        [:comma,          [:grouping, :comma]],
-        [:logical,        [:logical]],
-        [:combinator,     [:combinator]],
-        [:if,             [:function, :if]],
-        [:round,          [:function, :round]],
-        [:roundup,        [:function, :roundup]],
-        [:rounddown,      [:function, :rounddown]],
-        [:not,            [:function, :not]],
-      ].each_with_object({}) do |(key, args), matchers|
-        matchers[key] = TokenMatcher.new(*args)
+        :numeric, :string, :addsub, :muldiv, :pow,
+        :comparator, :comp_gt, :comp_lt,
+        :open, :close, :comma,
+        :non_group, :non_group_star,
+        :logical, :combinator,
+        :if, :round, :roundup, :rounddown, :not
+      ].each_with_object({}) do |name, matchers|
+        matchers[name] = TokenMatcher.send(name)
       end
-
-      @matchers[:non_group]      ||= TokenMatcher.new(:grouping).invert
-      @matchers[:non_group_star] ||= TokenMatcher.new(:grouping).invert.star
 
       @matchers[name]
     end

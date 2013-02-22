@@ -57,6 +57,27 @@ module Dentaku
     def value_match(value)
       @values.empty? || @values.include?(value)
     end
+
+    def self.numeric;        new(:numeric);                        end
+    def self.string;         new(:string);                         end
+    def self.addsub;         new(:operator, [:add, :subtract]);    end
+    def self.muldiv;         new(:operator, [:multiply, :divide]); end
+    def self.pow;            new(:operator, :pow);                 end
+    def self.comparator;     new(:comparator);                     end
+    def self.comp_gt;        new(:comparator, [:gt, :ge]);         end
+    def self.comp_lt;        new(:comparator, [:lt, :le]);         end
+    def self.open;           new(:grouping, :open);                end
+    def self.close;          new(:grouping, :close);               end
+    def self.comma;          new(:grouping, :comma);               end
+    def self.logical;        new(:logical);                        end
+    def self.combinator;     new(:combinator);                     end
+    def self.if;             new(:function, :if);                  end
+    def self.round;          new(:function, :round);               end
+    def self.roundup;        new(:function, :roundup);             end
+    def self.rounddown;      new(:function, :rounddown);           end
+    def self.not;            new(:function, :not);                 end
+    def self.non_group;      new(:grouping).invert;                end
+    def self.non_group_star; new(:grouping).invert.star;           end
   end
 end
 
