@@ -85,19 +85,14 @@ module Dentaku
     def round(*args)
       _, _, *tokens, _ = args
 
-      input_tokens = tokens.take_while { |a| a.category != :grouping }
+      input_tokens, places_tokens = tokens.chunk { |t| t.category == :grouping }.
+                                          reject { |flag, tokens| flag }.
+                                             map { |flag, tokens| tokens }
+
       input_value  = evaluate_token_stream(input_tokens).value
-      places       = 0
+      places       = places_tokens ? evaluate_token_stream(places_tokens).value : 0
 
-      if places_token = tokens.drop_while { |a| a.category != :grouping }.last
-        places = places_token.value
-      end
-
-      begin
-        value = input_value.round(places)
-      rescue ArgumentError
-        value = (input * 10 ** places).round / (10 ** places).to_f
-      end
+      value = input_value.round(places)
 
       Token.new(:numeric, value)
     end

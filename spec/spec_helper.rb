@@ -14,7 +14,7 @@ def type_for(value)
     :numeric
   when :add, :subtract, :multiply, :divide
     :operator
-  when :open, :close
+  when :open, :close, :comma
     :grouping
   when :le, :ge, :ne, :ne, :lt, :gt, :eq
     :comparator
