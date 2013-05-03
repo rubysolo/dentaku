@@ -83,7 +83,8 @@ module Dentaku
     end
 
     def round(*args)
-      _, _, *tokens, _ = args
+      _, _, *tokens = args
+      tokens.pop
 
       input_tokens, places_tokens = tokens.chunk { |t| t.category == :grouping }.
                                           reject { |flag, tokens| flag }.
@@ -98,7 +99,8 @@ module Dentaku
     end
 
     def round_int(*args)
-      function, _, *tokens, _ = args
+      function, _, *tokens = args
+      tokens.pop
 
       value = evaluate_token_stream(tokens).value
       rounded = if function.value == :roundup
