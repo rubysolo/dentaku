@@ -76,7 +76,7 @@ SUPPORTED OPERATORS AND FUNCTIONS
 ---------------------------------
 
 Math: `+ - * /`  
-Logic: `< > <= >= <> != = AND OR`  
+Logic: `< > <= >= <> != = AND OR NOT`  
 Functions: `IF ROUND`
 
 THANKS
