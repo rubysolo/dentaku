@@ -68,6 +68,12 @@ describe Dentaku::Calculator do
     calculator.evaluate('fruit = "Apple"', :fruit => 'Apple').should be_true
   end
 
+  it 'should allow binding logical values' do
+    calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => true).should be_true
+    calculator.evaluate('some_boolean AND 7 < 5', :some_boolean => true).should be_false
+    calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => false).should be_false
+  end
+
   describe 'functions' do
     it 'should include IF' do
       calculator.evaluate('if (foo < 8, 10, 20)', :foo => 2).should eq(10)

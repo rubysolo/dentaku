@@ -31,7 +31,7 @@ module Dentaku
         @memory[key_or_hash.to_sym] = value
       else
         key_or_hash.each do |key, value|
-          @memory[key.to_sym] = value if value
+          @memory[key.to_sym] = value
         end
       end
 
@@ -69,7 +69,11 @@ module Dentaku
     end
 
     def type_for_value(value)
-      value.is_a?(String) ? :string : :numeric
+      case value
+      when String then :string
+      when TrueClass, FalseClass then :logical
+      else :numeric
+      end
     end
   end
 end
