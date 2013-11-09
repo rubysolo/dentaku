@@ -63,6 +63,7 @@ module Dentaku
     def self.addsub;         new(:operator, [:add, :subtract]);    end
     def self.muldiv;         new(:operator, [:multiply, :divide]); end
     def self.pow;            new(:operator, :pow);                 end
+    def self.mod;            new(:operator, :mod);                 end
     def self.comparator;     new(:comparator);                     end
     def self.comp_gt;        new(:comparator, [:gt, :ge]);         end
     def self.comp_lt;        new(:comparator, [:lt, :le]);         end

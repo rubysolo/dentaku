@@ -48,6 +48,7 @@ describe Dentaku::Evaluator do
 
       it 'should respect order of precedence' do
         evaluator.evaluate(token_stream(1, :add, 1, :multiply, 5)).should eq(6)
+        evaluator.evaluate(token_stream(2, :add, 10, :mod, 2)).should eq(2)
       end
 
       it 'should respect explicit grouping' do
