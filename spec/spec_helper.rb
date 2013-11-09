@@ -12,7 +12,7 @@ def type_for(value)
   case value
   when Numeric
     :numeric
-  when :add, :subtract, :multiply, :divide
+  when :add, :subtract, :multiply, :divide, :mod
     :operator
   when :open, :close, :comma
     :grouping

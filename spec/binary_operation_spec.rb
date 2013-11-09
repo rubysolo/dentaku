@@ -38,4 +38,8 @@ describe Dentaku::BinaryOperation do
     logical.and.should eq [:logical, false]
     logical.or.should  eq [:logical, true]
   end
+
+  it 'mods two numbers' do
+    operation.mod.should eq [:numeric, 2%3]
+  end
 end
