@@ -72,10 +72,17 @@ describe Dentaku::Calculator do
     calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => true).should be_true
     calculator.evaluate('some_boolean AND 7 < 5', :some_boolean => true).should be_false
     calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => false).should be_false
+
+    calculator.evaluate('some_boolean OR 7 > 5', :some_boolean => true).should be_true
+    calculator.evaluate('some_boolean OR 7 < 5', :some_boolean => true).should be_true
+    calculator.evaluate('some_boolean OR 7 < 5', :some_boolean => false).should be_false
+
   end
 
   describe 'functions' do
     it 'should include IF' do
+      calculator.evaluate('if(foo < 8, 10, 20)', :foo => 2).should eq(10)
+      calculator.evaluate('if(foo < 8, 10, 20)', :foo => 9).should eq(20)
       calculator.evaluate('if (foo < 8, 10, 20)', :foo => 2).should eq(10)
       calculator.evaluate('if (foo < 8, 10, 20)', :foo => 9).should eq(20)
     end
@@ -86,6 +93,14 @@ describe Dentaku::Calculator do
       calculator.evaluate('round(8.75, 1)').should eq(8.8)
 
       calculator.evaluate('ROUND(apples * 0.93)', { :apples => 10 }).should eq(9)
+    end
+
+    it 'should include NOT' do
+      calculator.evaluate('NOT(some_boolean)', :some_boolean => true).should be_false
+      calculator.evaluate('NOT(some_boolean)', :some_boolean => false).should be_true
+
+      calculator.evaluate('NOT(some_boolean) AND 7 > 5', :some_boolean => true).should be_false
+      calculator.evaluate('NOT(some_boolean) OR 7 < 5', :some_boolean => false).should be_true
     end
   end
 end
