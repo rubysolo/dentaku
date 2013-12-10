@@ -18,6 +18,8 @@ module Dentaku
       [:numeric, left.to_f / right.to_f]
     end
 
+    def mod;      [:numeric, left % right]; end
+
     def le;       [:logical, left <= right]; end
     def ge;       [:logical, left >= right]; end
     def lt;       [:logical, left <  right]; end
