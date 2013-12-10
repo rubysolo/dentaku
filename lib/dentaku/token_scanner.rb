@@ -72,7 +72,7 @@ module Dentaku
       end
 
       def function
-        new(:function, '(if|round(up|down)?|not)\b', lambda {|raw| raw.strip.downcase.to_sym })
+        new(:function, '(\w+\s*(?=\())', lambda {|raw| raw.strip.downcase.to_sym })
       end
 
       def identifier

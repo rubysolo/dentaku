@@ -48,22 +48,23 @@ to ensure proper evaluation:
     calculator.evaluate('(5 + 3) * 2')
     => 16
 
-A number of functions are also supported.  Okay, the number is currently two,
-but more will be added soon.  The current functions are `round` and `if`, and
-they work like their counterparts in Excel:
+A number of functions are also supported.  Okay, the number is currently five,
+but more will be added soon.  The current functions are
+`if`, `not`, `round`, `rounddown`, and `roundup`, and they work like their counterparts in Excel:
 
     calculator.evaluate('if (pears < 10, 10, 20)', :pears => 5)
     => 10
     calculator.evaluate('if (pears < 10, 10, 20)', :pears => 15)
     => 20
 
-`Round` can be called with or without the number of decimal places:
+`round`, `rounddown`, and `roundup` can be called with or without the number of decimal places:
 
     calculator.evaluate('round(8.2)')
     => 8
     calculator.evaluate('round(8.2759, 2)')
     => 8.28
 
+`round` and `rounddown` round down, while `roundup` rounds up.
 
 If you're too lazy to be building calculator objects, there's a shortcut just
 for you:
@@ -75,9 +76,9 @@ for you:
 SUPPORTED OPERATORS AND FUNCTIONS
 ---------------------------------
 
-Math: `+ - * /`  
-Logic: `< > <= >= <> != = AND OR NOT`  
-Functions: `IF ROUND`
+Math: `+ - * / %`
+Logic: `< > <= >= <> != = AND OR`
+Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
 
 THANKS
 ------
