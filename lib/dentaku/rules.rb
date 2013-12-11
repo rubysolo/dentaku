@@ -3,8 +3,8 @@ require 'dentaku/token_matcher'
 
 module Dentaku
   class Rules
-    def self.each
-      @rules ||= [
+    def self.core_rules
+      [
         [ p(:if),         :if             ],
         [ p(:round_one),  :round          ],
         [ p(:round_two),  :round          ],
@@ -23,8 +23,34 @@ module Dentaku
         [ p(:str_comp),   :apply          ],
         [ p(:combine),    :apply          ]
       ]
+    end
 
+    def self.each
+      @rules ||= core_rules
       @rules.each { |r| yield r }
+    end
+
+    def self.add_rule(new_rule)
+      @rules ||= core_rules
+      @funcs ||= {}
+      name = new_rule[:name].to_sym
+
+      ## rules need to be added to the beginning of @rules; for precedence?
+      @rules.unshift [
+        [
+          TokenMatcher.send(name),
+          t(:open),
+          *pattern(*new_rule[:tokens]),
+          t(:close),
+        ],
+        name
+      ]
+      @funcs[name] = new_rule[:body]
+    end
+
+    def self.func(name)
+      @funcs ||= {}
+      @funcs[name]
     end
 
     def self.t(name)
