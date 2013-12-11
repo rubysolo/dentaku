@@ -73,12 +73,44 @@ for you:
     => 3.0
 
 
-SUPPORTED OPERATORS AND FUNCTIONS
+BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
 
 Math: `+ - * / %`
 Logic: `< > <= >= <> != = AND OR`
 Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
+
+
+EXTERNAL FUNCTIONS
+------------------
+
+See `spec/external_function_spec.rb` for examples of how to add your own functions.
+
+The short, dense version:
+
+Each rule for an external function consists of three parts: the function's name,
+a list of tokens describing its signature (parameters), and a lambda representing the
+function's body.
+
+The function name should be passed as a symbol (for example, `:func`).
+
+The token list should consist of `:numeric` or `:string` if a single value of the named
+type should be passed; `:non_group` or `:non_group_star` for grouped expressions.
+
+> (what's the difference? when would you use one instead of the other?)
+
+The function body should accept a list of parameters. Each function body will be passed
+a sequence of tokens, in order:
+
+1. The function's name
+2. A token representing the opening parenthesis
+3. Tokens representing the parameter values, separated by tokens representing the commas between parameters
+4. A token representing the closing parenthesis
+
+It should return a token (either `:numeric` or `:string`) representing the return value.
+
+Rules can be set individually using Calculator#add_rule, or en masse using Calculator#add_rules.
+
 
 THANKS
 ------

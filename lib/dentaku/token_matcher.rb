@@ -79,6 +79,16 @@ module Dentaku
     def self.not;            new(:function, :not);                 end
     def self.non_group;      new(:grouping).invert;                end
     def self.non_group_star; new(:grouping).invert.star;           end
+
+
+    def self.method_missing(name, *args, &block)
+      new(:function, name)
+    end
+
+    def self.respond_to_missing?(name, include_priv)
+      true
+    end
+
   end
 end
 
