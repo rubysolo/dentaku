@@ -61,6 +61,7 @@ module Dentaku
     def self.numeric;        new(:numeric);                        end
     def self.string;         new(:string);                         end
     def self.addsub;         new(:operator, [:add, :subtract]);    end
+    def self.subtract;       new(:operator, :subtract);            end
     def self.muldiv;         new(:operator, [:multiply, :divide]); end
     def self.pow;            new(:operator, :pow);                 end
     def self.mod;            new(:operator, :mod);                 end

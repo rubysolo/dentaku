@@ -74,6 +74,10 @@ module Dentaku
       Token.new(*operation.send(operator.value))
     end
 
+    def negate(_, token)
+      Token.new(token.category,token.value * -1)
+    end
+
     def expand_range(left, oper1, middle, oper2, right)
       [left, oper1, middle, Token.new(:combinator, :and), middle, oper2, right]
     end

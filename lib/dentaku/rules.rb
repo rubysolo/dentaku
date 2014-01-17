@@ -17,6 +17,7 @@ module Dentaku
         [ p(:math_mod),   :apply          ],
         [ p(:math_mul),   :apply          ],
         [ p(:math_add),   :apply          ],
+        [ p(:negation),   :negate         ],
         [ p(:range_asc),  :expand_range   ],
         [ p(:range_desc), :expand_range   ],
         [ p(:num_comp),   :apply          ],
@@ -55,7 +56,7 @@ module Dentaku
 
     def self.t(name)
       @matchers ||= [
-        :numeric, :string, :addsub, :muldiv, :pow, :mod,
+        :numeric, :string, :addsub, :subtract, :muldiv, :pow, :mod,
         :comparator, :comp_gt, :comp_lt,
         :open, :close, :comma,
         :non_group, :non_group_star,
@@ -75,6 +76,7 @@ module Dentaku
         math_mul:   pattern(:numeric, :muldiv,         :numeric),
         math_pow:   pattern(:numeric, :pow,            :numeric),
         math_mod:   pattern(:numeric, :mod,            :numeric),
+        negation:   pattern(:subtract, :numeric),
         range_asc:  pattern(:numeric, :comp_lt,        :numeric,  :comp_lt, :numeric),
         range_desc: pattern(:numeric, :comp_gt,        :numeric,  :comp_gt, :numeric),
         num_comp:   pattern(:numeric, :comparator,     :numeric),

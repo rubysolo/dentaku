@@ -41,6 +41,11 @@ describe Dentaku::Evaluator do
       evaluator.evaluate_step(stream, 0, 5, :evaluate_group).should eq(expected)
     end
 
+    it 'supports unary minus' do
+      evaluator.evaluate(token_stream(:subtract, 1)).should eq(-1)
+      evaluator.evaluate(token_stream(1, :subtract, :subtract, 1)).should eq(2)
+    end
+
     describe 'maths' do
       it 'should perform addition' do
         evaluator.evaluate(token_stream(1, :add, 1)).should eq(2)
