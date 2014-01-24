@@ -75,7 +75,11 @@ module Dentaku
     end
 
     def negate(_, token)
-      Token.new(token.category,token.value * -1)
+      Token.new(token.category, token.value * -1)
+    end
+
+    def percentage(token, _)
+      Token.new(token.category, token.value / 100.0)
     end
 
     def expand_range(left, oper1, middle, oper2, right)
@@ -83,7 +87,7 @@ module Dentaku
     end
 
     def if(*args)
-      _, open, condition, _, true_value, _, false_value, close = args
+      _if, _open, condition, _, true_value, _, false_value, _close = args
 
       if condition.value
         true_value

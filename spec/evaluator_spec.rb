@@ -8,7 +8,7 @@ describe Dentaku::Evaluator do
     it 'should find a matching rule' do
       rule   = [Dentaku::TokenMatcher.new(:numeric, nil)]
       stream = [Dentaku::Token.new(:numeric, 1), Dentaku::Token.new(:operator, :add), Dentaku::Token.new(:numeric, 1)]
-      position, match = evaluator.find_rule_match(rule, stream)
+      position, _match = evaluator.find_rule_match(rule, stream)
       position.should eq(0)
     end
   end
@@ -44,6 +44,11 @@ describe Dentaku::Evaluator do
     it 'supports unary minus' do
       evaluator.evaluate(token_stream(:subtract, 1)).should eq(-1)
       evaluator.evaluate(token_stream(1, :subtract, :subtract, 1)).should eq(2)
+    end
+
+    it 'supports unary percentage' do
+      evaluator.evaluate(token_stream(50, :mod)).should eq(0.5)
+      evaluator.evaluate(token_stream(50, :mod, :multiply, 100)).should eq(50)
     end
 
     describe 'maths' do
