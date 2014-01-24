@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Solomon White"]
   s.email       = ["rubysolo@gmail.com"]
   s.homepage    = "http://github.com/rubysolo/dentaku"
+  s.licenses    = %w(MIT)
   s.summary     = %q{A formula language parser and evaluator}
   s.description = <<-DESC
     Dentaku is a parser and evaluator for mathematical formulas
