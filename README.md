@@ -98,32 +98,43 @@ Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
 EXTERNAL FUNCTIONS
 ------------------
 
-See `spec/external_function_spec.rb` for examples of how to add your own functions.
+See `spec/external_function_spec.rb` for examples of how to add your own
+functions.
 
 The short, dense version:
 
-Each rule for an external function consists of three parts: the function's name,
-a list of tokens describing its signature (parameters), and a lambda representing the
-function's body.
+Each rule for an external function consists of three parts: the function's
+name, a list of tokens describing its signature (parameters), and a lambda
+representing the function's body.
 
 The function name should be passed as a symbol (for example, `:func`).
 
-The token list should consist of `:numeric` or `:string` if a single value of the named
-type should be passed; `:non_group` or `:non_group_star` for grouped expressions.
+The token list should consist of symbols that will match the tokenized input to
+the function.  Numbers will be tokenized as `:numeric`, quoted strings will be
+tokenized as `:string`, and so on.  See `lib/dentaku/rules.rb` for the names of
+matchers and the patterns that they will match.
 
-> (what's the difference? when would you use one instead of the other?)
+As an example, the exponentiation function takes two parameters, the mantissa
+and the exponent, so the token list could be defined as: `[:numeric, :comma,
+:numeric]`.  Other functions might be variadic -- consider `max`, a function
+that takes any number numeric inputs and returns the largest one.  Its token
+list could be defined as: `[:non_close_plus]` (one or more tokens that are not
+closing parentheses.
 
-The function body should accept a list of parameters. Each function body will be passed
-a sequence of tokens, in order:
+The function body should accept a list of parameters. Each function body will
+be passed a sequence of tokens, in order:
 
 1. The function's name
 2. A token representing the opening parenthesis
-3. Tokens representing the parameter values, separated by tokens representing the commas between parameters
+3. Tokens representing the parameter values, separated by tokens representing
+   the commas between parameters
 4. A token representing the closing parenthesis
 
-It should return a token (either `:numeric` or `:string`) representing the return value.
+It should return a token containing the return value and its type (most likely
+`:string`, `:numeric`, or `:logical`)
 
-Rules can be set individually using Calculator#add_rule, or en masse using Calculator#add_rules.
+Rules can be set individually using Calculator#add_rule, or en masse using
+Calculator#add_rules.
 
 Here's an example of adding the `exp` function:
 
@@ -140,6 +151,23 @@ Here's an example of adding the `exp` function:
 => 9
 > c.evaluate('EXP(2,3)')
 => 8
+```
+
+Here's an example of adding the `max` function:
+
+```ruby
+> c = Dentaku::Calculator.new
+> c.add_rule(
+    name: :max,
+    tokens: [:non_close_plus],
+    body: ->(_f, _o, *args, _c) {
+      argument_tokens = args.select { |t| t.category == :numeric }
+      argument_values = argument_tokens.map { |t| t.value }
+      Dentaku::Token.new(:numeric, argument_values.max)
+    }
+  )
+> c.evaluate 'MAX(5,3,9,6,2)'
+=> 9
 ```
 
 

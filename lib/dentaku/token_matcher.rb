@@ -39,12 +39,12 @@ module Dentaku
 
     def star
       @min = 0
-      @max = 1.0/0
+      @max = Float::INFINITY
       self
     end
 
     def plus
-      @max = 1.0/0
+      @max = Float::INFINITY
       self
     end
 
@@ -78,6 +78,7 @@ module Dentaku
     def self.roundup;        new(:function, :roundup);             end
     def self.rounddown;      new(:function, :rounddown);           end
     def self.not;            new(:function, :not);                 end
+    def self.non_close_plus; new(:grouping, :close).invert.plus;   end
     def self.non_group;      new(:grouping).invert;                end
     def self.non_group_star; new(:grouping).invert.star;           end
 

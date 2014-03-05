@@ -65,7 +65,7 @@ module Dentaku
         :numeric, :string, :addsub, :subtract, :muldiv, :pow, :mod,
         :comparator, :comp_gt, :comp_lt,
         :open, :close, :comma,
-        :non_group, :non_group_star,
+        :non_close_plus, :non_group, :non_group_star,
         :logical, :combinator,
         :if, :round, :roundup, :rounddown, :not
       ].each_with_object({}) do |name, matchers|
