@@ -5,8 +5,6 @@ Dentaku
 [![Build Status](https://travis-ci.org/rubysolo/dentaku.png?branch=master)](https://travis-ci.org/rubysolo/dentaku)
 [![Code Climate](https://codeclimate.com/github/rubysolo/dentaku.png)](https://codeclimate.com/github/rubysolo/dentaku)
 
-http://github.com/rubysolo/dentaku
-
 DESCRIPTION
 -----------
 
@@ -19,65 +17,81 @@ EXAMPLE
 
 This is probably simplest to illustrate in code:
 
-    calculator = Dentaku::Calculator.new
-    calculator.evaluate('10 * 2')
-    => 20
+```ruby
+calculator = Dentaku::Calculator.new
+calculator.evaluate('10 * 2')
+=> 20
+```
 
 Okay, not terribly exciting.  But what if you want to have a reference to a
 variable, and evaluate it at run-time?  Here's how that would look:
 
-    calculator.evaluate('kiwi + 5', :kiwi => 2)
-    => 7
+```ruby
+calculator.evaluate('kiwi + 5', kiwi: 2)
+=> 7
+```
 
 You can also store the variable values in the calculator's memory and then
 evaluate expressions against those stored values:
 
-    calculator.store(:peaches => 15)
-    calculator.evaluate('peaches - 5')
-    => 10
-    calculator.evaluate('peaches >= 15')
-    => true
+```ruby
+calculator.store(peaches: 15)
+calculator.evaluate('peaches - 5')
+=> 10
+calculator.evaluate('peaches >= 15')
+=> true
+```
 
 For maximum CS geekery, `bind` is an alias of `store`.
 
 Dentaku understands precedence order and using parentheses to group expressions
 to ensure proper evaluation:
 
-    calculator.evaluate('5 + 3 * 2')
-    => 11
-    calculator.evaluate('(5 + 3) * 2')
-    => 16
+```ruby
+calculator.evaluate('5 + 3 * 2')
+=> 11
+calculator.evaluate('(5 + 3) * 2')
+=> 16
+```
 
 A number of functions are also supported.  Okay, the number is currently five,
 but more will be added soon.  The current functions are
 `if`, `not`, `round`, `rounddown`, and `roundup`, and they work like their counterparts in Excel:
 
-    calculator.evaluate('if (pears < 10, 10, 20)', :pears => 5)
-    => 10
-    calculator.evaluate('if (pears < 10, 10, 20)', :pears => 15)
-    => 20
+```ruby
+calculator.evaluate('if (pears < 10, 10, 20)', pears: 5)
+=> 10
+calculator.evaluate('if (pears < 10, 10, 20)', pears: 15)
+=> 20
+```
 
 `round`, `rounddown`, and `roundup` can be called with or without the number of decimal places:
 
-    calculator.evaluate('round(8.2)')
-    => 8
-    calculator.evaluate('round(8.2759, 2)')
-    => 8.28
+```ruby
+calculator.evaluate('round(8.2)')
+=> 8
+calculator.evaluate('round(8.2759, 2)')
+=> 8.28
+```
 
 `round` and `rounddown` round down, while `roundup` rounds up.
 
 If you're too lazy to be building calculator objects, there's a shortcut just
 for you:
 
-    Dentaku('plums * 1.5', {:plums => 2})
-    => 3.0
+```ruby
+Dentaku('plums * 1.5', plums: 2)
+=> 3.0
+```
 
 
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
 
 Math: `+ - * / %`
+
 Logic: `< > <= >= <> != = AND OR`
+
 Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
 
 
@@ -110,6 +124,23 @@ a sequence of tokens, in order:
 It should return a token (either `:numeric` or `:string`) representing the return value.
 
 Rules can be set individually using Calculator#add_rule, or en masse using Calculator#add_rules.
+
+Here's an example of adding the `exp` function:
+
+```ruby
+> c = Dentaku::Calculator.new
+> c.add_rule(
+    name: :exp,
+    tokens: [:numeric, :comma, :numeric],
+    body: ->(_func, _open, mantissa, _comma, exponent, _close) {
+      Dentaku::Token.new(:numeric, mantissa.value ** exponent.value)
+    }
+  )
+> c.evaluate('EXP(3,2)')
+=> 9
+> c.evaluate('EXP(2,3)')
+=> 8
+```
 
 
 THANKS
