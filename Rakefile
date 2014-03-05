@@ -10,4 +10,19 @@ task :spec do
 end
 
 desc "Default: run specs."
-task :default => :spec
+task default: :spec
+
+task :console do
+  begin
+    require 'pry'
+    console = Pry
+  rescue LoadError
+    require 'irb'
+    require 'irb/completion'
+    console = IRB
+  end
+
+  require 'dentaku'
+  ARGV.clear
+  console.start
+end
