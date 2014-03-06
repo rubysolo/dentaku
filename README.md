@@ -129,7 +129,9 @@ and the exponent, so the token list could be defined as: `[:numeric,
 :numeric]`.  Other functions might be variadic -- consider `max`, a function
 that takes any number of numeric inputs and returns the largest one.  Its token
 list could be defined as: `[:non_close_plus]` (one or more tokens that are not
-closing parentheses.
+closing parentheses).  See the
+[rules definitions](https://github.com/rubysolo/dentaku/blob/master/lib/dentaku/token_matcher.rb#L61)
+for the names of token patterns you can use.
 
 Functions can be added individually using Calculator#add_function, or en masse using
 Calculator#add_functions.
