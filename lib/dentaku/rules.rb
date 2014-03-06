@@ -6,8 +6,7 @@ module Dentaku
     def self.core_rules
       [
         [ p(:if),         :if             ],
-        [ p(:round_one),  :round          ],
-        [ p(:round_two),  :round          ],
+        [ p(:round),      :round          ],
         [ p(:roundup),    :round_int      ],
         [ p(:rounddown),  :round_int      ],
         [ p(:not),        :not            ],
@@ -89,11 +88,10 @@ module Dentaku
         combine:    pattern(:logical,  :combinator,     :logical),
 
         if:         func_pattern(:if,        :non_group,      :comma, :non_group, :comma, :non_group),
-        round_one:  func_pattern(:round,     :non_group_star),
-        round_two:  func_pattern(:round,     :non_group_star, :comma, :numeric),
-        roundup:    func_pattern(:roundup,   :non_group_star),
-        rounddown:  func_pattern(:rounddown, :non_group_star),
-        not:        func_pattern(:not,       :non_group_star)
+        round:      func_pattern(:round,     :non_close_plus),
+        roundup:    func_pattern(:roundup,   :non_close_plus),
+        rounddown:  func_pattern(:rounddown, :non_close_plus),
+        not:        func_pattern(:not,       :non_close_plus)
       }
 
       @patterns[name]
