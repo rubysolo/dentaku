@@ -131,14 +131,14 @@ that takes any number of numeric inputs and returns the largest one.  Its token
 list could be defined as: `[:non_close_plus]` (one or more tokens that are not
 closing parentheses.
 
-Rules can be set individually using Calculator#add_rule, or en masse using
-Calculator#add_rules.
+Functions can be added individually using Calculator#add_function, or en masse using
+Calculator#add_functions.
 
 Here's an example of adding the `exp` function:
 
 ```ruby
 > c = Dentaku::Calculator.new
-> c.add_rule(
+> c.add_function(
     name: :exp,
     type: :numeric,
     signature: [:numeric, :numeric],
@@ -154,10 +154,10 @@ Here's an example of adding the `max` function:
 
 ```ruby
 > c = Dentaku::Calculator.new
-> c.add_rule(
+> c.add_function(
     name: :max,
     type: :numeric,
-    tokens: [:non_close_plus],
+    signature: [:non_close_plus],
     body: ->(*args) { args.max }
   )
 > c.evaluate 'MAX(5,3,9,6,2)'

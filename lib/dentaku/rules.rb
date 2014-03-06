@@ -32,8 +32,8 @@ module Dentaku
       @rules.each { |r| yield r }
     end
 
-    def self.add_rule(new_rule)
-      ext = ExternalFunction.new(new_rule[:name], new_rule[:type], new_rule[:signature], new_rule[:body])
+    def self.add_function(f)
+      ext = ExternalFunction.new(f[:name], f[:type], f[:signature], f[:body])
 
       @rules ||= core_rules
       @funcs ||= {}

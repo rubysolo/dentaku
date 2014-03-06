@@ -7,10 +7,10 @@ describe Dentaku::Calculator do
       let(:with_external_funcs) do
         c = described_class.new
 
-        rule = { name: :now, type: :string, signature: [], body: -> { Time.now.to_s } }
-        c.add_rule rule
+        now = { name: :now, type: :string, signature: [], body: -> { Time.now.to_s } }
+        c.add_function(now)
 
-        new_rules = [
+        fns = [
           {
             name:      :exp,
             type:      :numeric,
@@ -31,7 +31,7 @@ describe Dentaku::Calculator do
           }
         ]
 
-        c.add_rules new_rules
+        c.add_functions(fns)
       end
 
       it 'should include NOW' do
