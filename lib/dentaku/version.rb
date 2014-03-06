@@ -1,3 +1,3 @@
 module Dentaku
-  VERSION = "0.2.14"
+  VERSION = "1.0.0"
 end
