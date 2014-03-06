@@ -98,40 +98,38 @@ Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
 EXTERNAL FUNCTIONS
 ------------------
 
-See `spec/external_function_spec.rb` for examples of how to add your own
-functions.
+I don't know everything, so I might not have implemented all the functions you
+need.  Please implement your favorites and send a pull request!  Okay, so maybe
+that's not feasible because:
 
-The short, dense version:
+1. You can't be bothered to share
+2. You can't wait for me to respond to a pull request, you need it `NOW()`
+3. The formula is the secret sauce for your startup
 
-Each rule for an external function consists of three parts: the function's
-name, a list of tokens describing its signature (parameters), and a lambda
-representing the function's body.
+Whatever your reasons, Dentaku supports adding functions at runtime.  To add a
+function, you'll need to specify:
 
-The function name should be passed as a symbol (for example, `:func`).
+* Name
+* Return type
+* Signature
+* Body
 
-The token list should consist of symbols that will match the tokenized input to
-the function.  Numbers will be tokenized as `:numeric`, quoted strings will be
-tokenized as `:string`, and so on.  See `lib/dentaku/rules.rb` for the names of
-matchers and the patterns that they will match.
+Naming can be the hardest part, so you're on your own for that.
+
+`:type` specifies the type of value that will be returned, most likely
+`:numeric`, `:string`, or `:logical`.
+
+`:signature` specifies the types and order of the parameters for your function.
+
+`:body` is a lambda that implements your function.  It is passed the arguments
+and should return the calculated value.
 
 As an example, the exponentiation function takes two parameters, the mantissa
-and the exponent, so the token list could be defined as: `[:numeric, :comma,
+and the exponent, so the token list could be defined as: `[:numeric,
 :numeric]`.  Other functions might be variadic -- consider `max`, a function
-that takes any number numeric inputs and returns the largest one.  Its token
+that takes any number of numeric inputs and returns the largest one.  Its token
 list could be defined as: `[:non_close_plus]` (one or more tokens that are not
 closing parentheses.
-
-The function body should accept a list of parameters. Each function body will
-be passed a sequence of tokens, in order:
-
-1. The function's name
-2. A token representing the opening parenthesis
-3. Tokens representing the parameter values, separated by tokens representing
-   the commas between parameters
-4. A token representing the closing parenthesis
-
-It should return a token containing the return value and its type (most likely
-`:string`, `:numeric`, or `:logical`)
 
 Rules can be set individually using Calculator#add_rule, or en masse using
 Calculator#add_rules.
@@ -142,10 +140,9 @@ Here's an example of adding the `exp` function:
 > c = Dentaku::Calculator.new
 > c.add_rule(
     name: :exp,
-    tokens: [:numeric, :comma, :numeric],
-    body: ->(_func, _open, mantissa, _comma, exponent, _close) {
-      Dentaku::Token.new(:numeric, mantissa.value ** exponent.value)
-    }
+    type: :numeric,
+    signature: [:numeric, :numeric],
+    body: ->(mantissa, exponent) { mantissa ** exponent }
   )
 > c.evaluate('EXP(3,2)')
 => 9
@@ -159,12 +156,9 @@ Here's an example of adding the `max` function:
 > c = Dentaku::Calculator.new
 > c.add_rule(
     name: :max,
+    type: :numeric,
     tokens: [:non_close_plus],
-    body: ->(_f, _o, *args, _c) {
-      argument_tokens = args.select { |t| t.category == :numeric }
-      argument_values = argument_tokens.map { |t| t.value }
-      Dentaku::Token.new(:numeric, argument_values.max)
-    }
+    body: ->(*args) { args.max }
   )
 > c.evaluate 'MAX(5,3,9,6,2)'
 => 9

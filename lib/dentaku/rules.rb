@@ -1,3 +1,4 @@
+require 'dentaku/external_function'
 require 'dentaku/token'
 require 'dentaku/token_matcher'
 
@@ -32,21 +33,22 @@ module Dentaku
     end
 
     def self.add_rule(new_rule)
+      ext = ExternalFunction.new(new_rule[:name], new_rule[:type], new_rule[:signature], new_rule[:body])
+
       @rules ||= core_rules
       @funcs ||= {}
-      name = new_rule[:name].to_sym
 
-      ## rules need to be added to the beginning of @rules; for precedence?
+      ## rules need to be added to the beginning of @rules for precedence
       @rules.unshift [
         [
-          TokenMatcher.send(name),
+          TokenMatcher.send(ext.name),
           t(:open),
-          *pattern(*new_rule[:tokens]),
-          t(:close),
+          *pattern(*ext.tokens),
+          t(:close)
         ],
-        name
+        ext.name
       ]
-      @funcs[name] = new_rule[:body]
+      @funcs[ext.name] = ext
     end
 
     def self.func(name)

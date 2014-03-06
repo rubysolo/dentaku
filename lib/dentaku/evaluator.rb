@@ -55,13 +55,23 @@ module Dentaku
 
     def evaluate_step(token_stream, start, length, evaluator)
       expr = token_stream.slice!(start, length)
+
       if self.respond_to?(evaluator)
         token_stream.insert start, *self.send(evaluator, *expr)
       else
         func = Rules.func(evaluator)
         raise "unknown evaluator '#{evaluator.to_s}'" if func.nil?
-        token_stream.insert start, *(func.call(*expr))
+
+        arguments = extract_arguments_from_function_call(expr).map { |t| t.value }
+        return_value = func.body.call(*arguments)
+
+        token_stream.insert start, Token.new(func.type, return_value)
       end
+    end
+
+    def extract_arguments_from_function_call(tokens)
+      _function_name, _open, *args_and_commas, _close = tokens
+      args_and_commas.reject { |token| token.is?(:grouping) }
     end
 
     def evaluate_group(*args)
