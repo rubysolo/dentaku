@@ -8,6 +8,10 @@ module Dentaku
       @raw_value = raw_value
     end
 
+    def to_s
+      raw_value || value
+    end
+
     def length
       raw_value.to_s.length
     end

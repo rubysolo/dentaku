@@ -10,12 +10,16 @@ module Dentaku
     def evaluate_token_stream(tokens)
       while tokens.length > 1
         matched, tokens = match_rule_pattern(tokens)
-        raise "no rule matched #{ tokens.map(&:category).inspect }" unless matched
+        raise "no rule matched {{#{ inspect_tokens(tokens) }}}" unless matched
       end
 
       tokens << Token.new(:numeric, 0) if tokens.empty?
 
       tokens.first
+    end
+
+    def inspect_tokens(tokens)
+      tokens.map { |t| t.to_s }.join(' ')
     end
 
     def match_rule_pattern(tokens)
