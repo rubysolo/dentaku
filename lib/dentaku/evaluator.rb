@@ -58,19 +58,23 @@ module Dentaku
     end
 
     def evaluate_step(token_stream, start, length, evaluator)
-      expr = token_stream.slice!(start, length)
+      substream = token_stream.slice!(start, length)
 
       if self.respond_to?(evaluator)
-        token_stream.insert start, *self.send(evaluator, *expr)
+        token_stream.insert start, *self.send(evaluator, *substream)
       else
-        func = Rules.func(evaluator)
-        raise "unknown evaluator '#{evaluator.to_s}'" if func.nil?
-
-        arguments = extract_arguments_from_function_call(expr).map { |t| t.value }
-        return_value = func.body.call(*arguments)
-
-        token_stream.insert start, Token.new(func.type, return_value)
+        result = user_defined_function(evaluator, substream)
+        token_stream.insert start, result
       end
+    end
+
+    def user_defined_function(evaluator, tokens)
+      function = Rules.func(evaluator)
+      raise "unknown function '#{ evaluator }'" unless function
+
+      arguments = extract_arguments_from_function_call(tokens).map { |t| t.value }
+      return_value = function.body.call(*arguments)
+      Token.new(function.type, return_value)
     end
 
     def extract_arguments_from_function_call(tokens)
