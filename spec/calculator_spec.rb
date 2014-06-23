@@ -90,7 +90,7 @@ describe Dentaku::Calculator do
     it 'should include ROUND' do
       calculator.evaluate('round(8.2)').should eq(8)
       calculator.evaluate('round(8.8)').should eq(9)
-      calculator.evaluate('round(8.75, 1)').should eq(8.8)
+      calculator.evaluate('round(8.75, 1)').should eq(BigDecimal.new('8.8'))
 
       calculator.evaluate('ROUND(apples * 0.93)', { :apples => 10 }).should eq(9)
     end
