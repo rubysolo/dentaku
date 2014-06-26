@@ -1,10 +1,10 @@
 require 'dentaku/token'
 
 describe Dentaku::Token do
-  it 'should have a category and a value' do
+  it 'has a category and a value' do
     token = Dentaku::Token.new(:numeric, 5)
-    token.category.should eq(:numeric)
-    token.value.should eq(5)
-    token.is?(:numeric).should be_true
+    expect(token.category).to eq(:numeric)
+    expect(token.value).to eq(5)
+    expect(token.is?(:numeric)).to be_truthy
   end
 end

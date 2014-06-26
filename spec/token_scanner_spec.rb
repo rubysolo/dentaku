@@ -4,24 +4,24 @@ describe Dentaku::TokenScanner do
   let(:whitespace) { described_class.new(:whitespace, '\s') }
   let(:numeric)    { described_class.new(:numeric,    '(\d+(\.\d+)?|\.\d+)', lambda{|raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i }) }
 
-  it 'should return a token for a matching string' do
+  it 'returns a token for a matching string' do
     token = whitespace.scan(' ')
-    token.category.should eq(:whitespace)
-    token.value.should eq(' ')
+    expect(token.category).to eq(:whitespace)
+    expect(token.value).to eq(' ')
   end
 
-  it 'should return falsy for a non-matching string' do
-    whitespace.scan('A').should_not be
+  it 'returns falsy for a non-matching string' do
+    expect(whitespace.scan('A')).not_to be
   end
 
-  it 'should perform raw value conversion' do
+  it 'performs raw value conversion' do
     token = numeric.scan('5')
-    token.category.should eq(:numeric)
-    token.value.should eq(5)
+    expect(token.category).to eq(:numeric)
+    expect(token.value).to eq(5)
   end
 
-  it 'should return a list of all configured scanners' do
-    described_class.scanners.length.should eq 10
+  it 'returns a list of all configured scanners' do
+    expect(described_class.scanners.length).to eq 10
   end
 end
 

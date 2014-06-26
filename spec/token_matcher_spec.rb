@@ -2,102 +2,102 @@ require 'spec_helper'
 require 'dentaku/token_matcher'
 
 describe Dentaku::TokenMatcher do
-  it 'with single category should match token category' do
+  it 'with single category matches token category' do
     matcher = described_class.new(:numeric)
     token   = Dentaku::Token.new(:numeric, 5)
 
-    matcher.should == token
+    expect(matcher).to eq(token)
   end
 
-  it 'with multiple categories should match any included token category' do
+  it 'with multiple categories matches any included token category' do
     matcher    = described_class.new([:comparator, :operator])
     numeric    = Dentaku::Token.new(:numeric, 5)
     comparator = Dentaku::Token.new(:comparator, :lt)
     operator   = Dentaku::Token.new(:operator, :add)
 
-    matcher.should == comparator
-    matcher.should == operator
-    matcher.should_not == numeric
+    expect(matcher).to eq(comparator)
+    expect(matcher).to eq(operator)
+    expect(matcher).not_to eq(numeric)
   end
 
-  it 'with single category and value should match token category and value' do
+  it 'with single category and value matches token category and value' do
     matcher     = described_class.new(:operator, :add)
     addition    = Dentaku::Token.new(:operator, :add)
     subtraction = Dentaku::Token.new(:operator, :subtract)
 
-    matcher.should == addition
-    matcher.should_not == subtraction
+    expect(matcher).to eq(addition)
+    expect(matcher).not_to eq(subtraction)
   end
 
-  it 'with multiple values should match any included token value' do
+  it 'with multiple values matches any included token value' do
     matcher = described_class.new(:operator, [:add, :subtract])
     add = Dentaku::Token.new(:operator, :add)
     sub = Dentaku::Token.new(:operator, :subtract)
     mul = Dentaku::Token.new(:operator, :multiply)
     div = Dentaku::Token.new(:operator, :divide)
 
-    matcher.should == add
-    matcher.should == sub
-    matcher.should_not == mul
-    matcher.should_not == div
+    expect(matcher).to eq(add)
+    expect(matcher).to eq(sub)
+    expect(matcher).not_to eq(mul)
+    expect(matcher).not_to eq(div)
   end
 
-  it 'should be invertible' do
+  it 'is invertible' do
     matcher = described_class.new(:operator, [:add, :subtract]).invert
     add = Dentaku::Token.new(:operator, :add)
     mul = Dentaku::Token.new(:operator, :multiply)
     cmp = Dentaku::Token.new(:comparator, :lt)
 
-    matcher.should_not == add
-    matcher.should == mul
-    matcher.should == cmp
+    expect(matcher).not_to eq(add)
+    expect(matcher).to eq(mul)
+    expect(matcher).to eq(cmp)
   end
 
   describe 'stream matching' do
     let(:stream) { token_stream(5, 11, 9, 24, :hello, 8) }
 
-    describe :standard do
+    describe 'standard' do
       let(:standard) { described_class.new(:numeric) }
 
-      it 'should match zero or more occurrences in a token stream' do
+      it 'matches zero or more occurrences in a token stream' do
         substream = standard.match(stream)
-        substream.should be_matched
-        substream.length.should eq 1
-        substream.map(&:value).should eq [5]
+        expect(substream).to be_matched
+        expect(substream.length).to eq 1
+        expect(substream.map(&:value)).to eq [5]
 
         substream = standard.match(stream, 4)
-        substream.should be_empty
-        substream.should_not be_matched
+        expect(substream).to be_empty
+        expect(substream).not_to be_matched
       end
     end
 
-    describe :star do
+    describe 'star' do
       let(:star) { described_class.new(:numeric).star }
 
-      it 'should match zero or more occurrences in a token stream' do
+      it 'matches zero or more occurrences in a token stream' do
         substream = star.match(stream)
-        substream.should be_matched
-        substream.length.should eq 4
-        substream.map(&:value).should eq [5, 11, 9, 24]
+        expect(substream).to be_matched
+        expect(substream.length).to eq 4
+        expect(substream.map(&:value)).to eq [5, 11, 9, 24]
 
         substream = star.match(stream, 4)
-        substream.should be_empty
-        substream.should be_matched
+        expect(substream).to be_empty
+        expect(substream).to be_matched
       end
     end
 
-    describe :plus do
+    describe 'plus' do
       let(:plus) { described_class.new(:numeric).plus }
 
-      it 'should match one or more occurrences in a token stream' do
+      it 'matches one or more occurrences in a token stream' do
         substream = plus.match(stream)
-        substream.should be_matched
-        substream.length.should eq 4
-        substream.map(&:value).should eq [5, 11, 9, 24]
+        expect(substream).to be_matched
+        expect(substream.length).to eq 4
+        expect(substream.map(&:value)).to eq [5, 11, 9, 24]
 
         substream = plus.match(stream, 4)
-        substream.should be_empty
-        substream.should_not be_matched
+        expect(substream).to be_empty
+        expect(substream).not_to be_matched
       end
     end
   end

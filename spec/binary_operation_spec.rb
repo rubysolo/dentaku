@@ -5,41 +5,41 @@ describe Dentaku::BinaryOperation do
   let(:logical)   { described_class.new(true, false) }
 
   it 'raises a number to a power' do
-    operation.pow.should eq [:numeric, 8]
+    expect(operation.pow).to eq [:numeric, 8]
   end
 
   it 'adds two numbers' do
-    operation.add.should eq [:numeric, 5]
+    expect(operation.add).to eq [:numeric, 5]
   end
 
   it 'subtracts two numbers' do
-    operation.subtract.should eq [:numeric, -1]
+    expect(operation.subtract).to eq [:numeric, -1]
   end
 
   it 'multiplies two numbers' do
-    operation.multiply.should eq [:numeric, 6]
+    expect(operation.multiply).to eq [:numeric, 6]
   end
 
   it 'divides two numbers' do
-    operation.divide.should eq [:numeric, (BigDecimal.new('2.0')/BigDecimal.new('3.0'))]
+    expect(operation.divide).to eq [:numeric, (BigDecimal.new('2.0')/BigDecimal.new('3.0'))]
   end
 
   it 'compares two numbers' do
-    operation.le.should eq [:logical, true]
-    operation.lt.should eq [:logical, true]
-    operation.ne.should eq [:logical, true]
+    expect(operation.le).to eq [:logical, true]
+    expect(operation.lt).to eq [:logical, true]
+    expect(operation.ne).to eq [:logical, true]
 
-    operation.ge.should eq [:logical, false]
-    operation.gt.should eq [:logical, false]
-    operation.eq.should eq [:logical, false]
+    expect(operation.ge).to eq [:logical, false]
+    expect(operation.gt).to eq [:logical, false]
+    expect(operation.eq).to eq [:logical, false]
   end
 
   it 'performs logical AND and OR' do
-    logical.and.should eq [:logical, false]
-    logical.or.should  eq [:logical, true]
+    expect(logical.and).to eq [:logical, false]
+    expect(logical.or).to  eq [:logical, true]
   end
 
   it 'mods two numbers' do
-    operation.mod.should eq [:numeric, 2%3]
+    expect(operation.mod).to eq [:numeric, 2%3]
   end
 end

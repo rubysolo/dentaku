@@ -34,24 +34,24 @@ describe Dentaku::Calculator do
         c.add_functions(fns)
       end
 
-      it 'should include NOW' do
+      it 'includes NOW' do
         now = with_external_funcs.evaluate('NOW()')
-        now.should_not be_nil
-        now.should_not be_empty
+        expect(now).not_to be_nil
+        expect(now).not_to be_empty
       end
 
-      it 'should include EXP' do
-        with_external_funcs.evaluate('EXP(2,3)').should eq(8)
-        with_external_funcs.evaluate('EXP(3,2)').should eq(9)
-        with_external_funcs.evaluate('EXP(mantissa,exponent)', mantissa: 2, exponent: 4).should eq(16)
+      it 'includes EXP' do
+        expect(with_external_funcs.evaluate('EXP(2,3)')).to eq(8)
+        expect(with_external_funcs.evaluate('EXP(3,2)')).to eq(9)
+        expect(with_external_funcs.evaluate('EXP(mantissa,exponent)', mantissa: 2, exponent: 4)).to eq(16)
       end
 
-      it 'should include MAX' do
-        with_external_funcs.evaluate('MAX(8,6,7,5,3,0,9)').should eq(9)
+      it 'includes MAX' do
+        expect(with_external_funcs.evaluate('MAX(8,6,7,5,3,0,9)')).to eq(9)
       end
 
-      it 'should include MIN' do
-        with_external_funcs.evaluate('MIN(8,6,7,5,3,0,9)').should eq(0)
+      it 'includes MIN' do
+        expect(with_external_funcs.evaluate('MIN(8,6,7,5,3,0,9)')).to eq(0)
       end
     end
   end

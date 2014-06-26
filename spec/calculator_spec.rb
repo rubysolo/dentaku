@@ -5,102 +5,102 @@ describe Dentaku::Calculator do
   let(:with_memory) { described_class.new.store(:apples => 3) }
 
   it 'evaluates an expression' do
-    calculator.evaluate('7+3').should eq(10)
+    expect(calculator.evaluate('7+3')).to eq(10)
   end
 
   describe 'memory' do
-    it { calculator.should be_empty }
-    it { with_memory.should_not be_empty   }
-    it { with_memory.clear.should be_empty }
+    it { expect(calculator).to be_empty }
+    it { expect(with_memory).not_to be_empty   }
+    it { expect(with_memory.clear).to be_empty }
 
-    it { with_memory.memory(:apples).should eq(3) }
-    it { with_memory.memory('apples').should eq(3) }
+    it { expect(with_memory.memory(:apples)).to eq(3) }
+    it { expect(with_memory.memory('apples')).to eq(3) }
 
-    it { calculator.store(:apples, 3).memory('apples').should eq(3) }
-    it { calculator.store('apples', 3).memory(:apples).should eq(3) }
+    it { expect(calculator.store(:apples, 3).memory('apples')).to eq(3) }
+    it { expect(calculator.store('apples', 3).memory(:apples)).to eq(3) }
 
-    it 'should discard local values' do
-      calculator.evaluate('pears * 2', :pears => 5).should eq(10)
-      calculator.should be_empty
-      lambda { calculator.tokenize('pears * 2') }.should raise_error
+    it 'discards local values' do
+      expect(calculator.evaluate('pears * 2', :pears => 5)).to eq(10)
+      expect(calculator).to be_empty
+      expect { calculator.tokenize('pears * 2') }.to raise_error
     end
   end
 
-  it 'should evaluate a statement with no variables' do
-    calculator.evaluate('5+3').should eq(8)
-    calculator.evaluate('(1+1+1)/3*100').should eq(100)
+  it 'evaluates a statement with no variables' do
+    expect(calculator.evaluate('5+3')).to eq(8)
+    expect(calculator.evaluate('(1+1+1)/3*100')).to eq(100)
   end
 
-  it 'should fail to evaluate unbound statements' do
-    lambda { calculator.evaluate('foo * 1.5') }.should raise_error
+  it 'fails to evaluate unbound statements' do
+    expect { calculator.evaluate('foo * 1.5') }.to raise_error
   end
 
-  it 'should evaluate unbound statements given a binding in memory' do
-    calculator.evaluate('foo * 1.5', :foo => 2).should eq(3)
-    calculator.bind(:monkeys => 3).evaluate('monkeys < 7').should be_true
-    calculator.evaluate('monkeys / 1.5').should eq(2)
+  it 'evaluates unbound statements given a binding in memory' do
+    expect(calculator.evaluate('foo * 1.5', :foo => 2)).to eq(3)
+    expect(calculator.bind(:monkeys => 3).evaluate('monkeys < 7')).to be_truthy
+    expect(calculator.evaluate('monkeys / 1.5')).to eq(2)
   end
 
-  it 'should rebind for each evaluation' do
-    calculator.evaluate('foo * 2', :foo => 2).should eq(4)
-    calculator.evaluate('foo * 2', :foo => 4).should eq(8)
+  it 'rebinds for each evaluation' do
+    expect(calculator.evaluate('foo * 2', :foo => 2)).to eq(4)
+    expect(calculator.evaluate('foo * 2', :foo => 4)).to eq(8)
   end
 
-  it 'should accept strings or symbols for binding keys' do
-    calculator.evaluate('foo * 2', :foo => 2).should eq(4)
-    calculator.evaluate('foo * 2', 'foo' => 4).should eq(8)
+  it 'accepts strings or symbols for binding keys' do
+    expect(calculator.evaluate('foo * 2', :foo => 2)).to eq(4)
+    expect(calculator.evaluate('foo * 2', 'foo' => 4)).to eq(8)
   end
 
-  it 'should accept digits in identifiers' do
-    calculator.evaluate('foo1 * 2', :foo1 => 2).should eq(4)
-    calculator.evaluate('foo1 * 2', 'foo1' => 4).should eq(8)
-    calculator.evaluate('1foo * 2', '1foo' => 2).should eq(4)
-    calculator.evaluate('fo1o * 2', :fo1o => 4).should eq(8)
+  it 'accepts digits in identifiers' do
+    expect(calculator.evaluate('foo1 * 2', :foo1 => 2)).to eq(4)
+    expect(calculator.evaluate('foo1 * 2', 'foo1' => 4)).to eq(8)
+    expect(calculator.evaluate('1foo * 2', '1foo' => 2)).to eq(4)
+    expect(calculator.evaluate('fo1o * 2', :fo1o => 4)).to eq(8)
   end
 
-  it 'should compare string literals with string variables' do
-    calculator.evaluate('fruit = "apple"', :fruit => 'apple').should be_true
-    calculator.evaluate('fruit = "apple"', :fruit => 'pear').should be_false
+  it 'compares string literals with string variables' do
+    expect(calculator.evaluate('fruit = "apple"', :fruit => 'apple')).to be_truthy
+    expect(calculator.evaluate('fruit = "apple"', :fruit => 'pear')).to be_falsey
   end
 
-  it 'should do case-sensitive comparison' do
-    calculator.evaluate('fruit = "Apple"', :fruit => 'apple').should be_false
-    calculator.evaluate('fruit = "Apple"', :fruit => 'Apple').should be_true
+  it 'performs case-sensitive comparison' do
+    expect(calculator.evaluate('fruit = "Apple"', :fruit => 'apple')).to be_falsey
+    expect(calculator.evaluate('fruit = "Apple"', :fruit => 'Apple')).to be_truthy
   end
 
-  it 'should allow binding logical values' do
-    calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => true).should be_true
-    calculator.evaluate('some_boolean AND 7 < 5', :some_boolean => true).should be_false
-    calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => false).should be_false
+  it 'allows binding logical values' do
+    expect(calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => true)).to be_truthy
+    expect(calculator.evaluate('some_boolean AND 7 < 5', :some_boolean => true)).to be_falsey
+    expect(calculator.evaluate('some_boolean AND 7 > 5', :some_boolean => false)).to be_falsey
 
-    calculator.evaluate('some_boolean OR 7 > 5', :some_boolean => true).should be_true
-    calculator.evaluate('some_boolean OR 7 < 5', :some_boolean => true).should be_true
-    calculator.evaluate('some_boolean OR 7 < 5', :some_boolean => false).should be_false
+    expect(calculator.evaluate('some_boolean OR 7 > 5', :some_boolean => true)).to be_truthy
+    expect(calculator.evaluate('some_boolean OR 7 < 5', :some_boolean => true)).to be_truthy
+    expect(calculator.evaluate('some_boolean OR 7 < 5', :some_boolean => false)).to be_falsey
 
   end
 
   describe 'functions' do
-    it 'should include IF' do
-      calculator.evaluate('if(foo < 8, 10, 20)', :foo => 2).should eq(10)
-      calculator.evaluate('if(foo < 8, 10, 20)', :foo => 9).should eq(20)
-      calculator.evaluate('if (foo < 8, 10, 20)', :foo => 2).should eq(10)
-      calculator.evaluate('if (foo < 8, 10, 20)', :foo => 9).should eq(20)
+    it 'include IF' do
+      expect(calculator.evaluate('if(foo < 8, 10, 20)', :foo => 2)).to eq(10)
+      expect(calculator.evaluate('if(foo < 8, 10, 20)', :foo => 9)).to eq(20)
+      expect(calculator.evaluate('if (foo < 8, 10, 20)', :foo => 2)).to eq(10)
+      expect(calculator.evaluate('if (foo < 8, 10, 20)', :foo => 9)).to eq(20)
     end
 
-    it 'should include ROUND' do
-      calculator.evaluate('round(8.2)').should eq(8)
-      calculator.evaluate('round(8.8)').should eq(9)
-      calculator.evaluate('round(8.75, 1)').should eq(BigDecimal.new('8.8'))
+    it 'include ROUND' do
+      expect(calculator.evaluate('round(8.2)')).to eq(8)
+      expect(calculator.evaluate('round(8.8)')).to eq(9)
+      expect(calculator.evaluate('round(8.75, 1)')).to eq(BigDecimal.new('8.8'))
 
-      calculator.evaluate('ROUND(apples * 0.93)', { :apples => 10 }).should eq(9)
+      expect(calculator.evaluate('ROUND(apples * 0.93)', { :apples => 10 })).to eq(9)
     end
 
-    it 'should include NOT' do
-      calculator.evaluate('NOT(some_boolean)', :some_boolean => true).should be_false
-      calculator.evaluate('NOT(some_boolean)', :some_boolean => false).should be_true
+    it 'include NOT' do
+      expect(calculator.evaluate('NOT(some_boolean)', :some_boolean => true)).to be_falsey
+      expect(calculator.evaluate('NOT(some_boolean)', :some_boolean => false)).to be_truthy
 
-      calculator.evaluate('NOT(some_boolean) AND 7 > 5', :some_boolean => true).should be_false
-      calculator.evaluate('NOT(some_boolean) OR 7 < 5', :some_boolean => false).should be_true
+      expect(calculator.evaluate('NOT(some_boolean) AND 7 > 5', :some_boolean => true)).to be_falsey
+      expect(calculator.evaluate('NOT(some_boolean) OR 7 < 5', :some_boolean => false)).to be_truthy
     end
   end
 end
