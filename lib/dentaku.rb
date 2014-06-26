@@ -1,3 +1,4 @@
+require "bigdecimal"
 require "dentaku/calculator"
 require "dentaku/version"
 

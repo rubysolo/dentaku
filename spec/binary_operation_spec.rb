@@ -21,7 +21,7 @@ describe Dentaku::BinaryOperation do
   end
 
   it 'divides two numbers' do
-    operation.divide.should eq [:numeric, (2.0/3.0)]
+    operation.divide.should eq [:numeric, (BigDecimal.new('2.0')/BigDecimal.new('3.0'))]
   end
 
   it 'compares two numbers' do

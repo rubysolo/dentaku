@@ -15,7 +15,7 @@ module Dentaku
     def divide
       quotient, remainder = left.divmod(right)
       return [:numeric, quotient] if remainder == 0
-      [:numeric, left.to_f / right.to_f]
+      [:numeric, BigDecimal.new(left.to_s) / BigDecimal.new(right.to_s)]
     end
 
     def mod;      [:numeric, left % right]; end
