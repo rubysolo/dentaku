@@ -1,7 +1,7 @@
 require 'dentaku/evaluator'
+require 'dentaku/expression'
 require 'dentaku/rules'
 require 'dentaku/token'
-require 'dentaku/tokenizer'
 
 module Dentaku
   class Calculator
@@ -22,12 +22,10 @@ module Dentaku
     end
 
     def evaluate(expression, data={})
-      @tokenizer ||= Tokenizer.new
-      @tokens = @tokenizer.tokenize(expression)
-
       store(data) do
+        expr = Expression.new(expression, @memory)
         @evaluator ||= Evaluator.new
-        @result = @evaluator.evaluate(replace_identifiers_with_values)
+        @result = @evaluator.evaluate(expr.tokens)
       end
     end
 
@@ -62,29 +60,6 @@ module Dentaku
 
     def empty?
       @memory.empty?
-    end
-
-    private
-
-    def replace_identifiers_with_values
-      @tokens.map do |token|
-        if token.is?(:identifier)
-          value = memory(token.value)
-          type  = type_for_value(value)
-
-          Token.new(type, value)
-        else
-          token
-        end
-      end
-    end
-
-    def type_for_value(value)
-      case value
-      when String then :string
-      when TrueClass, FalseClass then :logical
-      else :numeric
-      end
     end
   end
 end
