@@ -22,6 +22,12 @@ module Dentaku
     end
 
     def evaluate(expression, data={})
+      evaluate!(expression, data)
+    rescue UnboundVariableError
+      yield expression if block_given?
+    end
+
+    def evaluate!(expression, data={})
       store(data) do
         expr = Expression.new(expression, @memory)
         raise UnboundVariableError if expr.unbound?

@@ -25,7 +25,11 @@ describe Dentaku::Calculator do
   end
 
   it 'fails to evaluate unbound statements' do
-    expect { calculator.evaluate('foo * 1.5') }.to raise_error(Dentaku::UnboundVariableError)
+    unbound = 'foo * 1.5'
+    expect { calculator.evaluate!(unbound) }.to raise_error(Dentaku::UnboundVariableError)
+    expect(calculator.evaluate(unbound)).to be_nil
+    expect(calculator.evaluate(unbound) { :bar }).to eq :bar
+    expect(calculator.evaluate(unbound) { |e| e }).to eq unbound
   end
 
   it 'evaluates unbound statements given a binding in memory' do
