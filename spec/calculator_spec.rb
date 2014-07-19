@@ -13,12 +13,6 @@ describe Dentaku::Calculator do
     it { expect(with_memory).not_to be_empty   }
     it { expect(with_memory.clear).to be_empty }
 
-    it { expect(with_memory.memory(:apples)).to eq(3) }
-    it { expect(with_memory.memory('apples')).to eq(3) }
-
-    it { expect(calculator.store(:apples, 3).memory('apples')).to eq(3) }
-    it { expect(calculator.store('apples', 3).memory(:apples)).to eq(3) }
-
     it 'discards local values' do
       expect(calculator.evaluate('pears * 2', :pears => 5)).to eq(10)
       expect(calculator).to be_empty

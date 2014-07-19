@@ -29,10 +29,6 @@ module Dentaku
       end
     end
 
-    def memory(key=nil)
-      key ? @memory[key.to_sym] : @memory
-    end
-
     def store(key_or_hash, value=nil)
       restore = @memory.dup
 
