@@ -16,7 +16,6 @@ describe Dentaku::Calculator do
     it 'discards local values' do
       expect(calculator.evaluate('pears * 2', :pears => 5)).to eq(10)
       expect(calculator).to be_empty
-      expect { calculator.tokenize('pears * 2') }.to raise_error
     end
   end
 
@@ -26,7 +25,7 @@ describe Dentaku::Calculator do
   end
 
   it 'fails to evaluate unbound statements' do
-    expect { calculator.evaluate('foo * 1.5') }.to raise_error
+    expect { calculator.evaluate('foo * 1.5') }.to raise_error(Dentaku::UnboundVariableError)
   end
 
   it 'evaluates unbound statements given a binding in memory' do
