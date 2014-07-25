@@ -45,8 +45,8 @@ module Dentaku
         matched = true
 
         pattern.each do |matcher|
-          match = matcher.match(token_stream, position + matches.length)
-          matched &&= match.matched?
+          _matched, match = matcher.match(token_stream, position + matches.length)
+          matched &&= _matched
           matches += match
         end
 

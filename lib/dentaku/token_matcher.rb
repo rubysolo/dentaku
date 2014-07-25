@@ -7,8 +7,12 @@ module Dentaku
       @values     = [values].compact.flatten
       @invert     = false
 
+      @categories_hash = Hash[@categories.map { |cat| [cat, 1] }]
+      @values_hash = Hash[@values.map { |value| [value, 1] }]
+
       @min = 1
       @max = 1
+      @range = (@min..@max)
     end
 
     def invert
@@ -23,39 +27,40 @@ module Dentaku
 
     def match(token_stream, offset=0)
       matched_tokens = []
+      matched = false
 
       while self == token_stream[matched_tokens.length + offset] && matched_tokens.length < @max
         matched_tokens << token_stream[matched_tokens.length + offset]
       end
 
-      if (@min..@max).include? matched_tokens.length
-        def matched_tokens.matched?() true end
-      else
-        def matched_tokens.matched?() false end
+      if @range.cover?(matched_tokens.length)
+        matched = true
       end
 
-      matched_tokens
+      [matched, matched_tokens]
     end
 
     def star
       @min = 0
       @max = Float::INFINITY
+      @range = (@min..@max)
       self
     end
 
     def plus
       @max = Float::INFINITY
+      @range = (@min..@max)
       self
     end
 
     private
 
     def category_match(category)
-      @categories.empty? || @categories.include?(category)
+      @categories_hash.empty? || @categories_hash.key?(category)
     end
 
     def value_match(value)
-      @values.empty? || @values.include?(value)
+      @values.empty? || @values_hash.key?(value)
     end
 
     def self.numeric;        new(:numeric);                        end
@@ -93,4 +98,3 @@ module Dentaku
 
   end
 end
-

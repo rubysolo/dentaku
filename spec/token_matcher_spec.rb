@@ -60,14 +60,14 @@ describe Dentaku::TokenMatcher do
       let(:standard) { described_class.new(:numeric) }
 
       it 'matches zero or more occurrences in a token stream' do
-        substream = standard.match(stream)
-        expect(substream).to be_matched
+        matched, substream = standard.match(stream)
+        expect(matched).to be_truthy
         expect(substream.length).to eq 1
         expect(substream.map(&:value)).to eq [5]
 
-        substream = standard.match(stream, 4)
+        matched, substream = standard.match(stream, 4)
         expect(substream).to be_empty
-        expect(substream).not_to be_matched
+        expect(matched).not_to be_truthy
       end
     end
 
@@ -75,14 +75,14 @@ describe Dentaku::TokenMatcher do
       let(:star) { described_class.new(:numeric).star }
 
       it 'matches zero or more occurrences in a token stream' do
-        substream = star.match(stream)
-        expect(substream).to be_matched
+        matched, substream = star.match(stream)
+        expect(matched).to be_truthy
         expect(substream.length).to eq 4
         expect(substream.map(&:value)).to eq [5, 11, 9, 24]
 
-        substream = star.match(stream, 4)
+        matched, substream = star.match(stream, 4)
         expect(substream).to be_empty
-        expect(substream).to be_matched
+        expect(matched).to be_truthy
       end
     end
 
@@ -90,14 +90,14 @@ describe Dentaku::TokenMatcher do
       let(:plus) { described_class.new(:numeric).plus }
 
       it 'matches one or more occurrences in a token stream' do
-        substream = plus.match(stream)
-        expect(substream).to be_matched
+        matched, substream = plus.match(stream)
+        expect(matched).to be_truthy
         expect(substream.length).to eq 4
         expect(substream.map(&:value)).to eq [5, 11, 9, 24]
 
-        substream = plus.match(stream, 4)
+        matched, substream = plus.match(stream, 4)
         expect(substream).to be_empty
-        expect(substream).not_to be_matched
+        expect(matched).not_to be_truthy
       end
     end
   end
