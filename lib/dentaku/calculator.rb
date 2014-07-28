@@ -30,7 +30,7 @@ module Dentaku
     def evaluate!(expression, data={})
       store(data) do
         expr = Expression.new(expression, @memory)
-        raise UnboundVariableError if expr.unbound?
+        raise UnboundVariableError.new(expr.identifiers) if expr.unbound?
         @evaluator ||= Evaluator.new
         @result = @evaluator.evaluate(expr.tokens)
       end
