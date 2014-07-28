@@ -7,7 +7,7 @@ module Dentaku
     calculator.evaluate(expression, data)
   end
 
-  class UnboundVariableError < Exception
+  class UnboundVariableError < StandardError
   end
 
   private
