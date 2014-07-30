@@ -12,6 +12,12 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([1, :add, 1])
   end
+  
+  it 'tokenizes comparison with =' do
+    tokens = tokenizer.tokenize('number = 5')
+    expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])
+    expect(tokens.map(&:value)).to eq([:number, :eq, 5])
+  end
 
   it 'ignores whitespace' do
     tokens = tokenizer.tokenize('1     / 1     ')
