@@ -63,8 +63,8 @@ module Dentaku
 
       def comparator
         names = { le: '<=', ge: '>=', ne: '!=', lt: '<', gt: '>', eq: '=' }.invert
-        alternate = { ne: '<>' }.invert
-        new(:comparator, '<=|>=|!=|<>|<|>|=', lambda { |raw| names[raw] || alternate[raw] })
+        alternate = { ne: '<>', eq: '==' }.invert
+        new(:comparator, '<=|>=|!=|<>|<|>|==|=', lambda { |raw| names[raw] || alternate[raw] })
       end
 
       def combinator
