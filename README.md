@@ -175,13 +175,13 @@ Big thanks to [ElkStone Basements](http://www.elkstonebasements.com/) for
 allowing me to extract and open source this code.  Thanks also to all the
 contributors:
 
-* @CraigCottingham
-* @arnaudl
-* @thbar / [BoxCar](https://www.boxcar.io)
-* @antonversal
-* @mvbrocato
-* @brixen
-* @0xCCD
+* [CraigCottingham](https://github.com/CraigCottingham)
+* [arnaudl](https://github.com/arnaudl)
+* [thbar](https://github.com/thbar) / [BoxCar](https://www.boxcar.io)
+* [antonversal](https://github.com/antonversal)
+* [mvbrocato](https://github.com/mvbrocato)
+* [brixen](https://github.com/brixen)
+* [0xCCD](https://github.com/0xCCD)
 
 
 LICENSE
