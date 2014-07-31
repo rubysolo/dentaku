@@ -10,7 +10,8 @@ DESCRIPTION
 
 Dentaku is a parser and evaluator for a mathematical and logical formula
 language that allows run-time binding of values to variables referenced in the
-formulas.
+formulas.  It is intended to safely evaluate untrusted expressions without
+opening security holes.
 
 EXAMPLE
 -------
@@ -171,7 +172,17 @@ THANKS
 ------
 
 Big thanks to [ElkStone Basements](http://www.elkstonebasements.com/) for
-allowing me to extract and open source this code.
+allowing me to extract and open source this code.  Thanks also to all the
+contributors:
+
+* @CraigCottingham
+* @arnaudl
+* @thbar / [BoxCar](https://www.boxcar.io)
+* @antonversal
+* @mvbrocato
+* @brixen
+* @0xCCD
+
 
 LICENSE
 -------
