@@ -39,7 +39,7 @@ module Dentaku
     def store(key_or_hash, value=nil)
       restore = @memory.dup
 
-      if value
+      if !value.nil?
         @memory[key_or_hash.to_sym] = value
       else
         key_or_hash.each do |key, value|
