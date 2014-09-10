@@ -55,9 +55,21 @@ calculator.evaluate('(5 + 3) * 2')
 => 16
 ```
 
+The `evalutate` method will return `nil` if there is an error in the formula.
+If this is not the desired behavior, use `evaluate!`, which will raise an
+exception.
+
+```ruby
+calculator.evaluate('10 * x')
+=> nil
+calculator.evaluate!('10 * x')
+Dentaku::UnboundVariableError: Dentaku::UnboundVariableError
+```
+
 A number of functions are also supported.  Okay, the number is currently five,
 but more will be added soon.  The current functions are
-`if`, `not`, `round`, `rounddown`, and `roundup`, and they work like their counterparts in Excel:
+`if`, `not`, `round`, `rounddown`, and `roundup`, and they work like their
+counterparts in Excel:
 
 ```ruby
 calculator.evaluate('if (pears < 10, 10, 20)', pears: 5)
