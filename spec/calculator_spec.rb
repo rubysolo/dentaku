@@ -19,6 +19,15 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'dependencies' do
+    it "finds dependencies in a generic statement" do
+      expect(calculator.dependencies("bob + dole / 3")).to eq([:bob, :dole])
+    end
+    it "doesn't consider variables in memory as dependencies" do
+      expect(with_memory.dependencies("apples + oranges")).to eq([:oranges])
+    end
+  end
+
   it 'evaluates a statement with no variables' do
     expect(calculator.evaluate('5+3')).to eq(8)
     expect(calculator.evaluate('(1+1+1)/3*100')).to eq(100)
