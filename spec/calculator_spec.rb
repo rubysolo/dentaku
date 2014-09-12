@@ -17,6 +17,17 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('pears * 2', :pears => 5)).to eq(10)
       expect(calculator).to be_empty
     end
+
+    it 'can store the value `false`' do
+      calculator.store('i_am_false', false)
+      expect(calculator.evaluate!('i_am_false')).to eq false
+    end
+
+    it 'can store multiple values' do
+      calculator.store(first: 1, second: 2)
+      expect(calculator.evaluate!('first')).to eq 1
+      expect(calculator.evaluate!('second')).to eq 2
+    end
   end
 
   it 'evaluates a statement with no variables' do
