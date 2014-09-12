@@ -107,6 +107,64 @@ Logic: `< > <= >= <> != = AND OR`
 
 Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
 
+RESOLVING DEPENDENCIES
+----------------------
+
+If your formulas rely on one another, they may need to be resolved in a
+particular order. For example:
+
+```ruby
+calc = Dentaku::Calculator.new
+calc.store(monthly_income: 50)
+need_to_compute: {
+  income_taxes: "annual_income / 5"
+  annual_income: "monthly_income * 12"
+}
+```
+
+In the example, `annual_income` needs to be computed (and stored) before
+`income_taxes`.
+
+Dentaku provides two methods to help resolve formulas in order`:
+
+#### Calculator.dependencies
+Pass a (string) expression to Dependencies and get back a list of variables (as
+`:symbols`) that are required for the expression. `Dependencies` also takes
+into account variables already (explicitly) stored into the calculator.
+
+```ruby
+calc.dependencies("monthly_income * 12")
+> []
+# (since monthly_income is in memory)
+
+calc.dependencies("annual_income / 5")
+> [:annual_income]
+```
+
+#### Calculator.solve!
+Have Dentaku figure out the order in which your formulas need to be evaluated.
+
+Pass in a hash of {eventual_variable_name: "expression"} to `solve!` and
+have Dentaku figure out dependencies (using `TSort`) for you.
+
+Raises `TSort::Cyclic` when a valid expression order cannot be found.
+
+```ruby
+calc = Dentaku::Calculator.new
+calc.store(monthly_income: 50)
+need_to_compute: {
+  income_taxes: "annual_income / 5"
+  annual_income: "monthly_income * 12"
+}
+calc.solve!(need_to_compute)
+> {annual_income: 600, income_taxes: 120}
+
+calc.solve!(
+  make_money: "have_money",
+  have_money: "make_money"
+}
+> raises TSort::Cyclic
+```
 
 EXTERNAL FUNCTIONS
 ------------------

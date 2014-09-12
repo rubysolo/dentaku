@@ -30,6 +30,31 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'dependencies' do
+    it "finds dependencies in a generic statement" do
+      expect(calculator.dependencies("bob + dole / 3")).to eq([:bob, :dole])
+    end
+    it "doesn't consider variables in memory as dependencies" do
+      expect(with_memory.dependencies("apples + oranges")).to eq([:oranges])
+    end
+  end
+
+  describe 'solve!' do
+    it "evaluates properly with variables, even if some in memory" do
+      expect(with_memory.solve!(
+        weekly_fruit_budget: "weekly_apple_budget + pear * 4",
+        weekly_apple_budget: "apples * 7",
+        pear: "1"
+      )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
+    end
+
+    it "lets you know about a cycle if one occurs" do
+      expect do
+        calculator.solve!(health: "happiness", happiness: "health")
+      end.to raise_error (TSort::Cyclic)
+    end
+  end
+
   it 'evaluates a statement with no variables' do
     expect(calculator.evaluate('5+3')).to eq(8)
     expect(calculator.evaluate('(1+1+1)/3*100')).to eq(100)
