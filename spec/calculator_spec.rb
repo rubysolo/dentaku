@@ -28,6 +28,21 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'evaluate_many!' do
+    it "evaluates properly with variables, even if some in memory" do
+      expect(with_memory.evaluate_many!(
+        weekly_fruit_budget: "weekly_apple_budget + pear * 4",
+        weekly_apple_budget: "apples * 7",
+        pear: ".25"
+      )).to eq(pear: 0.25, weekly_apple_budget: 21, weekly_fruit_budget: 25)
+    end
+
+    it "lets you know about a cycle if one occurs" do
+      expect(calculator.evaluate_many!(health: "happiness", happiness: health
+           )).to raise_error(TSort::Cyclic)
+    end
+  end
+
   it 'evaluates a statement with no variables' do
     expect(calculator.evaluate('5+3')).to eq(8)
     expect(calculator.evaluate('(1+1+1)/3*100')).to eq(100)
