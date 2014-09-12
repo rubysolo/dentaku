@@ -115,7 +115,7 @@ In the example, `annual_income` needs to be computed (and stored) before
 
 Dentaku provides two methods to help resolve formulas in order`:
 
-### `Calculator.dependencies`
+#### Calculator.dependencies
 Pass a (string) expression to Dependencies and get back a list of variables (as
 `:symbols`) that are required for the expression. `Dependencies` also takes
 into account variables already (explicitly) stored into the calculator.
@@ -129,7 +129,7 @@ calc.dependencies("annual_income / 5")
 > [:annual_income]
 ```
 
-### `Calculator.evaluate_many!`
+#### Calculator.evaluate_many!
 Have Dentaku figure out the order in which your formulas need to be evaluated.
 
 Pass in a hash of {eventual_variable_name: "expression"} to evaluate_many! and
