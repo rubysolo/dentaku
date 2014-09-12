@@ -2,6 +2,7 @@ require 'dentaku/evaluator'
 require 'dentaku/expression'
 require 'dentaku/rules'
 require 'dentaku/token'
+require 'dentaku/dependency_resolver'
 
 module Dentaku
   class Calculator
@@ -36,9 +37,20 @@ module Dentaku
       end
     end
 
-    def evaluate_many!(expressions, data={})
-      raise "TODO(AMK) "
+    def evaluate_many!(expression_hash)
+      # TSort thru the expressions' dependencies, then evaluate all
+      expression_dependencies = Hash[expression_hash.map do |var, expr|
+        [var, dependencies(expr)]
+      end]
+      variables_in_resolve_order = DependencyResolver::find_resolve_order(
+        expression_dependencies)
 
+      results = {}
+      variables_in_resolve_order.each do |var_name|
+        results[var_name] = evaluate!(expression_hash[var_name], results)
+      end
+
+      results
     end
 
     def dependencies(expression)

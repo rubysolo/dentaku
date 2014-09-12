@@ -33,13 +33,14 @@ describe Dentaku::Calculator do
       expect(with_memory.evaluate_many!(
         weekly_fruit_budget: "weekly_apple_budget + pear * 4",
         weekly_apple_budget: "apples * 7",
-        pear: ".25"
-      )).to eq(pear: 0.25, weekly_apple_budget: 21, weekly_fruit_budget: 25)
+        pear: "1"
+      )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
     end
 
     it "lets you know about a cycle if one occurs" do
-      expect(calculator.evaluate_many!(health: "happiness", happiness: health
-           )).to raise_error(TSort::Cyclic)
+      expect do
+        calculator.evaluate_many!(health: "happiness", happiness: "health")
+      end.to raise_error (TSort::Cyclic)
     end
   end
 
