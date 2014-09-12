@@ -36,6 +36,15 @@ module Dentaku
       end
     end
 
+    def evaluate_many!(expressions, data={})
+      raise "TODO(AMK) "
+
+    end
+
+    def dependencies(expression)
+      Expression.new(expression, @memory).identifiers
+    end
+
     def store(key_or_hash, value=nil)
       restore = @memory.dup
 
