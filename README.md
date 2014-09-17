@@ -21,7 +21,7 @@ This is probably simplest to illustrate in code:
 ```ruby
 calculator = Dentaku::Calculator.new
 calculator.evaluate('10 * 2')
-=> 20
+#=> 20
 ```
 
 Okay, not terribly exciting.  But what if you want to have a reference to a
@@ -29,7 +29,7 @@ variable, and evaluate it at run-time?  Here's how that would look:
 
 ```ruby
 calculator.evaluate('kiwi + 5', kiwi: 2)
-=> 7
+#=> 7
 ```
 
 You can also store the variable values in the calculator's memory and then
@@ -38,9 +38,9 @@ evaluate expressions against those stored values:
 ```ruby
 calculator.store(peaches: 15)
 calculator.evaluate('peaches - 5')
-=> 10
+#=> 10
 calculator.evaluate('peaches >= 15')
-=> true
+#=> true
 ```
 
 For maximum CS geekery, `bind` is an alias of `store`.
@@ -50,9 +50,9 @@ to ensure proper evaluation:
 
 ```ruby
 calculator.evaluate('5 + 3 * 2')
-=> 11
+#=> 11
 calculator.evaluate('(5 + 3) * 2')
-=> 16
+#=> 16
 ```
 
 The `evalutate` method will return `nil` if there is an error in the formula.
@@ -61,7 +61,7 @@ exception.
 
 ```ruby
 calculator.evaluate('10 * x')
-=> nil
+#=> nil
 calculator.evaluate!('10 * x')
 Dentaku::UnboundVariableError: Dentaku::UnboundVariableError
 ```
@@ -73,18 +73,18 @@ counterparts in Excel:
 
 ```ruby
 calculator.evaluate('if (pears < 10, 10, 20)', pears: 5)
-=> 10
+#=> 10
 calculator.evaluate('if (pears < 10, 10, 20)', pears: 15)
-=> 20
+#=> 20
 ```
 
 `round`, `rounddown`, and `roundup` can be called with or without the number of decimal places:
 
 ```ruby
 calculator.evaluate('round(8.2)')
-=> 8
+#=> 8
 calculator.evaluate('round(8.2759, 2)')
-=> 8.28
+#=> 8.28
 ```
 
 `round` and `rounddown` round down, while `roundup` rounds up.
@@ -94,7 +94,7 @@ for you:
 
 ```ruby
 Dentaku('plums * 1.5', plums: 2)
-=> 3.0
+#=> 3.0
 ```
 
 
@@ -116,7 +116,7 @@ particular order. For example:
 ```ruby
 calc = Dentaku::Calculator.new
 calc.store(monthly_income: 50)
-need_to_compute: {
+need_to_compute = {
   income_taxes: "annual_income / 5"
   annual_income: "monthly_income * 12"
 }
@@ -134,11 +134,11 @@ into account variables already (explicitly) stored into the calculator.
 
 ```ruby
 calc.dependencies("monthly_income * 12")
-> []
+#=> []
 # (since monthly_income is in memory)
 
 calc.dependencies("annual_income / 5")
-> [:annual_income]
+#=> [:annual_income]
 ```
 
 #### Calculator.solve!
@@ -152,18 +152,18 @@ Raises `TSort::Cyclic` when a valid expression order cannot be found.
 ```ruby
 calc = Dentaku::Calculator.new
 calc.store(monthly_income: 50)
-need_to_compute: {
+need_to_compute = {
   income_taxes: "annual_income / 5"
   annual_income: "monthly_income * 12"
 }
 calc.solve!(need_to_compute)
-> {annual_income: 600, income_taxes: 120}
+#=> {annual_income: 600, income_taxes: 120}
 
 calc.solve!(
   make_money: "have_money",
   have_money: "make_money"
 }
-> raises TSort::Cyclic
+#=> raises TSort::Cyclic
 ```
 
 EXTERNAL FUNCTIONS
@@ -218,9 +218,9 @@ Here's an example of adding the `exp` function:
     body: ->(mantissa, exponent) { mantissa ** exponent }
   )
 > c.evaluate('EXP(3,2)')
-=> 9
+#=> 9
 > c.evaluate('EXP(2,3)')
-=> 8
+#=> 8
 ```
 
 Here's an example of adding the `max` function:
@@ -234,7 +234,7 @@ Here's an example of adding the `max` function:
     body: ->(*args) { args.max }
   )
 > c.evaluate 'MAX(5,3,9,6,2)'
-=> 9
+#=> 9
 ```
 
 
@@ -252,6 +252,7 @@ contributors:
 * [mvbrocato](https://github.com/mvbrocato)
 * [brixen](https://github.com/brixen)
 * [0xCCD](https://github.com/0xCCD)
+* [AlexeyMK](https://github.com/AlexeyMK)
 
 
 LICENSE
