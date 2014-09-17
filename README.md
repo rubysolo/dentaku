@@ -129,10 +129,10 @@ calc.dependencies("annual_income / 5")
 > [:annual_income]
 ```
 
-#### Calculator.evaluate_many!
+#### Calculator.solve!
 Have Dentaku figure out the order in which your formulas need to be evaluated.
 
-Pass in a hash of {eventual_variable_name: "expression"} to evaluate_many! and
+Pass in a hash of {eventual_variable_name: "expression"} to `solve!` and
 have Dentaku figure out dependencies (using `TSort`) for you.
 
 Raises `TSort::Cyclic` when a valid expression order cannot be found.
@@ -144,10 +144,10 @@ need_to_compute: {
   income_taxes: "annual_income / 5"
   annual_income: "monthly_income * 12"
 }
-calc.evaluate_many!(need_to_compute)
+calc.solve!(need_to_compute)
 > {annual_income: 600, income_taxes: 120}
 
-calc.evaluate_many!(
+calc.solve!(
   make_money: "have_money",
   have_money: "make_money"
 }

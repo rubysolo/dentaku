@@ -37,7 +37,8 @@ module Dentaku
       end
     end
 
-    def evaluate_many!(expression_hash)
+    def solve!(expression_hash)
+      # expression_hash: { variable_name: "string expression" }
       # TSort thru the expressions' dependencies, then evaluate all
       expression_dependencies = Hash[expression_hash.map do |var, expr|
         [var, dependencies(expr)]

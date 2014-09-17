@@ -28,9 +28,9 @@ describe Dentaku::Calculator do
     end
   end
 
-  describe 'evaluate_many!' do
+  describe 'solve!' do
     it "evaluates properly with variables, even if some in memory" do
-      expect(with_memory.evaluate_many!(
+      expect(with_memory.solve!(
         weekly_fruit_budget: "weekly_apple_budget + pear * 4",
         weekly_apple_budget: "apples * 7",
         pear: "1"
@@ -39,7 +39,7 @@ describe Dentaku::Calculator do
 
     it "lets you know about a cycle if one occurs" do
       expect do
-        calculator.evaluate_many!(health: "happiness", happiness: "health")
+        calculator.solve!(health: "happiness", happiness: "health")
       end.to raise_error (TSort::Cyclic)
     end
   end
