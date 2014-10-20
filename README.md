@@ -117,7 +117,7 @@ particular order. For example:
 calc = Dentaku::Calculator.new
 calc.store(monthly_income: 50)
 need_to_compute = {
-  income_taxes: "annual_income / 5"
+  income_taxes: "annual_income / 5",
   annual_income: "monthly_income * 12"
 }
 ```
@@ -153,7 +153,7 @@ Raises `TSort::Cyclic` when a valid expression order cannot be found.
 calc = Dentaku::Calculator.new
 calc.store(monthly_income: 50)
 need_to_compute = {
-  income_taxes: "annual_income / 5"
+  income_taxes: "annual_income / 5",
   annual_income: "monthly_income * 12"
 }
 calc.solve!(need_to_compute)
