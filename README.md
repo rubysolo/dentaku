@@ -199,8 +199,8 @@ As an example, the exponentiation function takes two parameters, the mantissa
 and the exponent, so the token list could be defined as: `[:numeric,
 :numeric]`.  Other functions might be variadic -- consider `max`, a function
 that takes any number of numeric inputs and returns the largest one.  Its token
-list could be defined as: `[:non_close_plus]` (one or more tokens that are not
-closing parentheses).  See the
+list could be defined as: `[:arguments]` (one or more numeric, string, or logical
+values, separated by commas).  See the
 [rules definitions](https://github.com/rubysolo/dentaku/blob/master/lib/dentaku/token_matcher.rb#L61)
 for the names of token patterns you can use.
 
@@ -230,10 +230,10 @@ Here's an example of adding the `max` function:
 > c.add_function(
     name: :max,
     type: :numeric,
-    signature: [:non_close_plus],
+    signature: [:arguments],
     body: ->(*args) { args.max }
   )
-> c.evaluate 'MAX(5,3,9,6,2)'
+> c.evaluate 'MAX(8,6,7,5,3,0,9)'
 #=> 9
 ```
 
