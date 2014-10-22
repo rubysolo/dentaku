@@ -201,7 +201,7 @@ and the exponent, so the token list could be defined as: `[:numeric,
 that takes any number of numeric inputs and returns the largest one.  Its token
 list could be defined as: `[:arguments]` (one or more numeric, string, or logical
 values, separated by commas).  See the
-[rules definitions](https://github.com/rubysolo/dentaku/blob/master/lib/dentaku/token_matcher.rb#L61)
+[rules definitions](https://github.com/rubysolo/dentaku/blob/master/lib/dentaku/token_matcher.rb#L87)
 for the names of token patterns you can use.
 
 Functions can be added individually using Calculator#add_function, or en masse using
