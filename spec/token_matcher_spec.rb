@@ -53,6 +53,26 @@ describe Dentaku::TokenMatcher do
     expect(matcher).to eq(cmp)
   end
 
+  describe 'combining multiple tokens' do
+    let(:numeric) { described_class.new(:numeric) }
+    let(:string)  { described_class.new(:string) }
+
+    it 'matches either' do
+      either = numeric | string
+      expect(either).to eq(Dentaku::Token.new(:numeric, 5))
+      expect(either).to eq(Dentaku::Token.new(:string, 'rhubarb'))
+    end
+
+    it 'matches any value' do
+      value = described_class.value
+      expect(value).to eq(Dentaku::Token.new(:numeric, 8))
+      expect(value).to eq(Dentaku::Token.new(:string, 'apricot'))
+      expect(value).to eq(Dentaku::Token.new(:logical, false))
+      expect(value).not_to eq(Dentaku::Token.new(:function, :round))
+      expect(value).not_to eq(Dentaku::Token.new(:identifier, :hello))
+    end
+  end
+
   describe 'stream matching' do
     let(:stream) { token_stream(5, 11, 9, 24, :hello, 8) }
 
@@ -98,6 +118,16 @@ describe Dentaku::TokenMatcher do
         matched, substream = plus.match(stream, 4)
         expect(substream).to be_empty
         expect(matched).not_to be_truthy
+      end
+    end
+
+    describe 'arguments' do
+      it 'matches comma-separated values' do
+        stream = token_stream(1, :comma, 2, :comma, :true, :comma, 'olive', :comma, :'(')
+        matched, substream = described_class.arguments.match(stream)
+        expect(matched).to be_truthy
+        #expect(substream.length).to eq 8
+        expect(substream.map(&:value)).to eq [1, :comma, 2, :comma, true, :comma, 'olive', :comma]
       end
     end
   end

@@ -12,6 +12,8 @@ def type_for(value)
   case value
   when Numeric
     :numeric
+  when String
+    :string
   when :add, :subtract, :multiply, :divide, :mod
     :operator
   when :open, :close, :comma
