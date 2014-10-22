@@ -17,11 +17,7 @@ module Dentaku
     end
 
     def | (other_matcher)
-      leaf_matchers = [self, other_matcher, children, other_matcher.children].flatten.select do |m|
-        m.children.empty?
-      end
-
-      self.class.new(:nomatch, :nomatch, leaf_matchers)
+      self.class.new(:nomatch, :nomatch, leaf_matchers + other_matcher.leaf_matchers)
     end
 
     def invert
@@ -30,7 +26,7 @@ module Dentaku
     end
 
     def ==(token)
-      any_child_matches_token?(token) || matches_token?(token)
+      leaf_matcher? ? matches_token?(token) : any_child_matches_token?(token)
     end
 
     def match(token_stream, offset=0)
@@ -59,6 +55,14 @@ module Dentaku
       @max = Float::INFINITY
       @range = (@min..@max)
       self
+    end
+
+    def leaf_matcher?
+      children.empty?
+    end
+
+    def leaf_matchers
+      leaf_matcher? ? [self] : children
     end
 
     private
