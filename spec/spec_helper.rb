@@ -2,7 +2,6 @@
 def token_stream(*args)
   args.map do |value|
     type = type_for(value)
-    value = (value == :true) if type == :logical
     Dentaku::Token.new(type, value)
   end
 end
@@ -14,6 +13,8 @@ def type_for(value)
     :numeric
   when String
     :string
+  when true, false
+    :logical
   when :add, :subtract, :multiply, :divide, :mod
     :operator
   when :open, :close, :comma
@@ -22,8 +23,6 @@ def type_for(value)
     :comparator
   when :and, :or
     :combinator
-  when :true, :false
-    :logical
   when :if, :round, :roundup, :rounddown, :not
     :function
   else

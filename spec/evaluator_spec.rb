@@ -96,13 +96,13 @@ describe Dentaku::Evaluator do
       end
 
       it 'evaluates combined conditionals' do
-        expect(evaluator.evaluate(token_stream(5, :gt, 1, :or, :false))).to be_truthy
-        expect(evaluator.evaluate(token_stream(5, :gt, 1, :and, :false))).to be_falsey
+        expect(evaluator.evaluate(token_stream(5, :gt, 1, :or, false))).to be_truthy
+        expect(evaluator.evaluate(token_stream(5, :gt, 1, :and, false))).to be_falsey
       end
 
       it 'negates a logical value' do
-        expect(evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :or,  :false, :close))).to be_falsey
-        expect(evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :and, :false, :close))).to be_truthy
+        expect(evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :or,  false, :close))).to be_falsey
+        expect(evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :and, false, :close))).to be_truthy
       end
     end
   end
