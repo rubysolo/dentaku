@@ -245,14 +245,16 @@ Big thanks to [ElkStone Basements](http://www.elkstonebasements.com/) for
 allowing me to extract and open source this code.  Thanks also to all the
 contributors:
 
-* [CraigCottingham](https://github.com/CraigCottingham)
-* [arnaudl](https://github.com/arnaudl)
-* [thbar](https://github.com/thbar) / [BoxCar](https://www.boxcar.io)
-* [antonversal](https://github.com/antonversal)
-* [mvbrocato](https://github.com/mvbrocato)
-* [brixen](https://github.com/brixen)
 * [0xCCD](https://github.com/0xCCD)
 * [AlexeyMK](https://github.com/AlexeyMK)
+* [CraigCottingham](https://github.com/CraigCottingham)
+* [antonversal](https://github.com/antonversal)
+* [arnaudl](https://github.com/arnaudl)
+* [bernardofire](https://github.com/bernardofire)
+* [brixen](https://github.com/brixen)
+* [jmangs](https://github.com/jmangs)
+* [mvbrocato](https://github.com/mvbrocato)
+* [thbar](https://github.com/thbar) / [BoxCar](https://www.boxcar.io)
 
 
 LICENSE
