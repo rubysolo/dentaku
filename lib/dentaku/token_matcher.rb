@@ -5,13 +5,11 @@ module Dentaku
     attr_reader :children
 
     def initialize(categories=nil, values=nil, children=[])
-      @categories = [categories].compact.flatten
-      @values     = [values].compact.flatten
+      # store categories and values as hash to optimize key lookup, h/t @jan-mangs
+      @categories = [categories].compact.flatten.map { |c| [c, 1] }.to_h
+      @values     = [values].compact.flatten.map { |v| [v, 1] }.to_h
       @children   = children.compact
       @invert     = false
-
-      @categories_hash = Hash[@categories.map { |cat| [cat, 1] }]
-      @values_hash = Hash[@values.map { |value| [value, 1] }]
 
       @min = 1
       @max = 1
@@ -19,7 +17,7 @@ module Dentaku
     end
 
     def | (other_matcher)
-      leaf_matchers = [self, other_matcher, @children, other_matcher.children].flatten.select do |m|
+      leaf_matchers = [self, other_matcher, children, other_matcher.children].flatten.select do |m|
         m.children.empty?
       end
 
@@ -75,11 +73,11 @@ module Dentaku
     end
 
     def category_match(category)
-      @categories_hash.empty? || @categories_hash.key?(category)
+      @categories.empty? || @categories.key?(category)
     end
 
     def value_match(value)
-      @values.empty? || @values_hash.key?(value)
+      @values.empty? || @values.key?(value)
     end
 
     def self.numeric;        new(:numeric);                        end
