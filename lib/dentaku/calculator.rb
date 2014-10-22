@@ -1,4 +1,5 @@
 require 'dentaku/evaluator'
+require 'dentaku/exceptions'
 require 'dentaku/expression'
 require 'dentaku/rules'
 require 'dentaku/token'

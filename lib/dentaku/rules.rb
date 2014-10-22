@@ -42,7 +42,7 @@ module Dentaku
       @rules.unshift [
         [
           TokenMatcher.send(ext.name),
-          t(:open),
+          t(:fopen),
           *pattern(*ext.tokens),
           t(:close)
         ],
@@ -53,22 +53,20 @@ module Dentaku
 
     def self.func(name)
       @funcs ||= {}
-      @funcs[name]
+      @funcs.fetch(name)
     end
 
     def self.t(name)
       @matchers ||= generate_matchers
-      @matchers[name]
+      @matchers.fetch(name)
     end
 
     def self.generate_matchers
       [
         :numeric, :string, :addsub, :subtract, :muldiv, :pow, :mod,
-        :comparator, :comp_gt, :comp_lt,
-        :open, :close, :comma,
-        :non_close_plus, :non_group, :non_group_star,
-        :logical, :combinator,
-        :if, :round, :roundup, :rounddown, :not
+        :comparator, :comp_gt, :comp_lt, :fopen, :open, :close, :comma,
+        :non_close_plus, :non_group, :non_group_star, :arguments,
+        :logical, :combinator, :if, :round, :roundup, :rounddown, :not
       ].each_with_object({}) do |name, matchers|
         matchers[name] = TokenMatcher.send(name)
       end
@@ -90,10 +88,10 @@ module Dentaku
         combine:    pattern(:logical,  :combinator,     :logical),
 
         if:         func_pattern(:if,        :non_group,      :comma, :non_group, :comma, :non_group),
-        round:      func_pattern(:round,     :non_close_plus),
-        roundup:    func_pattern(:roundup,   :non_close_plus),
-        rounddown:  func_pattern(:rounddown, :non_close_plus),
-        not:        func_pattern(:not,       :non_close_plus)
+        round:      func_pattern(:round,     :arguments),
+        roundup:    func_pattern(:roundup,   :arguments),
+        rounddown:  func_pattern(:rounddown, :arguments),
+        not:        func_pattern(:not,       :arguments)
       }
 
       @patterns[name]
@@ -104,7 +102,7 @@ module Dentaku
     end
 
     def self.func_pattern(func, *tokens)
-      pattern(func, :open, *tokens, :close)
+      pattern(func, :fopen, *tokens, :close)
     end
   end
 end

@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'dentaku/calculator'
 
 describe Dentaku::Calculator do
@@ -20,13 +21,13 @@ describe Dentaku::Calculator do
           {
             name:      :max,
             type:      :numeric,
-            signature: [ :non_close_plus ],
+            signature: [ :arguments ],
             body:      ->(*args) { args.max }
           },
           {
             name:      :min,
             type:      :numeric,
-            signature: [ :non_close_plus ],
+            signature: [ :arguments ],
             body:      ->(*args) { args.min }
           }
         ]

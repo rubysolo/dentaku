@@ -126,7 +126,7 @@ describe Dentaku::TokenMatcher do
         stream = token_stream(1, :comma, 2, :comma, true, :comma, 'olive', :comma, :'(')
         matched, substream = described_class.arguments.match(stream)
         expect(matched).to be_truthy
-        #expect(substream.length).to eq 8
+        expect(substream.length).to eq 8
         expect(substream.map(&:value)).to eq [1, :comma, 2, :comma, true, :comma, 'olive', :comma]
       end
     end

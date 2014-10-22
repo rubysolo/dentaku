@@ -5,7 +5,7 @@ describe Dentaku::TokenScanner do
   let(:numeric)    { described_class.new(:numeric,    '(\d+(\.\d+)?|\.\d+)', lambda{|raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i }) }
 
   it 'returns a token for a matching string' do
-    token = whitespace.scan(' ')
+    token = whitespace.scan(' ').first
     expect(token.category).to eq(:whitespace)
     expect(token.value).to eq(' ')
   end
@@ -15,7 +15,7 @@ describe Dentaku::TokenScanner do
   end
 
   it 'performs raw value conversion' do
-    token = numeric.scan('5')
+    token = numeric.scan('5').first
     expect(token.category).to eq(:numeric)
     expect(token.value).to eq(5)
   end

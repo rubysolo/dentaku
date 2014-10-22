@@ -1,3 +1,5 @@
+require 'bigdecimal'
+
 module Dentaku
   class BinaryOperation
     attr_reader :left, :right

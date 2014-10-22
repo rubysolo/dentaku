@@ -13,7 +13,9 @@ module Dentaku
         value = raw = m.to_s
         value = @converter.call(raw) if @converter
 
-        return Token.new(@category, value, raw)
+        return Array(value).map do |v|
+          Token === v ? v : Token.new(@category, v, raw)
+        end
       end
 
       false
@@ -68,15 +70,18 @@ module Dentaku
       end
 
       def combinator
-        new(:combinator, '(and|or)\b', lambda {|raw| raw.strip.downcase.to_sym })
+        new(:combinator, '(and|or)\b', lambda { |raw| raw.strip.downcase.to_sym })
       end
 
       def function
-        new(:function, '(\w+\s*(?=\())', lambda {|raw| raw.strip.downcase.to_sym })
+        new(:function, '\w+\s*\(', lambda do |raw|
+          function_name = raw.gsub('(', '')
+          [Token.new(:function, function_name.strip.downcase.to_sym, function_name), Token.new(:grouping, :fopen, '(')]
+        end)
       end
 
       def identifier
-        new(:identifier, '\w+\b', lambda {|raw| raw.strip.downcase.to_sym })
+        new(:identifier, '\w+\b', lambda { |raw| raw.strip.downcase.to_sym })
       end
     end
   end

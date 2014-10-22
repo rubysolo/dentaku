@@ -17,7 +17,7 @@ def type_for(value)
     :logical
   when :add, :subtract, :multiply, :divide, :mod
     :operator
-  when :open, :close, :comma
+  when :fopen, :open, :close, :comma
     :grouping
   when :le, :ge, :ne, :ne, :lt, :gt, :eq
     :comparator

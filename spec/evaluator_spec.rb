@@ -70,12 +70,21 @@ describe Dentaku::Evaluator do
       end
     end
 
+    describe 'find_rule_match' do
+      it 'matches a function call' do
+        if_pattern, _ = *Dentaku::Rules.core_rules.first
+        position, tokens = evaluator.find_rule_match(if_pattern, token_stream(:if, :fopen, true, :comma, 1, :comma, 2, :close))
+        expect(position).to eq 0
+        expect(tokens.length).to eq 8
+      end
+    end
+
     describe 'functions' do
       it 'is evaluated' do
-        expect(evaluator.evaluate(token_stream(:round,     :open, 5, :divide, 3.0, :close))).to eq 2
-        expect(evaluator.evaluate(token_stream(:round,     :open, 5, :divide, 3.0, :comma, 2, :close))).to eq 1.67
-        expect(evaluator.evaluate(token_stream(:roundup,   :open, 5, :divide, 1.2, :close))).to eq 5
-        expect(evaluator.evaluate(token_stream(:rounddown, :open, 5, :divide, 1.2, :close))).to eq 4
+        expect(evaluator.evaluate(token_stream(:round,     :fopen, 5, :divide, 3.0, :close))).to eq 2
+        expect(evaluator.evaluate(token_stream(:round,     :fopen, 5, :divide, 3.0, :comma, 2, :close))).to eq 1.67
+        expect(evaluator.evaluate(token_stream(:roundup,   :fopen, 5, :divide, 1.2, :close))).to eq 5
+        expect(evaluator.evaluate(token_stream(:rounddown, :fopen, 5, :divide, 1.2, :close))).to eq 4
       end
     end
 
@@ -101,8 +110,8 @@ describe Dentaku::Evaluator do
       end
 
       it 'negates a logical value' do
-        expect(evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :or,  false, :close))).to be_falsey
-        expect(evaluator.evaluate(token_stream(:not, :open, 5, :gt, 1, :and, false, :close))).to be_truthy
+        expect(evaluator.evaluate(token_stream(:not, :fopen, 5, :gt, 1, :or,  false, :close))).to be_falsey
+        expect(evaluator.evaluate(token_stream(:not, :fopen, 5, :gt, 1, :and, false, :close))).to be_truthy
       end
     end
   end
