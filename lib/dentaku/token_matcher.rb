@@ -6,8 +6,8 @@ module Dentaku
 
     def initialize(categories=nil, values=nil, children=[])
       # store categories and values as hash to optimize key lookup, h/t @jan-mangs
-      @categories = [categories].compact.flatten.map { |c| [c, 1] }.to_h
-      @values     = [values].compact.flatten.map { |v| [v, 1] }.to_h
+      @categories = [categories].compact.flatten.each_with_object({}) { |c,h| h[c] = 1 }
+      @values     = [values].compact.flatten.each_with_object({}) { |v,h| h[v] = 1 }
       @children   = children.compact
       @invert     = false
 
