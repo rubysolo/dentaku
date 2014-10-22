@@ -252,6 +252,7 @@ contributors:
 * [arnaudl](https://github.com/arnaudl)
 * [bernardofire](https://github.com/bernardofire)
 * [brixen](https://github.com/brixen)
+* [jasonhutchens](https://github.com/jasonhutchens)
 * [jmangs](https://github.com/jmangs)
 * [mvbrocato](https://github.com/mvbrocato)
 * [thbar](https://github.com/thbar) / [BoxCar](https://www.boxcar.io)
