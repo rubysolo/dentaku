@@ -6,6 +6,7 @@ module Dentaku
   class Tokenizer
     LPAREN = TokenMatcher.new(:grouping, [:open, :fopen])
     RPAREN = TokenMatcher.new(:grouping, :close)
+    SBTRCT = TokenMatcher.new(:operator, :subtract)
 
     def tokenize(string)
       @nesting = 0
@@ -20,6 +21,8 @@ module Dentaku
       end
 
       raise "too many opening parentheses" if @nesting > 0
+
+      @tokens = @tokens.unshift(Token.new(:operator, :start)) if !@tokens.empty? && SBTRCT == @tokens.first
 
       @tokens
     end

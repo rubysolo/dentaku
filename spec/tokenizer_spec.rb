@@ -67,24 +67,6 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['animal', :eq, 'giraffe'])
   end
 
-  it 'recognizes binary minus operator' do
-    tokens = tokenizer.tokenize('2 - 3')
-    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([2, :subtract, 3])
-  end
-
-  it 'recognizes unary minus operator' do
-    tokens = tokenizer.tokenize('-2 + 3')
-    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([-2, :add, 3])
-  end
-
-  it 'recognizes unary minus operator' do
-    tokens = tokenizer.tokenize('2 - -3')
-    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([2, :subtract, -3])
-  end
-
   it 'matches "<=" before "<"' do
     tokens = tokenizer.tokenize('perimeter <= 7500')
     expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])

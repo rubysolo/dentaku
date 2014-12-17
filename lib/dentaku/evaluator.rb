@@ -93,8 +93,12 @@ module Dentaku
       Token.new(*operation.send(operator.value))
     end
 
-    def negate(_, token)
-      Token.new(token.category, token.value * -1)
+    def negate(negop, _, token)
+      if negop.value == :start
+        Token.new(token.category, token.value * -1)
+      else
+        [negop, Token.new(token.category, token.value * -1)]
+      end
     end
 
     def percentage(token, _)

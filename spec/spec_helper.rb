@@ -15,7 +15,7 @@ def type_for(value)
     :string
   when true, false
     :logical
-  when :add, :subtract, :multiply, :divide, :mod
+  when :add, :subtract, :multiply, :divide, :mod, :start
     :operator
   when :fopen, :open, :close, :comma
     :grouping
