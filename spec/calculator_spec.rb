@@ -45,7 +45,15 @@ describe Dentaku::Calculator do
         weekly_fruit_budget: "weekly_apple_budget + pear * 4",
         weekly_apple_budget: "apples * 7",
         pear: "1"
-      )).to eq('pear' => 1, 'weekly_apple_budget' => 21, 'weekly_fruit_budget' => 25)
+      )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
+    end
+
+    it "preserves hash keys" do
+      expect(calculator.solve!(
+        'meaning_of_life' => 'age + kids',
+        'age'  => 40,
+        'kids' =>  2
+      )).to eq('age' => 40, 'kids' => 2, 'meaning_of_life' => 42)
     end
 
     it "lets you know about a cycle if one occurs" do

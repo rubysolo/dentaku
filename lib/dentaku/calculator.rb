@@ -50,12 +50,13 @@ module Dentaku
       variables_in_resolve_order = DependencyResolver::find_resolve_order(
         expression_dependencies)
 
-      results = {}
-      variables_in_resolve_order.each do |var_name|
-        results[var_name] = evaluate!(expressions[var_name], results)
+      results = variables_in_resolve_order.each_with_object({}) do |var_name, r|
+        r[var_name] = evaluate!(expressions[var_name], r)
       end
 
-      results
+      expression_hash.each_with_object({}) do |(k, _), r|
+        r[k] = results[k.to_s]
+      end
     end
 
     def dependencies(expression)
