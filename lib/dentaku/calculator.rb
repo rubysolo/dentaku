@@ -65,12 +65,12 @@ module Dentaku
     def store(key_or_hash, value=nil)
       restore = @memory.dup
 
-      if !value.nil?
-        @memory[key_or_hash.to_s] = value
-      else
+      if value.nil?
         key_or_hash.each do |key, val|
           @memory[key.downcase.to_s] = val
         end
+      else
+        @memory[key_or_hash.to_s] = value
       end
 
       if block_given?
