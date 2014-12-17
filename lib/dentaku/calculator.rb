@@ -65,8 +65,8 @@ module Dentaku
       if !value.nil?
         @memory[key_or_hash.to_sym] = value
       else
-        key_or_hash.each do |key, value|
-          @memory[key.to_sym] = value
+        key_or_hash.each do |key, val|
+          @memory[key.downcase.to_sym] = val
         end
       end
 
