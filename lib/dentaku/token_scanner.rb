@@ -81,7 +81,7 @@ module Dentaku
       end
 
       def identifier
-        new(:identifier, '\w+\b', lambda { |raw| raw.strip.downcase.to_sym })
+        new(:identifier, '\w+\b', lambda { |raw| raw.strip.downcase.to_s })
       end
     end
   end

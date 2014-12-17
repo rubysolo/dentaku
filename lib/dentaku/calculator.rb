@@ -39,17 +39,20 @@ module Dentaku
     end
 
     def solve!(expression_hash)
+      expressions = Hash[expression_hash.map { |k,v| [k.to_s, v] }]
+
       # expression_hash: { variable_name: "string expression" }
       # TSort thru the expressions' dependencies, then evaluate all
-      expression_dependencies = Hash[expression_hash.map do |var, expr|
+      expression_dependencies = Hash[expressions.map do |var, expr|
         [var, dependencies(expr)]
       end]
+
       variables_in_resolve_order = DependencyResolver::find_resolve_order(
         expression_dependencies)
 
       results = {}
       variables_in_resolve_order.each do |var_name|
-        results[var_name] = evaluate!(expression_hash[var_name], results)
+        results[var_name] = evaluate!(expressions[var_name], results)
       end
 
       results
@@ -63,10 +66,10 @@ module Dentaku
       restore = @memory.dup
 
       if !value.nil?
-        @memory[key_or_hash.to_sym] = value
+        @memory[key_or_hash.to_s] = value
       else
         key_or_hash.each do |key, val|
-          @memory[key.downcase.to_sym] = val
+          @memory[key.downcase.to_s] = val
         end
       end
 

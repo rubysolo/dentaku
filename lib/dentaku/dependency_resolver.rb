@@ -9,8 +9,8 @@ module Dentaku
     end
 
     def initialize(vars_to_dependencies_hash)
-      # ensure variables are symbols
-      @vars_to_deps = Hash[vars_to_dependencies_hash.map { |k, v| [k.to_sym, v]}]
+      # ensure variables are strings
+      @vars_to_deps = Hash[vars_to_dependencies_hash.map { |k, v| [k.to_s, v]}]
     end
 
     def tsort_each_node(&block)
@@ -18,7 +18,7 @@ module Dentaku
     end
 
     def tsort_each_child(node, &block)
-      @vars_to_deps[node.to_sym].each(&block)
+      @vars_to_deps[node.to_s].each(&block)
     end
   end
 end

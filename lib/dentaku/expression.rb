@@ -2,13 +2,14 @@ require 'dentaku/tokenizer'
 
 module Dentaku
   class Expression
-    attr_reader :tokens
+    attr_reader :tokens, :variables
 
     def initialize(string, variables={})
       @raw = string
       @tokenizer ||= Tokenizer.new
       @tokens = @tokenizer.tokenize(@raw)
-      replace_identifiers_with_values(variables)
+      @variables = Hash[variables.map { |k,v| [k.to_s, v] }]
+      replace_identifiers_with_values
     end
 
     def identifiers
@@ -21,18 +22,18 @@ module Dentaku
 
     private
 
-    def replace_identifiers_with_values(variables)
+    def replace_identifiers_with_values
       @tokens.map! do |token|
         if token.is?(:identifier)
-          replace_identifier_with_value(token, variables)
+          replace_identifier_with_value(token)
         else
           token
         end
       end
     end
 
-    def replace_identifier_with_value(token, variables)
-      key = token.value.to_sym
+    def replace_identifier_with_value(token)
+      key = token.value.to_s
 
       if variables.key? key
         value = variables[key]

@@ -32,10 +32,10 @@ describe Dentaku::Calculator do
 
   describe 'dependencies' do
     it "finds dependencies in a generic statement" do
-      expect(calculator.dependencies("bob + dole / 3")).to eq([:bob, :dole])
+      expect(calculator.dependencies("bob + dole / 3")).to eq(['bob', 'dole'])
     end
     it "doesn't consider variables in memory as dependencies" do
-      expect(with_memory.dependencies("apples + oranges")).to eq([:oranges])
+      expect(with_memory.dependencies("apples + oranges")).to eq(['oranges'])
     end
   end
 
@@ -45,7 +45,7 @@ describe Dentaku::Calculator do
         weekly_fruit_budget: "weekly_apple_budget + pear * 4",
         weekly_apple_budget: "apples * 7",
         pear: "1"
-      )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
+      )).to eq('pear' => 1, 'weekly_apple_budget' => 21, 'weekly_fruit_budget' => 25)
     end
 
     it "lets you know about a cycle if one occurs" do
@@ -64,7 +64,7 @@ describe Dentaku::Calculator do
     unbound = 'foo * 1.5'
     expect { calculator.evaluate!(unbound) }.to raise_error(Dentaku::UnboundVariableError)
     expect { calculator.evaluate!(unbound) }.to raise_error do |error|
-      expect(error.unbound_variables).to eq [:foo]
+      expect(error.unbound_variables).to eq ['foo']
     end
     expect(calculator.evaluate(unbound)).to be_nil
     expect(calculator.evaluate(unbound) { :bar }).to eq :bar

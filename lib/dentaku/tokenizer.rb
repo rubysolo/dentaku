@@ -10,7 +10,7 @@ module Dentaku
     def tokenize(string)
       @nesting = 0
       @tokens  = []
-      input    = string.dup
+      input    = string.to_s.dup
 
       until input.empty?
         raise "parse error at: '#{ input }'" unless TokenScanner.scanners.any? do |scanner|
