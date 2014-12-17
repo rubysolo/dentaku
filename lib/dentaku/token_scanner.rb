@@ -42,7 +42,7 @@ module Dentaku
       end
 
       def numeric
-        new(:numeric, '-?(\d+(\.\d+)?|\.\d+)\b', lambda { |raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
+        new(:numeric, '(\d+(\.\d+)?|\.\d+)\b', lambda { |raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
       end
 
       def double_quoted_string

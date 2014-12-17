@@ -93,6 +93,15 @@ module Dentaku
 
     def self.addsub;         new(:operator, [:add, :subtract]);    end
     def self.subtract;       new(:operator, :subtract);            end
+    def self.negop;          new([:operator, :comparator, 
+                                  :grouping, :function, 
+                                  :logical, :combinator], 
+                                 [:add, :subtract, :multiply, 
+                                  :divide, :mod, :pow, :gt, :ge,
+                                  :lt, :le, :eq, :fopen, :open, 
+                                  :comma, :if, :round, :roundup, 
+                                  :rounddown, :not, :start, :and, 
+                                  :or]);                           end
     def self.muldiv;         new(:operator, [:multiply, :divide]); end
     def self.pow;            new(:operator, :pow);                 end
     def self.mod;            new(:operator, :mod);                 end
