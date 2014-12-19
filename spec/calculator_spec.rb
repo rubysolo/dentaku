@@ -6,6 +6,7 @@ describe Dentaku::Calculator do
 
   it 'evaluates an expression' do
     expect(calculator.evaluate('7+3')).to eq(10)
+    expect(calculator.evaluate('2 -1')).to eq(1)
     expect(calculator.evaluate('-1 + 2')).to eq(1)
     expect(calculator.evaluate('1 - 2')).to eq(-1)
     expect(calculator.evaluate('1 - - 2')).to eq(3)
@@ -18,7 +19,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('(2 + 3) - 1')).to eq(4)
     expect(calculator.evaluate('(-2 + 3) - 1')).to eq(0)
     expect(calculator.evaluate('(-2 - 3) - 1')).to eq(-6)
-    expect(calculator.evaluate('1 + -2 ^ 2')).to eq(5)
+    expect(calculator.evaluate('1 + -2 ^ 2')).to eq(-3)
     expect(calculator.evaluate('3 + -num', :num => 2)).to eq(1)
     expect(calculator.evaluate('-num + 3', :num => 2)).to eq(1)
   end
