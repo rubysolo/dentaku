@@ -75,14 +75,14 @@ describe Dentaku::Tokenizer do
 
   it 'recognizes unary minus operator' do
     tokens = tokenizer.tokenize('-2 + 3')
-    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([-2, :add, 3])
+    expect(tokens.map(&:category)).to eq([:operator, :numeric, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([:subtract, 2, :add, 3])
   end
 
   it 'recognizes unary minus operator' do
     tokens = tokenizer.tokenize('2 - -3')
-    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([2, :subtract, -3])
+    expect(tokens.map(&:category)).to eq([:numeric, :operator, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([2, :subtract, :subtract, 3])
   end
 
   it 'matches "<=" before "<"' do
