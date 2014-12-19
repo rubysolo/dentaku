@@ -255,6 +255,7 @@ contributors:
 * [jasonhutchens](https://github.com/jasonhutchens)
 * [jmangs](https://github.com/jmangs)
 * [mvbrocato](https://github.com/mvbrocato)
+* [schneidmaster](https://github.com/schneidmaster)
 * [thbar](https://github.com/thbar) / [BoxCar](https://www.boxcar.io)
 
 
