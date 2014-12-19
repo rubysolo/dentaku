@@ -52,6 +52,7 @@ module Dentaku
         end
 
         return position, matches if matched
+        return if pattern.first.caret?
         position += 1
       end
 

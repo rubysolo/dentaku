@@ -13,6 +13,7 @@ module Dentaku
         [ p(:not),        :not            ],
 
         [ p(:group),      :evaluate_group ],
+        [ p(:start_neg),  :negate         ],
         [ p(:math_pow),   :apply          ],
         [ p(:math_mod),   :apply          ],
         [ p(:math_mul),   :apply          ],
@@ -66,7 +67,8 @@ module Dentaku
         :numeric, :string, :addsub, :subtract, :muldiv, :pow, :mod,
         :comparator, :comp_gt, :comp_lt, :fopen, :open, :close, :comma,
         :non_close_plus, :non_group, :non_group_star, :arguments,
-        :logical, :combinator, :if, :round, :roundup, :rounddown, :not
+        :logical, :combinator, :if, :round, :roundup, :rounddown, :not,
+        :anchored_minus
       ].each_with_object({}) do |name, matchers|
         matchers[name] = TokenMatcher.send(name)
       end
@@ -80,6 +82,7 @@ module Dentaku
         math_pow:   pattern(:numeric,  :pow,            :numeric),
         math_mod:   pattern(:numeric,  :mod,            :numeric),
         negation:   pattern(:subtract, :numeric),
+        start_neg:  pattern(:anchored_minus, :numeric),
         percentage: pattern(:numeric,  :mod),
         range_asc:  pattern(:numeric,  :comp_lt,        :numeric,  :comp_lt, :numeric),
         range_desc: pattern(:numeric,  :comp_gt,        :numeric,  :comp_gt, :numeric),

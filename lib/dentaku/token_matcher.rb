@@ -44,6 +44,15 @@ module Dentaku
       [matched, matched_tokens]
     end
 
+    def caret
+      @caret = true
+      self
+    end
+
+    def caret?
+      @caret
+    end
+
     def star
       @min = 0
       @max = Float::INFINITY
@@ -93,6 +102,7 @@ module Dentaku
 
     def self.addsub;         new(:operator, [:add, :subtract]);    end
     def self.subtract;       new(:operator, :subtract);            end
+    def self.anchored_minus; new(:operator, :subtract).caret;      end
     def self.muldiv;         new(:operator, [:multiply, :divide]); end
     def self.pow;            new(:operator, :pow);                 end
     def self.mod;            new(:operator, :mod);                 end

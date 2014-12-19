@@ -44,6 +44,8 @@ describe Dentaku::Evaluator do
     it 'supports unary minus' do
       expect(evaluator.evaluate(token_stream(:subtract, 1))).to eq(-1)
       expect(evaluator.evaluate(token_stream(1, :subtract, :subtract, 1))).to eq(2)
+      expect(evaluator.evaluate(token_stream(1, :subtract, :subtract, :subtract, 1))).to eq(0)
+      expect(evaluator.evaluate(token_stream(:subtract, 1, :add, 1))).to eq(0)
     end
 
     it 'supports unary percentage' do
@@ -76,6 +78,23 @@ describe Dentaku::Evaluator do
         position, tokens = evaluator.find_rule_match(if_pattern, token_stream(:if, :fopen, true, :comma, 1, :comma, 2, :close))
         expect(position).to eq 0
         expect(tokens.length).to eq 8
+      end
+
+      describe 'with start-anchored token' do
+        let(:number) { [Dentaku::TokenMatcher.new(:numeric).caret] }
+        let(:string) { [Dentaku::TokenMatcher.new(:string).caret] }
+        let(:stream) { token_stream(1, 'foo') }
+
+        it 'matches anchored to the beginning of the token stream' do
+          position, tokens = evaluator.find_rule_match(number, stream)
+          expect(position).to eq 0
+          expect(tokens.length).to eq 1
+        end
+
+        it 'does not match later in the stream' do
+          position, _tokens = evaluator.find_rule_match(string, stream)
+          expect(position).to be_nil
+        end
       end
     end
 
