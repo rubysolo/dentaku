@@ -98,6 +98,10 @@ module Dentaku
       Token.new(token.category, token.value * -1)
     end
 
+    def pow_negate(base, _, _, exp)
+      Token.new(base.category, base.value ** (exp.value * -1))
+    end
+
     def percentage(token, _)
       Token.new(token.category, token.value / 100.0)
     end

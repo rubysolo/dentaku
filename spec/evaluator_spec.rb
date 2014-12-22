@@ -48,6 +48,12 @@ describe Dentaku::Evaluator do
       expect(evaluator.evaluate(token_stream(:subtract, 1, :add, 1))).to eq(0)
     end
 
+    it 'evaluates a number multiplied by an exponent' do
+      expect(evaluator.evaluate(token_stream(10, :pow, 2))).to eq(100)
+      expect(evaluator.evaluate(token_stream(0, :multiply, 10, :pow, 5))).to eq(0)
+      expect(evaluator.evaluate(token_stream(0, :multiply, 10, :pow, :subtract, 5))).to eq(0)
+    end
+
     it 'supports unary percentage' do
       expect(evaluator.evaluate(token_stream(50, :mod))).to eq(0.5)
       expect(evaluator.evaluate(token_stream(50, :mod, :multiply, 100))).to eq(50)
