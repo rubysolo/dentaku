@@ -37,6 +37,18 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq([1, :divide, 1])
   end
 
+  it 'tokenizes power operations' do
+    tokens = tokenizer.tokenize('10 ^ 2')
+    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([10, :pow, 2])
+  end
+
+  it 'tokenizes power operations' do
+    tokens = tokenizer.tokenize('0 * 10 ^ -5')
+    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric, :operator, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([0, :multiply, 10, :pow, :subtract, 5])
+  end
+
   it 'handles floating point' do
     tokens = tokenizer.tokenize('1.5 * 3.7')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
