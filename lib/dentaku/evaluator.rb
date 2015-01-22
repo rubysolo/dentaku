@@ -102,6 +102,10 @@ module Dentaku
       Token.new(base.category, base.value ** (exp.value * -1))
     end
 
+    def pow_mul(val1, _, _, val2)
+      Token.new(val1.category, val1.value * val2.value * -1)
+    end
+
     def percentage(token, _)
       Token.new(token.category, token.value / 100.0)
     end
