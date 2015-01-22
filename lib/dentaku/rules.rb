@@ -18,6 +18,7 @@ module Dentaku
         [ p(:math_neg_pow), :pow_negate     ],
         [ p(:math_mod),     :apply          ],
         [ p(:math_mul),     :apply          ],
+        [ p(:math_neg_mul), :pow_mul        ],
         [ p(:math_add),     :apply          ],
         [ p(:percentage),   :percentage     ],
         [ p(:negation),     :negate         ],
@@ -69,7 +70,7 @@ module Dentaku
         :comparator, :comp_gt, :comp_lt, :fopen, :open, :close, :comma,
         :non_close_plus, :non_group, :non_group_star, :arguments,
         :logical, :combinator, :if, :round, :roundup, :rounddown, :not,
-        :anchored_minus, :math_neg_pow
+        :anchored_minus, :math_neg_pow, :math_neg_mul
       ].each_with_object({}) do |name, matchers|
         matchers[name] = TokenMatcher.send(name)
       end
@@ -80,6 +81,7 @@ module Dentaku
         group:        pattern(:open,     :non_group_star, :close),
         math_add:     pattern(:numeric,  :addsub,         :numeric),
         math_mul:     pattern(:numeric,  :muldiv,         :numeric),
+        math_neg_mul: pattern(:numeric,  :muldiv,         :subtract, :numeric),
         math_pow:     pattern(:numeric,  :pow,            :numeric),
         math_neg_pow: pattern(:numeric,  :pow,            :subtract, :numeric),
         math_mod:     pattern(:numeric,  :mod,            :numeric),
