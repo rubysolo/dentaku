@@ -46,6 +46,7 @@ describe Dentaku::Evaluator do
       expect(evaluator.evaluate(token_stream(1, :subtract, :subtract, 1))).to eq(2)
       expect(evaluator.evaluate(token_stream(1, :subtract, :subtract, :subtract, 1))).to eq(0)
       expect(evaluator.evaluate(token_stream(:subtract, 1, :add, 1))).to eq(0)
+      expect(evaluator.evaluate(token_stream(3, :add, 0, :multiply, :subtract, 3))).to eq(3)
     end
 
     it 'evaluates a number multiplied by an exponent' do
