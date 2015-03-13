@@ -35,6 +35,35 @@ module Dentaku
       @rules.each { |r| yield r }
     end
 
+    def self.refresh
+      @rules ||= core_rules
+      @p_values ||= {}
+      @p_categories ||= {}
+
+      @rules.each do |pattern, _|
+        @p_values[pattern] = pattern.map{ |matcher| matcher.values }.reduce{ |a, e| a.merge(e) }.keys
+        @p_categories[pattern] = pattern.map{ |matcher| matcher.categories }.reduce{ |a, e| a.merge(e) }.keys
+      end
+    end
+
+    def self.filter(tokens)
+      @cache ||= {}
+      categories = tokens.map { |token| token.category }.uniq
+      values = tokens.map { |token| token.value.is_a?(Numeric) ? 0 : token.value }
+      values.select! { |token| ![:fopen, :close].include?(token) }
+      select(categories, values)
+    end
+
+    def self.select(categories, values)
+      return @cache[categories + values] if @cache.has_key?(categories + values)
+      @cache[categories + values] = @rules.select do |pattern, _|
+        categories_intersection = @p_categories[pattern] & categories
+        values_intersection = @p_values[pattern] & values
+        categories_intersection.length > 0 && (values_intersection.length > 0 || @p_values[pattern].empty?)
+      end
+    end
+
+
     def self.add_function(f)
       ext = ExternalFunction.new(f[:name], f[:type], f[:signature], f[:body])
 
@@ -51,6 +80,8 @@ module Dentaku
         ],
         ext.name
       ]
+
+      refresh
       @funcs[ext.name] = ext
     end
 

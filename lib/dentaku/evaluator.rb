@@ -24,7 +24,8 @@ module Dentaku
 
     def match_rule_pattern(tokens)
       matched = false
-      Rules.each do |pattern, evaluator|
+
+      Rules.filter(tokens).each do |pattern, evaluator|
         pos, match = find_rule_match(pattern, tokens)
 
         if pos

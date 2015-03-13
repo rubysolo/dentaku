@@ -11,6 +11,7 @@ module Dentaku
 
     def initialize
       clear
+      Rules.refresh
     end
 
     def add_function(fn)

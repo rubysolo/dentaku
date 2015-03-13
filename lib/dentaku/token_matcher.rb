@@ -2,7 +2,7 @@ require 'dentaku/token'
 
 module Dentaku
   class TokenMatcher
-    attr_reader :children
+    attr_reader :children, :categories, :values
 
     def initialize(categories=nil, values=nil, children=[])
       # store categories and values as hash to optimize key lookup, h/t @jan-mangs
