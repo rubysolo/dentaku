@@ -6,7 +6,7 @@ describe Dentaku do
   end
 
   it 'binds values to variables' do
-    expect(Dentaku('oranges > 7', {:oranges => 10})).to be_truthy
+    expect(Dentaku('oranges > 7', oranges: 10)).to be_truthy
   end
 
   it 'evaulates a nested function' do
