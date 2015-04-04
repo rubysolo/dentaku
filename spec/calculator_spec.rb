@@ -82,6 +82,11 @@ describe Dentaku::Calculator do
         calculator.solve!(health: "happiness", happiness: "health")
       end.to raise_error (TSort::Cyclic)
     end
+
+    it 'is case-insensitive' do
+      result = with_memory.solve!(total_fruit: "Apples + pears", pears: 10)
+      expect(result[:total_fruit]).to eq 13
+    end
   end
 
   it 'evaluates a statement with no variables' do

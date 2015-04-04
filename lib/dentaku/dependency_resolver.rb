@@ -18,7 +18,7 @@ module Dentaku
     end
 
     def tsort_each_child(node, &block)
-      @vars_to_deps[node.to_s].each(&block)
+      @vars_to_deps.fetch(node.to_s, []).each(&block)
     end
   end
 end
