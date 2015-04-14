@@ -1,6 +1,8 @@
 Dentaku
 =======
 
+[![Join the chat at https://gitter.im/rubysolo/dentaku](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rubysolo/dentaku?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Gem Version](https://badge.fury.io/rb/dentaku.png)](http://badge.fury.io/rb/dentaku)
 [![Build Status](https://travis-ci.org/rubysolo/dentaku.png?branch=master)](https://travis-ci.org/rubysolo/dentaku)
 [![Code Climate](https://codeclimate.com/github/rubysolo/dentaku.png)](https://codeclimate.com/github/rubysolo/dentaku)
