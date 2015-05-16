@@ -2,7 +2,8 @@ require 'spec_helper'
 require 'dentaku/evaluator'
 
 describe Dentaku::Evaluator do
-  let(:evaluator) { Dentaku::Evaluator.new }
+  let(:rule_set)  { Dentaku::RuleSet.new }
+  let(:evaluator) { Dentaku::Evaluator.new(rule_set) }
 
   describe 'rule scanning' do
     it 'finds a matching rule' do
@@ -81,7 +82,7 @@ describe Dentaku::Evaluator do
 
     describe 'find_rule_match' do
       it 'matches a function call' do
-        if_pattern, _ = *Dentaku::Rules.core_rules.first
+        if_pattern, _ = *rule_set.rules.first
         position, tokens = evaluator.find_rule_match(if_pattern, token_stream(:if, :fopen, true, :comma, 1, :comma, 2, :close))
         expect(position).to eq 0
         expect(tokens.length).to eq 8

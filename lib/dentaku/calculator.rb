@@ -1,26 +1,26 @@
 require 'dentaku/evaluator'
 require 'dentaku/exceptions'
 require 'dentaku/expression'
-require 'dentaku/rules'
+require 'dentaku/rule_set'
 require 'dentaku/token'
 require 'dentaku/dependency_resolver'
 
 module Dentaku
   class Calculator
-    attr_reader :result
+    attr_reader :result, :rule_set
 
     def initialize
       clear
-      Rules.refresh
+      @rule_set = RuleSet.new
     end
 
     def add_function(fn)
-      Rules.add_function(fn)
+      rule_set.add_function(fn)
       self
     end
 
     def add_functions(fns)
-      fns.each { |fn| Rules.add_function(fn) }
+      fns.each { |fn| add_function(fn) }
       self
     end
 
@@ -34,7 +34,7 @@ module Dentaku
       store(data) do
         expr = Expression.new(expression, @memory)
         raise UnboundVariableError.new(expr.identifiers) if expr.unbound?
-        @evaluator ||= Evaluator.new
+        @evaluator ||= Evaluator.new(rule_set)
         @result = @evaluator.evaluate(expr.tokens)
       end
     end

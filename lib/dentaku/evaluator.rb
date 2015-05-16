@@ -1,8 +1,14 @@
-require 'dentaku/rules'
+require 'dentaku/rule_set'
 require 'dentaku/binary_operation'
 
 module Dentaku
   class Evaluator
+    attr_reader :rule_set
+
+    def initialize(rule_set)
+      @rule_set = rule_set
+    end
+
     def evaluate(tokens)
       evaluate_token_stream(tokens).value
     end
@@ -25,7 +31,7 @@ module Dentaku
     def match_rule_pattern(tokens)
       matched = false
 
-      Rules.filter(tokens).each do |pattern, evaluator|
+      rule_set.filter(tokens).each do |pattern, evaluator|
         pos, match = find_rule_match(pattern, tokens)
 
         if pos
@@ -72,7 +78,7 @@ module Dentaku
     end
 
     def user_defined_function(evaluator, tokens)
-      function = Rules.func(evaluator)
+      function = rule_set.function(evaluator)
       raise "unknown function '#{ evaluator }'" unless function
 
       arguments = extract_arguments_from_function_call(tokens).map { |t| t.value }
