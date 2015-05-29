@@ -20,6 +20,13 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         described_class.new(expressions, {}).solve!()
       }.to raise_error(Dentaku::UnboundVariableError)
     end
+
+    it "lets you know if the result is a div/0 error" do
+      expressions = {more_apples: "1/0"}
+      expect {
+        described_class.new(expressions, {}).solve!()
+      }.to raise_error(ZeroDivisionError)
+    end
   end
 
   describe "#solve" do
@@ -29,8 +36,14 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         .to eq(more_apples: :undefined)
     end
 
-    it "allows passing in a custom value to an error handler" do
+    it "allows passing in a custom value to an error handler when a variable is unbound" do
       expressions = {more_apples: "apples + 1"}
+      expect(described_class.new(expressions, {}).solve() { :foo })
+        .to eq(more_apples: :foo)
+    end
+
+    it "allows passing in a custom value to an error handler when there is a div/0 error" do
+      expressions = {more_apples: "1/0"}
       expect(described_class.new(expressions, {}).solve() { :foo })
         .to eq(more_apples: :foo)
     end
