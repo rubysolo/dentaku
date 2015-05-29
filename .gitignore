@@ -8,3 +8,4 @@ vendor/*
 
 /.ruby-gemset
 /.ruby-version
+/.rspec
