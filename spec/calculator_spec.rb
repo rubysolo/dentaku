@@ -87,6 +87,12 @@ describe Dentaku::Calculator do
       result = with_memory.solve!(total_fruit: "Apples + pears", pears: 10)
       expect(result[:total_fruit]).to eq 13
     end
+
+    it "lets you know if a variable is unbound" do
+      expect {
+        calculator.solve!(more_apples: "apples + 1")
+      }.to raise_error(Dentaku::UnboundVariableError)
+    end
   end
 
   it 'evaluates a statement with no variables' do

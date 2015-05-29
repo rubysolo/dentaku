@@ -52,6 +52,8 @@ module Dentaku
         expression_dependencies)
 
       results = variables_in_resolve_order.each_with_object({}) do |var_name, r|
+        expr = Expression.new(expressions[var_name], @memory.merge(expressions))
+        raise UnboundVariableError.new(expr.identifiers) if expr.unbound?
         r[var_name] = evaluate!(expressions[var_name], r)
       end
 
