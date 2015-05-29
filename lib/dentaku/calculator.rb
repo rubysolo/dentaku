@@ -1,3 +1,4 @@
+require 'dentaku/bulk_expression_solver'
 require 'dentaku/evaluator'
 require 'dentaku/exceptions'
 require 'dentaku/expression'
@@ -40,24 +41,11 @@ module Dentaku
     end
 
     def solve!(expression_hash)
-      expressions = Hash[expression_hash.map { |k,v| [k.to_s, v] }]
+      BulkExpressionSolver.new(expression_hash, @memory).solve!
+    end
 
-      # expression_hash: { variable_name: "string expression" }
-      # TSort thru the expressions' dependencies, then evaluate all
-      expression_dependencies = Hash[expressions.map do |var, expr|
-        [var, dependencies(expr)]
-      end]
-
-      variables_in_resolve_order = DependencyResolver::find_resolve_order(
-        expression_dependencies)
-
-      results = variables_in_resolve_order.each_with_object({}) do |var_name, r|
-        r[var_name] = evaluate!(expressions[var_name], r)
-      end
-
-      expression_hash.each_with_object({}) do |(k, _), r|
-        r[k] = results[k.to_s]
-      end
+    def solve(expression_hash, &block)
+      BulkExpressionSolver.new(expression_hash, @memory).solve(&block)
     end
 
     def dependencies(expression)
