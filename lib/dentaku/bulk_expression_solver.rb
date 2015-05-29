@@ -5,14 +5,18 @@ require 'dentaku/expression'
 
 module Dentaku
   class BulkExpressionSolver
-    def initialize(expression_hash, memory, calculator)
+    def initialize(expression_hash, memory)
       self.expression_hash = expression_hash
       self.memory = memory
-      self.calculator = calculator
     end
 
     def solve!
-      results = load_results
+      solve(&raise_exception_handler)
+    end
+
+    def solve(&block)
+      error_handler = block || return_undefined_handler
+      results = load_results(&error_handler)
 
       expression_hash.each_with_object({}) do |(k, _), r|
         r[k] = results[k.to_s]
@@ -21,11 +25,23 @@ module Dentaku
 
     private
 
-    attr_accessor :expression_hash, :memory, :calculator
+    attr_accessor :expression_hash, :memory
 
-    def load_results
+    def return_undefined_handler
+      ->(*) { :undefined }
+    end
+
+    def raise_exception_handler
+      ->(ex) { raise ex }
+    end
+
+    def load_results(&block)
       variables_in_resolve_order.each_with_object({}) do |var_name, r|
-        r[var_name] = evaluate!(expressions[var_name], r)
+        begin
+          r[var_name] = evaluate!(expressions[var_name], r)
+        rescue Dentaku::UnboundVariableError => ex
+          r[var_name] = block.call(ex)
+        end
       end
     end
 
@@ -50,6 +66,10 @@ module Dentaku
       expr = Expression.new(expression, memory.merge(expressions))
       raise UnboundVariableError.new(expr.identifiers) if expr.unbound?
       calculator.evaluate!(expression, results)
+    end
+
+    def calculator
+      @calculator ||= Calculator.new.store(memory)
     end
   end
 end

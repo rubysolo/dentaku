@@ -95,6 +95,19 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'solve' do
+    it "returns :undefined when variables are unbound" do
+      expressions = {more_apples: "apples + 1"}
+      expect(calculator.solve(expressions)).to eq(more_apples: :undefined)
+    end
+
+    it "allows passing in a custom value to an error handler" do
+      expressions = {more_apples: "apples + 1"}
+      expect(calculator.solve(expressions) { :foo })
+        .to eq(more_apples: :foo)
+    end
+  end
+
   it 'evaluates a statement with no variables' do
     expect(calculator.evaluate('5+3')).to eq(8)
     expect(calculator.evaluate('(1+1+1)/3*100')).to eq(100)

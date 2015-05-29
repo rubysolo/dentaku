@@ -41,7 +41,11 @@ module Dentaku
     end
 
     def solve!(expression_hash)
-      BulkExpressionSolver.new(expression_hash, @memory, self).solve!
+      BulkExpressionSolver.new(expression_hash, @memory).solve!
+    end
+
+    def solve(expression_hash, &block)
+      BulkExpressionSolver.new(expression_hash, @memory).solve(&block)
     end
 
     def dependencies(expression)
