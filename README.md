@@ -247,11 +247,12 @@ contributors:
 
 * [0xCCD](https://github.com/0xCCD)
 * [AlexeyMK](https://github.com/AlexeyMK)
-* [CraigCottingham](https://github.com/CraigCottingham)
 * [antonversal](https://github.com/antonversal)
 * [arnaudl](https://github.com/arnaudl)
 * [bernardofire](https://github.com/bernardofire)
 * [brixen](https://github.com/brixen)
+* [CraigCottingham](https://github.com/CraigCottingham)
+* [glanotte](https://github.com/glanotte)
 * [jasonhutchens](https://github.com/jasonhutchens)
 * [jmangs](https://github.com/jmangs)
 * [mvbrocato](https://github.com/mvbrocato)
