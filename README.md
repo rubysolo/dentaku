@@ -168,6 +168,28 @@ calc.solve!(
 #=> raises TSort::Cyclic
 ```
 
+INLINE COMMENTS
+---------------------------------
+
+If your expressions grow long or complex, you may add inline comments for future reference. This is particularly useful if you save your expressions in a model.
+
+```ruby
+calculator.evaluate('kiwi + 5 /* This is a comment */', kiwi: 2)
+#=> 7
+```
+
+Comments can be single or multi-line. The following are also valid.
+
+```
+/*
+ * This is a multi-line comment
+ */
+
+/*
+ This is another type of multi-line comment
+ */
+```
+
 EXTERNAL FUNCTIONS
 ------------------
 
