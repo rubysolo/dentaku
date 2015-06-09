@@ -10,7 +10,7 @@ module Dentaku
     def tokenize(string)
       @nesting = 0
       @tokens  = []
-      input    = string.to_s.dup
+      input    = strip_comments(string.to_s.dup)
 
       until input.empty?
         raise "parse error at: '#{ input }'" unless TokenScanner.scanners.any? do |scanner|
@@ -41,6 +41,10 @@ module Dentaku
       else
         [false, string]
       end
+    end
+
+    def strip_comments(input)
+      input.gsub(/\/\*[^*]*\*+(?:[^*\/][^*]*\*+)*\//, '')
     end
   end
 end
