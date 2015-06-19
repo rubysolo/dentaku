@@ -26,7 +26,7 @@ describe Dentaku::RuleSet do
                              :apply,
                              :apply,
                              :apply,
-                            ]
+                            ].concat(Dentaku::Math.exported_methods)
   end
 
   it 'adds custom function patterns' do

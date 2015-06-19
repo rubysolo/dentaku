@@ -109,6 +109,8 @@ Logic: `< > <= >= <> != = AND OR`
 
 Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
 
+Math: all functions from Ruby's Math module, including `SIN, COS, TAN, ...`
+
 RESOLVING DEPENDENCIES
 ----------------------
 

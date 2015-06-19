@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'dentaku/token_matcher'
 require 'dentaku/evaluator'
 
 describe Dentaku::Evaluator do
