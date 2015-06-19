@@ -1,3 +1,4 @@
+require 'dentaku/token_matchers'
 require 'dentaku/external_function'
 
 module Dentaku
@@ -19,7 +20,7 @@ module Dentaku
       fn = ExternalFunction.new(function[:name], function[:type], function[:signature], function[:body])
 
       custom_rules.push [
-        function_token_matchers(fn.name, *fn.tokens),
+        TokenMatchers.function_token_matchers(fn.name, *fn.tokens),
         fn.name
       ]
 
@@ -93,45 +94,35 @@ module Dentaku
         [ pattern(:num_comp),     :apply          ],
         [ pattern(:str_comp),     :apply          ],
         [ pattern(:combine),      :apply          ]
-      ]
+      ].concat(Math.rules)
     end
 
     def pattern(name)
       @patterns ||= {
-        group:        token_matchers(:open,     :non_group_star, :close),
-        math_add:     token_matchers(:numeric,  :addsub,         :numeric),
-        math_mul:     token_matchers(:numeric,  :muldiv,         :numeric),
-        math_neg_mul: token_matchers(:numeric,  :muldiv,         :subtract, :numeric),
-        math_pow:     token_matchers(:numeric,  :pow,            :numeric),
-        math_neg_pow: token_matchers(:numeric,  :pow,            :subtract, :numeric),
-        math_mod:     token_matchers(:numeric,  :mod,            :numeric),
-        negation:     token_matchers(:subtract, :numeric),
-        start_neg:    token_matchers(:anchored_minus, :numeric),
-        percentage:   token_matchers(:numeric,  :mod),
-        range_asc:    token_matchers(:numeric,  :comp_lt,        :numeric,  :comp_lt, :numeric),
-        range_desc:   token_matchers(:numeric,  :comp_gt,        :numeric,  :comp_gt, :numeric),
-        num_comp:     token_matchers(:numeric,  :comparator,     :numeric),
-        str_comp:     token_matchers(:string,   :comparator,     :string),
-        combine:      token_matchers(:logical,  :combinator,     :logical),
+        group:        TokenMatchers.token_matchers(:open,     :non_group_star, :close),
+        math_add:     TokenMatchers.token_matchers(:numeric,  :addsub,         :numeric),
+        math_mul:     TokenMatchers.token_matchers(:numeric,  :muldiv,         :numeric),
+        math_neg_mul: TokenMatchers.token_matchers(:numeric,  :muldiv,         :subtract, :numeric),
+        math_pow:     TokenMatchers.token_matchers(:numeric,  :pow,            :numeric),
+        math_neg_pow: TokenMatchers.token_matchers(:numeric,  :pow,            :subtract, :numeric),
+        math_mod:     TokenMatchers.token_matchers(:numeric,  :mod,            :numeric),
+        negation:     TokenMatchers.token_matchers(:subtract, :numeric),
+        start_neg:    TokenMatchers.token_matchers(:anchored_minus, :numeric),
+        percentage:   TokenMatchers.token_matchers(:numeric,  :mod),
+        range_asc:    TokenMatchers.token_matchers(:numeric,  :comp_lt,        :numeric,  :comp_lt, :numeric),
+        range_desc:   TokenMatchers.token_matchers(:numeric,  :comp_gt,        :numeric,  :comp_gt, :numeric),
+        num_comp:     TokenMatchers.token_matchers(:numeric,  :comparator,     :numeric),
+        str_comp:     TokenMatchers.token_matchers(:string,   :comparator,     :string),
+        combine:      TokenMatchers.token_matchers(:logical,  :combinator,     :logical),
 
-        if:           function_token_matchers(:if,        :non_group,      :comma, :non_group, :comma, :non_group),
-        round:        function_token_matchers(:round,     :arguments),
-        roundup:      function_token_matchers(:roundup,   :arguments),
-        rounddown:    function_token_matchers(:rounddown, :arguments),
-        not:          function_token_matchers(:not,       :arguments)
-      }
+        if:           TokenMatchers.function_token_matchers(:if,        :non_group,      :comma, :non_group, :comma, :non_group),
+        round:        TokenMatchers.function_token_matchers(:round,     :arguments),
+        roundup:      TokenMatchers.function_token_matchers(:roundup,   :arguments),
+        rounddown:    TokenMatchers.function_token_matchers(:rounddown, :arguments),
+        not:          TokenMatchers.function_token_matchers(:not,       :arguments)
+      }.merge(Math.patterns)
 
       @patterns[name]
-    end
-
-    def token_matchers(*symbols)
-      symbols.map { |s| matcher(s) }
-    end
-
-    def function_token_matchers(function_name, *symbols)
-      token_matchers(:fopen, *symbols, :close).unshift(
-        TokenMatcher.send(function_name)
-      )
     end
 
     def matcher(symbol)
