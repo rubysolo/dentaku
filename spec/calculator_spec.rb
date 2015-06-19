@@ -198,4 +198,16 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('NOT(some_boolean) AND -1 > 3', some_boolean: true)).to be_falsey
     end
   end
+
+  describe 'math functions' do
+    Math.methods(false).each do |method|
+      it method do
+        if Math.method(method).arity == 2
+          expect(calculator.evaluate("#{method}(1,2)")).to eq Math.send(method, 1, 2)
+        else
+          expect(calculator.evaluate("#{method}(1)")).to eq Math.send(method, 1)
+        end
+      end
+    end
+  end
 end

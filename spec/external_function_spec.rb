@@ -13,7 +13,7 @@ describe Dentaku::Calculator do
 
         fns = [
           {
-            name:      :exp,
+            name:      :cexp,
             type:      :numeric,
             signature: [ :numeric, :numeric ],
             body:      ->(mantissa, exponent) { mantissa ** exponent }
@@ -41,10 +41,10 @@ describe Dentaku::Calculator do
         expect(now).not_to be_empty
       end
 
-      it 'includes EXP' do
-        expect(with_external_funcs.evaluate('EXP(2,3)')).to eq(8)
-        expect(with_external_funcs.evaluate('EXP(3,2)')).to eq(9)
-        expect(with_external_funcs.evaluate('EXP(mantissa,exponent)', mantissa: 2, exponent: 4)).to eq(16)
+      it 'includes CEXP' do
+        expect(with_external_funcs.evaluate('CEXP(2,3)')).to eq(8)
+        expect(with_external_funcs.evaluate('CEXP(3,2)')).to eq(9)
+        expect(with_external_funcs.evaluate('CEXP(mantissa,exponent)', mantissa: 2, exponent: 4)).to eq(16)
       end
 
       it 'includes MAX' do

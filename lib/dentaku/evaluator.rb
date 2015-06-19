@@ -1,8 +1,10 @@
 require 'dentaku/rule_set'
 require 'dentaku/binary_operation'
+require 'dentaku/math'
 
 module Dentaku
   class Evaluator
+    include Dentaku::Math
     attr_reader :rule_set
 
     def initialize(rule_set)

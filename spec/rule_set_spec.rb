@@ -6,27 +6,28 @@ describe Dentaku::RuleSet do
   it 'yields core rules' do
     functions = []
     subject.each { |pattern, function| functions << function }
-    expect(functions).to eq [:if,
-                             :round,
-                             :round_int,
-                             :round_int,
-                             :not,
-                             :evaluate_group,
-                             :negate,
-                             :apply,
-                             :pow_negate,
-                             :apply,
-                             :apply,
-                             :mul_negate,
-                             :apply,
-                             :percentage,
-                             :negate,
-                             :expand_range,
-                             :expand_range,
-                             :apply,
-                             :apply,
-                             :apply,
-                            ]
+    expect(functions).to eq [
+      :if,
+      :round,
+      :round_int,
+      :round_int,
+      :not,
+      :evaluate_group,
+      :negate,
+      :apply,
+      :pow_negate,
+      :apply,
+      :apply,
+      :mul_negate,
+      :apply,
+      :percentage,
+      :negate,
+      :expand_range,
+      :expand_range,
+      :apply,
+      :apply,
+      :apply,
+    ].concat(Dentaku::Math.exported_methods.map { :delegate_to_math })
   end
 
   it 'adds custom function patterns' do

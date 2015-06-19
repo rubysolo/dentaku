@@ -16,6 +16,10 @@ module Dentaku
       raw_value.to_s.length
     end
 
+    def grouping?
+      is?(:grouping)
+    end
+
     def is?(c)
       category == c
     end
