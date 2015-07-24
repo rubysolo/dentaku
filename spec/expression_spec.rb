@@ -17,9 +17,19 @@ describe Dentaku::Expression do
 
     describe 'with values set for all variables' do
       it 'is fully bound' do
-        dynamic = described_class.new('a > 5', {a: 7})
+        dynamic = described_class.new('a > 5', a: 7)
         expect(dynamic).not_to be_unbound
       end
+    end
+  end
+
+  describe 'binding an expression' do
+    it 'returns a new, bound expression' do
+      dynamic = described_class.new('a > 5')
+      static  = dynamic.bind(a: 5)
+
+      expect(dynamic).to be_unbound
+      expect(static).not_to be_unbound
     end
   end
 end

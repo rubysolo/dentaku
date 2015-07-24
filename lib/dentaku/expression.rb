@@ -4,25 +4,29 @@ module Dentaku
   class Expression
     attr_reader :tokens, :variables
 
-    def initialize(string, variables={})
-      @raw = string
-      @tokenizer ||= Tokenizer.new
-      @tokens = @tokenizer.tokenize(@raw)
-      @variables = Hash[variables.map { |k,v| [k.to_s, v] }]
-      replace_identifiers_with_values
+    def initialize(expr, variables={})
+      @tokens    = Tokenizer.new.tokenize(expr)
+      @variables = string_keys(variables)
+      bind!
     end
 
     def identifiers
-      @tokens.select { |t| t.category == :identifier }.map { |t| t.value }
+      @tokens.select { |t| t.is? :identifier }.map(&:value)
     end
 
     def unbound?
       identifiers.any?
     end
 
-    private
+    def bind(vars={})
+      self.class.allocate.tap do |bound|
+        bound.instance_variable_set :@tokens, tokens.dup
+        bound.instance_variable_set :@variables, variables.merge(string_keys(vars))
+        bound.bind!
+      end
+    end
 
-    def replace_identifiers_with_values
+    def bind!
       @tokens.map! do |token|
         if token.is?(:identifier)
           replace_identifier_with_value(token)
@@ -31,6 +35,13 @@ module Dentaku
         end
       end
     end
+
+    private
+
+    def string_keys(hash)
+      Hash[hash.map { |k,v| [k.to_s, v] }]
+    end
+
 
     def replace_identifier_with_value(token)
       key = token.value.to_s
