@@ -28,6 +28,12 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         described_class.new(expressions, {}).solve!
       }.to raise_error(ZeroDivisionError)
     end
+
+    it "does not require keys to be parseable" do
+      expressions = { "the value of x, incremented" => "x + 1" }
+      solver = described_class.new(expressions, "x" => 3)
+      expect(solver.solve!).to eq({ "the value of x, incremented" => 4 })
+    end
   end
 
   describe "#solve" do

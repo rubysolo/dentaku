@@ -39,7 +39,7 @@ module Dentaku
     def load_results(&block)
       variables_in_resolve_order.each_with_object({}) do |var_name, r|
         begin
-          r[var_name] = calculator.evaluate(var_name) || evaluate!(expressions[var_name], r)
+          r[var_name] = calculator.memory[var_name] || evaluate!(expressions[var_name], r)
         rescue Dentaku::UnboundVariableError, ZeroDivisionError => ex
           r[var_name] = block.call(ex)
         end
