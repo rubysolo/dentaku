@@ -15,7 +15,7 @@ module Dentaku
         registry.fetch(function_name(name)) { fail "Undefined function #{ name } "}
       end
 
-      def self.register(name, return_type, arguments, implementation)
+      def self.register(name, implementation)
         function = Class.new(self) do
           def self.implementation=(impl)
             @implementation = impl

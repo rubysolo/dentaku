@@ -13,13 +13,13 @@ module Dentaku
       @tokenizer = Tokenizer.new
     end
 
-    def add_function(fn)
-      Dentaku::AST::Function.register(fn[:name], fn[:type], fn[:signature], fn[:body])
+    def add_function(name, body)
+      Dentaku::AST::Function.register(name, body)
       self
     end
 
     def add_functions(fns)
-      fns.each { |fn| add_function(fn) }
+      fns.each { |(name, body)| add_function(name, body) }
       self
     end
 

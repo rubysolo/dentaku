@@ -2,7 +2,6 @@ Dentaku
 =======
 
 [![Join the chat at https://gitter.im/rubysolo/dentaku](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rubysolo/dentaku?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Gem Version](https://badge.fury.io/rb/dentaku.png)](http://badge.fury.io/rb/dentaku)
 [![Build Status](https://travis-ci.org/rubysolo/dentaku.png?branch=master)](https://travis-ci.org/rubysolo/dentaku)
 [![Code Climate](https://codeclimate.com/github/rubysolo/dentaku.png)](https://codeclimate.com/github/rubysolo/dentaku)
@@ -68,10 +67,9 @@ calculator.evaluate!('10 * x')
 Dentaku::UnboundVariableError: Dentaku::UnboundVariableError
 ```
 
-A number of functions are also supported.  Okay, the number is currently five,
-but more will be added soon.  The current functions are
-`if`, `not`, `round`, `rounddown`, and `roundup`, and they work like their
-counterparts in Excel:
+Dentaku has built-in functions (including `if`, `not`, `min`, `max`, and
+`round`) and the ability to define custom functions (see below). Functions
+generally work like their counterparts in Excel:
 
 ```ruby
 calculator.evaluate('if (pears < 10, 10, 20)', pears: 5)
@@ -80,7 +78,7 @@ calculator.evaluate('if (pears < 10, 10, 20)', pears: 15)
 #=> 20
 ```
 
-`round`, `rounddown`, and `roundup` can be called with or without the number of decimal places:
+`round` can be called with or without the number of decimal places:
 
 ```ruby
 calculator.evaluate('round(8.2)')
@@ -89,7 +87,8 @@ calculator.evaluate('round(8.2759, 2)')
 #=> 8.28
 ```
 
-`round` and `rounddown` round down, while `roundup` rounds up.
+`round` follows rounding rules, while `roundup` and `rounddown` are `ceil` and
+`floor`, respectively.
 
 If you're too lazy to be building calculator objects, there's a shortcut just
 for you:
@@ -107,7 +106,7 @@ Math: `+ - * / %`
 
 Logic: `< > <= >= <> != = AND OR`
 
-Functions: `IF NOT ROUND ROUNDDOWN ROUNDUP`
+Functions: `IF NOT MIN MAX ROUND ROUNDDOWN ROUNDUP`
 
 Math: all functions from Ruby's Math module, including `SIN, COS, TAN, ...`
 
@@ -129,7 +128,7 @@ need_to_compute = {
 In the example, `annual_income` needs to be computed (and stored) before
 `income_taxes`.
 
-Dentaku provides two methods to help resolve formulas in order`:
+Dentaku provides two methods to help resolve formulas in order:
 
 #### Calculator.dependencies
 Pass a (string) expression to Dependencies and get back a list of variables (as
@@ -148,7 +147,7 @@ calc.dependencies("annual_income / 5")
 #### Calculator.solve!
 Have Dentaku figure out the order in which your formulas need to be evaluated.
 
-Pass in a hash of {eventual_variable_name: "expression"} to `solve!` and
+Pass in a hash of `{eventual_variable_name: "expression"}` to `solve!` and
 have Dentaku figure out dependencies (using `TSort`) for you.
 
 Raises `TSort::Cyclic` when a valid expression order cannot be found.
@@ -157,7 +156,7 @@ Raises `TSort::Cyclic` when a valid expression order cannot be found.
 calc = Dentaku::Calculator.new
 calc.store(monthly_income: 50)
 need_to_compute = {
-  income_taxes: "annual_income / 5",
+  income_taxes:  "annual_income / 5",
   annual_income: "monthly_income * 12"
 }
 calc.solve!(need_to_compute)
@@ -173,7 +172,8 @@ calc.solve!(
 INLINE COMMENTS
 ---------------------------------
 
-If your expressions grow long or complex, you may add inline comments for future reference. This is particularly useful if you save your expressions in a model.
+If your expressions grow long or complex, you may add inline comments for future
+reference. This is particularly useful if you save your expressions in a model.
 
 ```ruby
 calculator.evaluate('kiwi + 5 /* This is a comment */', kiwi: 2)
@@ -200,69 +200,39 @@ need.  Please implement your favorites and send a pull request!  Okay, so maybe
 that's not feasible because:
 
 1. You can't be bothered to share
-2. You can't wait for me to respond to a pull request, you need it `NOW()`
-3. The formula is the secret sauce for your startup
+1. You can't wait for me to respond to a pull request, you need it `NOW()`
+1. The formula is the secret sauce for your startup
 
 Whatever your reasons, Dentaku supports adding functions at runtime.  To add a
-function, you'll need to specify:
+function, you'll need to specify a name and a lambda that accepts all function
+arguments and returns the result value.
 
-* Name
-* Return type
-* Signature
-* Body
-
-Naming can be the hardest part, so you're on your own for that.
-
-`:type` specifies the type of value that will be returned, most likely
-`:numeric`, `:string`, or `:logical`.
-
-`:signature` specifies the types and order of the parameters for your function.
-
-`:body` is a lambda that implements your function.  It is passed the arguments
-and should return the calculated value.
-
-As an example, the exponentiation function takes two parameters, the mantissa
-and the exponent, so the token list could be defined as: `[:numeric,
-:numeric]`.  Other functions might be variadic -- consider `max`, a function
-that takes any number of numeric inputs and returns the largest one.  Its token
-list could be defined as: `[:arguments]` (one or more numeric, string, or logical
-values, separated by commas).  See the
-[rules definitions](https://github.com/rubysolo/dentaku/blob/master/lib/dentaku/token_matcher.rb#L87)
-for the names of token patterns you can use.
-
-Functions can be added individually using Calculator#add_function, or en masse using
-Calculator#add_functions.
-
-Here's an example of adding the `exp` function:
+Here's an example of adding a function named `POW` that implements
+exponentiation.
 
 ```ruby
 > c = Dentaku::Calculator.new
-> c.add_function(
-    name: :exp,
-    type: :numeric,
-    signature: [:numeric, :numeric],
-    body: ->(mantissa, exponent) { mantissa ** exponent }
-  )
-> c.evaluate('EXP(3,2)')
+> c.add_function(:pow, ->(mantissa, exponent) { mantissa ** exponent })
+> c.evaluate('POW(3,2)')
 #=> 9
-> c.evaluate('EXP(2,3)')
+> c.evaluate('POW(2,3)')
 #=> 8
 ```
 
-Here's an example of adding the `max` function:
+Here's an example of adding a variadic function:
 
 ```ruby
 > c = Dentaku::Calculator.new
-> c.add_function(
-    name: :max,
-    type: :numeric,
-    signature: [:arguments],
-    body: ->(*args) { args.max }
-  )
+> c.add_function(:max, ->(*args) { args.max })
 > c.evaluate 'MAX(8,6,7,5,3,0,9)'
 #=> 9
 ```
 
+(However both of these are already built-in -- the `^` operator and the `MAX`
+function)
+
+Functions can be added individually using Calculator#add_function, or en masse
+using Calculator#add_functions.
 
 THANKS
 ------
@@ -309,4 +279,3 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-

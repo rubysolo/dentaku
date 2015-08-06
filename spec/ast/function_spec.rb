@@ -11,7 +11,7 @@ describe Dentaku::AST::Function do
   end
 
   it 'registers a custom function' do
-    described_class.register("flarble", :string, [], -> { "flarble" })
+    described_class.register("flarble", -> { "flarble" })
     expect { described_class.get("flarble") }.not_to raise_error
     function = described_class.get("flarble").new
     expect(function.value).to eq "flarble"
