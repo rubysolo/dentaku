@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'dentaku/calculator'
 
 describe Dentaku::Calculator do
@@ -19,7 +20,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('(2 + 3) - 1')).to eq(4)
     expect(calculator.evaluate('(-2 + 3) - 1')).to eq(0)
     expect(calculator.evaluate('(-2 - 3) - 1')).to eq(-6)
-    expect(calculator.evaluate('1 + -2 ^ 2')).to eq(-3)
+    expect(calculator.evaluate('1 + -(2 ^ 2)')).to eq(-3)
     expect(calculator.evaluate('3 + -num', num: 2)).to eq(1)
     expect(calculator.evaluate('-num + 3', num: 2)).to eq(1)
     expect(calculator.evaluate('10 ^ 2')).to eq(100)

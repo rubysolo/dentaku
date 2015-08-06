@@ -12,7 +12,33 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([1, :add, 1])
   end
-  
+
+  it 'tokenizes unary minus' do
+    tokens = tokenizer.tokenize('-5')
+    expect(tokens.map(&:category)).to eq([:operator, :numeric])
+    expect(tokens.map(&:value)).to eq([:negate, 5])
+
+    tokens = tokenizer.tokenize('(-5)')
+    expect(tokens.map(&:category)).to eq([:grouping, :operator, :numeric, :grouping])
+    expect(tokens.map(&:value)).to eq([:open, :negate, 5, :close])
+
+    tokens = tokenizer.tokenize('if(-5 > x, -7, -8) - 9')
+    expect(tokens.map(&:category)).to eq([
+      :function, :grouping,                                      # if(
+      :operator, :numeric, :comparator, :identifier, :grouping,  # -5 > x,
+      :operator, :numeric, :grouping,                            # -7,
+      :operator, :numeric, :grouping,                            # -8)
+      :operator, :numeric                                        # - 9
+    ])
+    expect(tokens.map(&:value)).to eq([
+      :if, :fopen,                  # if(
+      :negate, 5, :gt, 'x', :comma, # -5 > x,
+      :negate, 7, :comma,           # -7,
+      :negate, 8, :close,           # -8)
+      :subtract, 9                  # - 9
+    ])
+  end
+
   it 'tokenizes comparison with =' do
     tokens = tokenizer.tokenize('number = 5')
     expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])
@@ -46,7 +72,7 @@ describe Dentaku::Tokenizer do
   it 'tokenizes power operations' do
     tokens = tokenizer.tokenize('0 * 10 ^ -5')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric, :operator, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([0, :multiply, 10, :pow, :subtract, 5])
+    expect(tokens.map(&:value)).to eq([0, :multiply, 10, :pow, :negate, 5])
   end
 
   it 'handles floating point' do
@@ -62,9 +88,9 @@ describe Dentaku::Tokenizer do
   end
 
   it 'accepts arbitrary identifiers' do
-    tokens = tokenizer.tokenize('monkeys > 1500')
+    tokens = tokenizer.tokenize('sea_monkeys > 1500')
     expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])
-    expect(tokens.map(&:value)).to eq(['monkeys', :gt, 1500])
+    expect(tokens.map(&:value)).to eq(['sea_monkeys', :gt, 1500])
   end
 
   it 'recognizes double-quoted strings' do
@@ -88,13 +114,13 @@ describe Dentaku::Tokenizer do
   it 'recognizes unary minus operator' do
     tokens = tokenizer.tokenize('-2 + 3')
     expect(tokens.map(&:category)).to eq([:operator, :numeric, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([:subtract, 2, :add, 3])
+    expect(tokens.map(&:value)).to eq([:negate, 2, :add, 3])
   end
 
   it 'recognizes unary minus operator' do
     tokens = tokenizer.tokenize('2 - -3')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :operator, :numeric])
-    expect(tokens.map(&:value)).to eq([2, :subtract, :subtract, 3])
+    expect(tokens.map(&:value)).to eq([2, :subtract, :negate, 3])
   end
 
   it 'matches "<=" before "<"' do

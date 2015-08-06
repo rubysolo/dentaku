@@ -1,22 +1,20 @@
 require 'dentaku/bulk_expression_solver'
-require 'dentaku/evaluator'
 require 'dentaku/exceptions'
-require 'dentaku/expression'
-require 'dentaku/rule_set'
 require 'dentaku/token'
 require 'dentaku/dependency_resolver'
+require 'dentaku/parser'
 
 module Dentaku
   class Calculator
-    attr_reader :result, :rule_set
+    attr_reader :result, :memory, :tokenizer
 
     def initialize
       clear
-      @rule_set = RuleSet.new
+      @tokenizer = Tokenizer.new
     end
 
     def add_function(fn)
-      rule_set.add_function(fn)
+      Dentaku::AST::Function.register(fn[:name], fn[:type], fn[:signature], fn[:body])
       self
     end
 
@@ -32,35 +30,38 @@ module Dentaku
     end
 
     def evaluate!(expression, data={})
-      store(data) do
-        expr = Expression.new(expression, @memory)
-        raise UnboundVariableError.new(expr.identifiers) if expr.unbound?
-        @evaluator ||= Evaluator.new(rule_set)
-        @result = @evaluator.evaluate(expr.tokens)
+      memory[expression] || store(data) do
+        node = expression
+        node = ast(node) unless node.is_a?(AST::Node)
+        node.value(memory)
       end
     end
 
     def solve!(expression_hash)
-      BulkExpressionSolver.new(expression_hash, @memory).solve!
+      BulkExpressionSolver.new(expression_hash, memory).solve!
     end
 
     def solve(expression_hash, &block)
-      BulkExpressionSolver.new(expression_hash, @memory).solve(&block)
+      BulkExpressionSolver.new(expression_hash, memory).solve(&block)
     end
 
     def dependencies(expression)
-      Expression.new(expression, @memory).identifiers
+      ast(expression).dependencies(memory)
+    end
+
+    def ast(expression)
+      Parser.new(tokenizer.tokenize(expression)).parse
     end
 
     def store(key_or_hash, value=nil)
-      restore = @memory.dup
+      restore = memory.dup
 
       if value.nil?
         key_or_hash.each do |key, val|
-          @memory[key.downcase.to_s] = val
+          memory[key.downcase.to_s] = val
         end
       else
-        @memory[key_or_hash.to_s] = value
+        memory[key_or_hash.to_s] = value
       end
 
       if block_given?
@@ -78,7 +79,7 @@ module Dentaku
     end
 
     def empty?
-      @memory.empty?
+      memory.empty?
     end
   end
 end

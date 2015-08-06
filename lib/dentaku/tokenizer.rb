@@ -24,8 +24,12 @@ module Dentaku
       @tokens
     end
 
+    def last_token
+      @tokens.last
+    end
+
     def scan(string, scanner)
-      if tokens = scanner.scan(string)
+      if tokens = scanner.scan(string, last_token)
         tokens.each do |token|
           raise "unexpected zero-width match (:#{ token.category }) at '#{ string }'" if token.length == 0
 

@@ -1,3 +1,5 @@
+require 'pry'
+
 # automatically create a token stream from bare values
 def token_stream(*args)
   args.map do |value|
@@ -29,4 +31,3 @@ def type_for(value)
     :identifier
   end
 end
-

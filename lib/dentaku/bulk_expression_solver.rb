@@ -1,13 +1,14 @@
 require 'dentaku/calculator'
 require 'dentaku/dependency_resolver'
 require 'dentaku/exceptions'
-require 'dentaku/expression'
+require 'dentaku/parser'
+require 'dentaku/tokenizer'
 
 module Dentaku
   class BulkExpressionSolver
     def initialize(expression_hash, memory)
       self.expression_hash = expression_hash
-      self.memory = memory
+      self.calculator = Calculator.new.store(memory)
     end
 
     def solve!
@@ -25,7 +26,7 @@ module Dentaku
 
     private
 
-    attr_accessor :expression_hash, :memory
+    attr_accessor :expression_hash, :calculator
 
     def return_undefined_handler
       ->(*) { :undefined }
@@ -38,7 +39,7 @@ module Dentaku
     def load_results(&block)
       variables_in_resolve_order.each_with_object({}) do |var_name, r|
         begin
-          r[var_name] = evaluate!(expressions[var_name], r)
+          r[var_name] = calculator.evaluate(var_name) || evaluate!(expressions[var_name], r)
         rescue Dentaku::UnboundVariableError, ZeroDivisionError => ex
           r[var_name] = block.call(ex)
         end
@@ -46,7 +47,7 @@ module Dentaku
     end
 
     def dependencies(expression)
-      Expression.new(expression, memory).identifiers
+      Parser.new(Tokenizer.new.tokenize(expression)).parse.dependencies
     end
 
     def expressions
@@ -63,13 +64,7 @@ module Dentaku
     end
 
     def evaluate!(expression, results)
-      expr = Expression.new(expression, memory.merge(expressions))
-      raise UnboundVariableError.new(expr.identifiers) if expr.unbound?
       calculator.evaluate!(expression, results)
-    end
-
-    def calculator
-      @calculator ||= Calculator.new.store(memory)
     end
   end
 end

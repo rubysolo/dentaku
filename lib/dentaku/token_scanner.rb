@@ -1,15 +1,17 @@
+require 'bigdecimal'
 require 'dentaku/token'
 
 module Dentaku
   class TokenScanner
-    def initialize(category, regexp, converter=nil)
+    def initialize(category, regexp, converter=nil, condition=nil)
       @category  = category
       @regexp    = %r{\A(#{ regexp })}i
       @converter = converter
+      @condition = condition || ->(*) { true }
     end
 
-    def scan(string)
-      if m = @regexp.match(string)
+    def scan(string, last_token=nil)
+      if (m = @regexp.match(string)) && @condition.call(last_token)
         value = raw = m.to_s
         value = @converter.call(raw) if @converter
 
@@ -28,6 +30,7 @@ module Dentaku
           numeric,
           double_quoted_string,
           single_quoted_string,
+          negate,
           operator,
           grouping,
           comparator,
@@ -51,6 +54,18 @@ module Dentaku
 
       def single_quoted_string
         new(:string, "'[^']*'", lambda { |raw| raw.gsub(/^'|'$/, '') })
+      end
+
+      def negate
+        new(:operator, '-', lambda { |raw| :negate }, lambda { |last_token|
+          last_token.nil?             ||
+          last_token.is?(:operator)   ||
+          last_token.is?(:comparator) ||
+          last_token.is?(:combinator) ||
+          last_token.value == :open   ||
+          last_token.value == :fopen  ||
+          last_token.value == :comma
+        })
       end
 
       def operator
