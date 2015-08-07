@@ -11,6 +11,7 @@ module Dentaku
     def initialize
       clear
       @tokenizer = Tokenizer.new
+      @ast_cache = {}
     end
 
     def add_function(name, body)
@@ -50,7 +51,11 @@ module Dentaku
     end
 
     def ast(expression)
-      Parser.new(tokenizer.tokenize(expression)).parse
+      @ast_cache.fetch(expression) {
+        Parser.new(tokenizer.tokenize(expression)).parse.tap do |node|
+          @ast_cache[expression] = node if Dentaku.cache_ast?
+        end
+      }
     end
 
     def store(key_or_hash, value=nil)

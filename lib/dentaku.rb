@@ -7,6 +7,14 @@ module Dentaku
     calculator.evaluate(expression, data)
   end
 
+  def self.enable_ast_cache!
+    @enable_ast_caching = true
+  end
+
+  def self.cache_ast?
+    @enable_ast_caching
+  end
+
   private
 
   def self.calculator
