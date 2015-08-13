@@ -85,4 +85,13 @@ describe Dentaku::Parser do
     expect { node.value }.to raise_error
     expect(node.value(x: 3)).to eq 15
   end
+
+  it 'evaluates boolean expressions' do
+    d_true  = Dentaku::Token.new(:logical, true)
+    d_and   = Dentaku::Token.new(:combinator, :and)
+    d_false = Dentaku::Token.new(:logical, false)
+
+    node  = described_class.new([d_true, d_and, d_false]).parse
+    expect(node.value).to eq false
+  end
 end

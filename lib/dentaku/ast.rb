@@ -1,6 +1,7 @@
 require_relative './ast/node'
 require_relative './ast/nil'
 require_relative './ast/numeric'
+require_relative './ast/logical'
 require_relative './ast/string'
 require_relative './ast/identifier'
 require_relative './ast/addition'
