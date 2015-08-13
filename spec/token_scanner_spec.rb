@@ -3,7 +3,7 @@ require 'dentaku/token_scanner'
 describe Dentaku::TokenScanner do
   let(:whitespace) { described_class.new(:whitespace, '\s') }
   let(:numeric)    { described_class.new(:numeric,    '(\d+(\.\d+)?|\.\d+)',
-    lambda{|raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
+    lambda { |raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
   }
 
   it 'returns a token for a matching string' do
@@ -23,6 +23,6 @@ describe Dentaku::TokenScanner do
   end
 
   it 'returns a list of all configured scanners' do
-    expect(described_class.scanners.length).to eq 11
+    expect(described_class.scanners.length).to eq 12
   end
 end

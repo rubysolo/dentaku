@@ -35,6 +35,7 @@ module Dentaku
           grouping,
           comparator,
           combinator,
+          boolean,
           function,
           identifier
         ]
@@ -86,6 +87,10 @@ module Dentaku
 
       def combinator
         new(:combinator, '(and|or)\b', lambda { |raw| raw.strip.downcase.to_sym })
+      end
+
+      def boolean
+        new(:logical, '(true|false)\b', lambda { |raw| raw.strip.downcase == 'true' })
       end
 
       def function

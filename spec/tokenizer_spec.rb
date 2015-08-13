@@ -153,6 +153,18 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['andover', :lt, 10])
   end
 
+  it 'tokenizes TRUE and FALSE literals' do
+    tokens = tokenizer.tokenize('true and false')
+    expect(tokens.length).to eq(3)
+    expect(tokens.map(&:category)).to eq([:logical, :combinator, :logical])
+    expect(tokens.map(&:value)).to eq([true, :and, false])
+
+    tokens = tokenizer.tokenize('true_lies and falsehoods')
+    expect(tokens.length).to eq(3)
+    expect(tokens.map(&:category)).to eq([:identifier, :combinator, :identifier])
+    expect(tokens.map(&:value)).to eq(['true_lies', :and, 'falsehoods'])
+  end
+
   describe 'functions' do
     it 'include IF' do
       tokens = tokenizer.tokenize('if(x < 10, y, z)')
