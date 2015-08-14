@@ -1,17 +1,8 @@
+require_relative "./literal"
+
 module Dentaku
   module AST
-    class Numeric < Node
-      def initialize(token)
-        @value = token.value
-      end
-
-      def value(*)
-        @value
-      end
-
-      def dependencies(*)
-        []
-      end
+    class Numeric < Literal
     end
   end
 end
