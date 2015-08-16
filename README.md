@@ -99,6 +99,26 @@ Dentaku('plums * 1.5', plums: 2)
 #=> 3.0
 ```
 
+PERFORMANCE
+-----------
+
+The flexibility and safety of Dentaku don't come without a price.  Tokenizing a
+string, parsing to an AST, and then evaluating that AST are about 2 orders of
+magnitude slower than doing the same math in pure Ruby!
+
+The good news is that most of the time is spent in the tokenization and parsing
+phases, so if performance is a concern, you can enable AST caching:
+
+```ruby
+Dentaku.enable_ast_cache!
+```
+
+After this, Dentaku will cache the AST of each formula that it evaluates, so
+subsequent evaluations (even with different values for variables) will be much
+faster -- closer to 4x native Ruby speed.  As usual, these benchmarks should be
+considered rough estimates, and you should measure with representative formulas
+from your application.  Also, if new formulas are constantly introduced to your
+application, AST caching will consume more memory with each new formula.
 
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
