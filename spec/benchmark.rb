@@ -26,20 +26,19 @@ def test(args, custom_function: true)
     bm = Benchmark.measure do
       stats = AllocationStats.trace do
 
-        calls.each do |formule, bound|
+        calls.each do |formula, bound|
 
           calculator = Dentaku::Calculator.new
 
           if custom_function
             calculator.add_function(
-              name:      :sum,
-              type:      :numeric,
-              signature: [:arguments],
-              body:      ->(numbers) { numbers.inject(:+) },
+              :sum,
+              :numeric,
+              ->(numbers) { numbers.inject(:+) }
             )
           end
 
-          calculator.evaluate(formule, bound)
+          calculator.evaluate(formula, bound)
         end
       end
     end
