@@ -1,5 +1,9 @@
 # Change Log
 
+## [v2.0.1] 2015-08-15
+- add support for boolean literals
+- implement basic parse-time type checking
+
 ## [v2.0.0] 2015-08-07
 - shunting-yard parser for performance enhancement and AST generation
 - AST caching for performance enhancement
