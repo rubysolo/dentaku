@@ -1,3 +1,5 @@
+require_relative './node'
+
 module Dentaku
   module AST
     class Operation < Node

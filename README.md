@@ -205,15 +205,15 @@ that's not feasible because:
 1. The formula is the secret sauce for your startup
 
 Whatever your reasons, Dentaku supports adding functions at runtime.  To add a
-function, you'll need to specify a name and a lambda that accepts all function
-arguments and returns the result value.
+function, you'll need to specify a name, a return type, and a lambda that
+accepts all function arguments and returns the result value.
 
 Here's an example of adding a function named `POW` that implements
 exponentiation.
 
 ```ruby
 > c = Dentaku::Calculator.new
-> c.add_function(:pow, ->(mantissa, exponent) { mantissa ** exponent })
+> c.add_function(:pow, :numeric, ->(mantissa, exponent) { mantissa ** exponent })
 > c.evaluate('POW(3,2)')
 #=> 9
 > c.evaluate('POW(2,3)')
@@ -224,7 +224,7 @@ Here's an example of adding a variadic function:
 
 ```ruby
 > c = Dentaku::Calculator.new
-> c.add_function(:max, ->(*args) { args.max })
+> c.add_function(:max, :numeric, ->(*args) { args.max })
 > c.evaluate 'MAX(8,6,7,5,3,0,9)'
 #=> 9
 ```

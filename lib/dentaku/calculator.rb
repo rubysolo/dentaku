@@ -14,13 +14,13 @@ module Dentaku
       @ast_cache = {}
     end
 
-    def add_function(name, body)
-      Dentaku::AST::Function.register(name, body)
+    def add_function(name, type, body)
+      Dentaku::AST::Function.register(name, type, body)
       self
     end
 
     def add_functions(fns)
-      fns.each { |(name, body)| add_function(name, body) }
+      fns.each { |(name, type, body)| add_function(name, type, body) }
       self
     end
 

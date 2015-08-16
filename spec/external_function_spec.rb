@@ -8,12 +8,12 @@ describe Dentaku::Calculator do
       let(:with_external_funcs) do
         c = described_class.new
 
-        c.add_function(:now, -> { Time.now.to_s })
+        c.add_function(:now, :string, -> { Time.now.to_s })
 
         fns = [
-          [:pow,      ->(mantissa, exponent) { mantissa ** exponent }],
-          [:biggest,  ->(*args) { args.max }],
-          [:smallest, ->(*args) { args.min }],
+          [:pow,      :numeric, ->(mantissa, exponent) { mantissa ** exponent }],
+          [:biggest,  :numeric, ->(*args) { args.max }],
+          [:smallest, :numeric, ->(*args) { args.min }],
         ]
 
         c.add_functions(fns)

@@ -8,6 +8,10 @@ module Dentaku
       def value(context={})
         @node.value(context)
       end
+
+      def type
+        @node.type
+      end
     end
   end
 end

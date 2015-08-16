@@ -6,6 +6,10 @@ module Dentaku
       def self.precedence
         5
       end
+
+      def type
+        :logical
+      end
     end
 
     class LessThan < Comparator

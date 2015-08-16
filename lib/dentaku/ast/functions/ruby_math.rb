@@ -2,7 +2,7 @@
 require_relative "../function"
 
 Math.methods(false).each do |method|
-  Dentaku::AST::Function.register(method, ->(*args) {
+  Dentaku::AST::Function.register(method, :numeric, ->(*args) {
     Math.send(method, *args)
   })
 end

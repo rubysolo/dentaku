@@ -15,7 +15,7 @@ module Dentaku
         registry.fetch(function_name(name)) { fail "Undefined function #{ name } "}
       end
 
-      def self.register(name, implementation)
+      def self.register(name, type, implementation)
         function = Class.new(self) do
           def self.implementation=(impl)
             @implementation = impl
@@ -25,13 +25,30 @@ module Dentaku
             @implementation
           end
 
+          def self.type=(type)
+            @type = type
+          end
+
+          def self.type
+            @type
+          end
+
           def value(context={})
             args = @args.flat_map { |a| a.value(context) }
             self.class.implementation.call(*args)
           end
+
+          def type
+            self.class.type
+          end
         end
 
+        function_class = name.to_s.capitalize
+        Dentaku::AST.send(:remove_const, function_class) if Dentaku::AST.const_defined?(function_class)
+        Dentaku::AST.const_set(function_class, function)
+
         function.implementation = implementation
+        function.type = type
 
         registry[function_name(name)] = function
       end
