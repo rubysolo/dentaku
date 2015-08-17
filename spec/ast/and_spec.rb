@@ -23,5 +23,10 @@ describe Dentaku::AST::And do
     expect {
       described_class.new(t, expression)
     }.not_to raise_error
+
+    expression = Dentaku::AST::Or.new(t, f)
+    expect {
+      described_class.new(t, expression)
+    }.not_to raise_error
   end
 end

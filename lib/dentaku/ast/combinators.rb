@@ -8,6 +8,10 @@ module Dentaku
         fail "#{ self.class } requires logical operands" unless valid_node?(left) && valid_node?(right)
       end
 
+      def type
+        :logical
+      end
+
       private
 
       def valid_node?(node)
