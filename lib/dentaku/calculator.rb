@@ -63,10 +63,10 @@ module Dentaku
 
       if value.nil?
         key_or_hash.each do |key, val|
-          memory[key.downcase.to_s] = val
+          memory[key.to_s.downcase] = val
         end
       else
-        memory[key_or_hash.to_s] = value
+        memory[key_or_hash.to_s.downcase] = value
       end
 
       if block_given?
