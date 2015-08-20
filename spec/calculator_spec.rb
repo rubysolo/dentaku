@@ -27,6 +27,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('0 * 10 ^ -5')).to eq(0)
     expect(calculator.evaluate('3 + 0 * -3')).to eq(3)
     expect(calculator.evaluate('3 + 0 / -3')).to eq(3)
+    expect(calculator.evaluate('15 % 8')).to eq(7)
   end
 
   describe 'memory' do

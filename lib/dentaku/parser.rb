@@ -114,6 +114,7 @@ module Dentaku
         divide:   AST::Division,
         pow:      AST::Exponentiation,
         negate:   AST::Negation,
+        mod:      AST::Modulo,
 
         lt:       AST::LessThan,
         gt:       AST::GreaterThan,

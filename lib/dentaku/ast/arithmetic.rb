@@ -59,6 +59,16 @@ module Dentaku
       end
     end
 
+    class Modulo < Arithmetic
+      def value(context={})
+        left.value(context) % right.value(context)
+      end
+
+      def self.precedence
+        20
+      end
+    end
+
     class Exponentiation < Arithmetic
       def value(context={})
         left.value(context) ** right.value(context)
