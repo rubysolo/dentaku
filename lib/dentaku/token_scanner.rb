@@ -64,7 +64,6 @@ module Dentaku
           last_token.is?(:comparator) ||
           last_token.is?(:combinator) ||
           last_token.value == :open   ||
-          last_token.value == :fopen  ||
           last_token.value == :comma
         })
       end
@@ -96,7 +95,7 @@ module Dentaku
       def function
         new(:function, '\w+\s*\(', lambda do |raw|
           function_name = raw.gsub('(', '')
-          [Token.new(:function, function_name.strip.downcase.to_sym, function_name), Token.new(:grouping, :fopen, '(')]
+          [Token.new(:function, function_name.strip.downcase.to_sym, function_name), Token.new(:grouping, :open, '(')]
         end)
       end
 

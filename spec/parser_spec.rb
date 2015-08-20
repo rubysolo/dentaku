@@ -63,7 +63,7 @@ describe Dentaku::Parser do
 
   it 'evaluates functions' do
     fn    = Dentaku::Token.new(:function, :if)
-    fopen = Dentaku::Token.new(:grouping, :fopen)
+    fopen = Dentaku::Token.new(:grouping, :open)
     five  = Dentaku::Token.new(:numeric, 5)
     lt    = Dentaku::Token.new(:comparator, :lt)
     four  = Dentaku::Token.new(:numeric, 4)

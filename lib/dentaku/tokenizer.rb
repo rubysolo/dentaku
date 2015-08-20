@@ -4,7 +4,7 @@ require 'dentaku/token_scanner'
 
 module Dentaku
   class Tokenizer
-    LPAREN = TokenMatcher.new(:grouping, [:open, :fopen])
+    LPAREN = TokenMatcher.new(:grouping, :open)
     RPAREN = TokenMatcher.new(:grouping, :close)
 
     def tokenize(string)

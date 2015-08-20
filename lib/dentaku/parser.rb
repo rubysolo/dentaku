@@ -60,7 +60,7 @@ module Dentaku
 
         when :grouping
           case token.value
-          when :open, :fopen
+          when :open
             if input.first && input.first.value == :close
               input.shift
               consume(0)

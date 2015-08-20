@@ -31,7 +31,7 @@ describe Dentaku::Tokenizer do
       :operator, :numeric                                        # - 9
     ])
     expect(tokens.map(&:value)).to eq([
-      :if, :fopen,                  # if(
+      :if, :open,                   # if(
       :negate, 5, :gt, 'x', :comma, # -5 > x,
       :negate, 7, :comma,           # -7,
       :negate, 8, :close,           # -8)
@@ -170,43 +170,43 @@ describe Dentaku::Tokenizer do
       tokens = tokenizer.tokenize('if(x < 10, y, z)')
       expect(tokens.length).to eq(10)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :identifier, :comparator, :numeric, :grouping, :identifier, :grouping, :identifier, :grouping])
-      expect(tokens.map(&:value)).to eq([:if, :fopen, 'x', :lt, 10, :comma, 'y', :comma, 'z', :close])
+      expect(tokens.map(&:value)).to eq([:if, :open, 'x', :lt, 10, :comma, 'y', :comma, 'z', :close])
     end
 
     it 'include ROUND/UP/DOWN' do
       tokens = tokenizer.tokenize('round(8.2)')
       expect(tokens.length).to eq(4)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :grouping])
-      expect(tokens.map(&:value)).to eq([:round, :fopen, BigDecimal.new('8.2'), :close])
+      expect(tokens.map(&:value)).to eq([:round, :open, BigDecimal.new('8.2'), :close])
 
       tokens = tokenizer.tokenize('round(8.75, 1)')
       expect(tokens.length).to eq(6)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :grouping, :numeric, :grouping])
-      expect(tokens.map(&:value)).to eq([:round, :fopen, BigDecimal.new('8.75'), :comma, 1, :close])
+      expect(tokens.map(&:value)).to eq([:round, :open, BigDecimal.new('8.75'), :comma, 1, :close])
 
       tokens = tokenizer.tokenize('ROUNDUP(8.2)')
       expect(tokens.length).to eq(4)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :grouping])
-      expect(tokens.map(&:value)).to eq([:roundup, :fopen, BigDecimal.new('8.2'), :close])
+      expect(tokens.map(&:value)).to eq([:roundup, :open, BigDecimal.new('8.2'), :close])
 
       tokens = tokenizer.tokenize('RoundDown(8.2)')
       expect(tokens.length).to eq(4)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :grouping])
-      expect(tokens.map(&:value)).to eq([:rounddown, :fopen, BigDecimal.new('8.2'), :close])
+      expect(tokens.map(&:value)).to eq([:rounddown, :open, BigDecimal.new('8.2'), :close])
     end
 
     it 'include NOT' do
       tokens = tokenizer.tokenize('not(8 < 5)')
       expect(tokens.length).to eq(6)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :comparator, :numeric, :grouping])
-      expect(tokens.map(&:value)).to eq([:not, :fopen, 8, :lt, 5, :close])
+      expect(tokens.map(&:value)).to eq([:not, :open, 8, :lt, 5, :close])
     end
 
     it 'handles whitespace after function name' do
       tokens = tokenizer.tokenize('not (8 < 5)')
       expect(tokens.length).to eq(6)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :comparator, :numeric, :grouping])
-      expect(tokens.map(&:value)).to eq([:not, :fopen, 8, :lt, 5, :close])
+      expect(tokens.map(&:value)).to eq([:not, :open, 8, :lt, 5, :close])
     end
   end
 end

@@ -112,7 +112,6 @@ module Dentaku
     def self.comp_gt;        new(:comparator, [:gt, :ge]);         end
     def self.comp_lt;        new(:comparator, [:lt, :le]);         end
 
-    def self.fopen;          new(:grouping, :fopen);               end
     def self.open;           new(:grouping, :open);                end
     def self.close;          new(:grouping, :close);               end
     def self.comma;          new(:grouping, :comma);               end
