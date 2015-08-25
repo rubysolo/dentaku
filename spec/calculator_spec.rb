@@ -28,6 +28,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('3 + 0 * -3')).to eq(3)
     expect(calculator.evaluate('3 + 0 / -3')).to eq(3)
     expect(calculator.evaluate('15 % 8')).to eq(7)
+    expect(calculator.evaluate('(((695759/735000)^(1/(1981-1991)))-1)*1000').round(4)).to eq(5.5018)
   end
 
   describe 'memory' do
