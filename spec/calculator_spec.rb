@@ -82,7 +82,7 @@ describe Dentaku::Calculator do
     it "lets you know about a cycle if one occurs" do
       expect do
         calculator.solve!(health: "happiness", happiness: "health")
-      end.to raise_error (TSort::Cyclic)
+      end.to raise_error(TSort::Cyclic)
     end
 
     it 'is case-insensitive' do

@@ -82,7 +82,7 @@ describe Dentaku::Parser do
     x     = Dentaku::Token.new(:identifier, :x)
 
     node  = described_class.new([five, times, x]).parse
-    expect { node.value }.to raise_error
+    expect { node.value }.to raise_error(Dentaku::UnboundVariableError)
     expect(node.value(x: 3)).to eq 15
   end
 

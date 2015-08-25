@@ -7,7 +7,7 @@ describe Dentaku::AST::Function do
   end
 
   it 'raises an exception when trying to access an undefined function' do
-    expect { described_class.get("flarble") }.to raise_error
+    expect { described_class.get("flarble") }.to raise_error(RuntimeError, /undefined function/i)
   end
 
   it 'registers a custom function' do
