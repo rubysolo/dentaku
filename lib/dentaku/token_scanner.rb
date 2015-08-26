@@ -24,21 +24,31 @@ module Dentaku
     end
 
     class << self
+      AVAILABLE_SCANNERS = [
+        :whitespace,
+        :numeric,
+        :double_quoted_string,
+        :single_quoted_string,
+        :negate,
+        :operator,
+        :grouping,
+        :comparator,
+        :combinator,
+        :boolean,
+        :function,
+        :identifier
+      ]
+
+      def scanners=(token_scanners)
+        @scanners = (token_scanners & AVAILABLE_SCANNERS).map { |scanner|
+          self.send(scanner)
+        }
+      end
+
       def scanners
-        @scanners ||= [
-          whitespace,
-          numeric,
-          double_quoted_string,
-          single_quoted_string,
-          negate,
-          operator,
-          grouping,
-          comparator,
-          combinator,
-          boolean,
-          function,
-          identifier
-        ]
+        @scanners ||= AVAILABLE_SCANNERS.map { |scanner|
+          self.send(scanner)
+        }
       end
 
       def whitespace
