@@ -51,6 +51,11 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('first')).to eq 1
       expect(calculator.evaluate!('second')).to eq 2
     end
+
+    it 'stores formulas' do
+      calculator.store_formula('area', 'length * width')
+      expect(calculator.evaluate!('area', length: 5, width: 5)).to eq 25
+    end
   end
 
   describe 'dependencies' do

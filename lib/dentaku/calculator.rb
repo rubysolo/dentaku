@@ -1,3 +1,4 @@
+require 'dentaku'
 require 'dentaku/bulk_expression_solver'
 require 'dentaku/exceptions'
 require 'dentaku/token'
@@ -31,7 +32,7 @@ module Dentaku
     end
 
     def evaluate!(expression, data={})
-      memory[expression] || store(data) do
+      store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
         node.value(memory)
@@ -78,6 +79,10 @@ module Dentaku
       self
     end
     alias_method :bind, :store
+
+    def store_formula(key, formula)
+      store(key, ast(formula))
+    end
 
     def clear
       @memory = {}

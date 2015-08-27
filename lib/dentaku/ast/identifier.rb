@@ -13,7 +13,7 @@ module Dentaku
         v = context[identifier]
         case v
         when Node
-          v.value
+          v.value(context)
         when NilClass
           raise UnboundVariableError.new([identifier])
         else
