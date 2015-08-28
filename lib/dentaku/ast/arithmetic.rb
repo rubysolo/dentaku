@@ -1,5 +1,6 @@
 require_relative './operation'
 require 'bigdecimal'
+require 'bigdecimal/util'
 
 module Dentaku
   module AST
@@ -52,10 +53,10 @@ module Dentaku
 
     class Division < Arithmetic
       def value(context={})
-        r = BigDecimal.new(right.value(context))
+        r = right.value(context).to_d
         raise ZeroDivisionError if r.zero?
 
-        v = BigDecimal.new(left.value(context)) / r
+        v = left.value(context).to_d / r
         v = v.to_i if v.frac.zero?
         v
       end
