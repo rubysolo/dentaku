@@ -14,7 +14,19 @@ module Dentaku
         :numeric
       end
 
+      def value(context={})
+        l = cast(left.value(context))
+        r = cast(right.value(context))
+        l.public_send(operator, r)
+      end
+
       private
+
+      def cast(value, prefer_integer=true)
+        v = BigDecimal.new(value, Float::DIG+1)
+        v = v.to_i if prefer_integer && v.frac.zero?
+        v
+      end
 
       def valid_node?(node)
         node.is_a?(Identifier) || node.type == :numeric
@@ -22,8 +34,8 @@ module Dentaku
     end
 
     class Addition < Arithmetic
-      def value(context={})
-        left.value(context) + right.value(context)
+      def operator
+        :+
       end
 
       def self.precedence
@@ -32,8 +44,8 @@ module Dentaku
     end
 
     class Subtraction < Arithmetic
-      def value(context={})
-        left.value(context) - right.value(context)
+      def operator
+        :-
       end
 
       def self.precedence
@@ -42,8 +54,8 @@ module Dentaku
     end
 
     class Multiplication < Arithmetic
-      def value(context={})
-        left.value(context) * right.value(context)
+      def operator
+        :*
       end
 
       def self.precedence
@@ -53,12 +65,10 @@ module Dentaku
 
     class Division < Arithmetic
       def value(context={})
-        r = right.value(context).to_d
+        r = cast(right.value(context), false)
         raise ZeroDivisionError if r.zero?
 
-        v = left.value(context).to_d / r
-        v = v.to_i if v.frac.zero?
-        v
+        cast(cast(left.value(context)) / r)
       end
 
       def self.precedence
@@ -67,8 +77,8 @@ module Dentaku
     end
 
     class Modulo < Arithmetic
-      def value(context={})
-        left.value(context) % right.value(context)
+      def operator
+        :%
       end
 
       def self.precedence
@@ -77,8 +87,8 @@ module Dentaku
     end
 
     class Exponentiation < Arithmetic
-      def value(context={})
-        left.value(context) ** right.value(context)
+      def operator
+        :**
       end
 
       def self.precedence

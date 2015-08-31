@@ -39,7 +39,8 @@ module Dentaku
     def load_results(&block)
       variables_in_resolve_order.each_with_object({}) do |var_name, r|
         begin
-          r[var_name] = calculator.memory[var_name] || evaluate!(expressions[var_name], r)
+          r[var_name] = calculator.memory[var_name] ||
+                        evaluate!(expressions[var_name], expressions.merge(r))
         rescue Dentaku::UnboundVariableError, ZeroDivisionError => ex
           r[var_name] = block.call(ex)
         end
@@ -55,7 +56,20 @@ module Dentaku
     end
 
     def expression_dependencies
-      Hash[expressions.map { |var, expr| [var, dependencies(expr)] }]
+      Hash[expressions.map { |var, expr| [var, dependencies(expr)] }].tap do |d|
+        d.values.each do |deps|
+          unresolved = deps.reject { |ud| d.has_key?(ud) }
+          unresolved.each { |u| add_dependencies(d, u) }
+        end
+      end
+    end
+
+    def add_dependencies(current_dependencies, variable)
+      node = calculator.memory[variable]
+      if node.respond_to?(:dependencies)
+        current_dependencies[variable] = node.dependencies
+        node.dependencies.each { |d| add_dependencies(current_dependencies, d) }
+      end
     end
 
     def variables_in_resolve_order
