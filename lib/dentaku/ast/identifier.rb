@@ -22,7 +22,13 @@ module Dentaku
       end
 
       def dependencies(context={})
-        context.has_key?(identifier) ? [] : [identifier]
+        context.has_key?(identifier) ? dependencies_of(context[identifier]) : [identifier]
+      end
+
+      private
+
+      def dependencies_of(node)
+        node.respond_to?(:dependencies) ? node.dependencies : []
       end
     end
   end

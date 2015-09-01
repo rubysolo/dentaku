@@ -7,12 +7,25 @@ module Dentaku
     calculator.evaluate(expression, data)
   end
 
+  def self.enable_caching!
+    enable_ast_cache!
+    enable_dependency_order_cache!
+  end
+
   def self.enable_ast_cache!
     @enable_ast_caching = true
   end
 
   def self.cache_ast?
     @enable_ast_caching
+  end
+
+  def self.enable_dependency_order_cache!
+    @enable_dependency_order_caching = true
+  end
+
+  def self.cache_dependency_order?
+    @enable_dependency_order_caching
   end
 
   private

@@ -6,9 +6,9 @@ require 'dentaku/tokenizer'
 
 module Dentaku
   class BulkExpressionSolver
-    def initialize(expression_hash, memory)
+    def initialize(expression_hash, calculator)
       self.expression_hash = expression_hash
-      self.calculator = Calculator.new.store(memory)
+      self.calculator = calculator
     end
 
     def solve!
@@ -25,6 +25,10 @@ module Dentaku
     end
 
     private
+
+    def self.dependency_cache
+      @dep_cache ||= {}
+    end
 
     attr_accessor :expression_hash, :calculator
 
@@ -47,16 +51,12 @@ module Dentaku
       end
     end
 
-    def dependencies(expression)
-      Parser.new(Tokenizer.new.tokenize(expression)).parse.dependencies
-    end
-
     def expressions
       @expressions ||= Hash[expression_hash.map { |k,v| [k.to_s, v] }]
     end
 
     def expression_dependencies
-      Hash[expressions.map { |var, expr| [var, dependencies(expr)] }].tap do |d|
+      Hash[expressions.map { |var, expr| [var, calculator.dependencies(expr)] }].tap do |d|
         d.values.each do |deps|
           unresolved = deps.reject { |ud| d.has_key?(ud) }
           unresolved.each { |u| add_dependencies(d, u) }
@@ -73,8 +73,12 @@ module Dentaku
     end
 
     def variables_in_resolve_order
-      @variables_in_resolve_order ||=
-        DependencyResolver::find_resolve_order(expression_dependencies)
+      cache_key = expressions.keys.map(&:to_s).sort.join("|")
+      @ordered_deps ||= self.class.dependency_cache.fetch(cache_key) {
+        DependencyResolver.find_resolve_order(expression_dependencies).tap do |d|
+          self.class.dependency_cache[cache_key] = d if Dentaku.cache_dependency_order?
+        end
+      }
     end
 
     def evaluate!(expression, results)
