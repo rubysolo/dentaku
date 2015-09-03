@@ -1,5 +1,10 @@
 # Change Log
 
+## [v2.0.4] 2015-09-03
+- fix BigDecimal conversion bug
+- add caching for bulk expression solving dependency order
+- allow for custom configuration for token scanners
+
 ## [v2.0.3] 2015-08-25
 - bug fixes
 - performance enhancements
@@ -80,6 +85,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[v2.0.4]:  https://github.com/rubysolo/dentaku/compare/v2.0.3...v2.0.4
 [v2.0.3]:  https://github.com/rubysolo/dentaku/compare/v2.0.1...v2.0.3
 [v2.0.1]:  https://github.com/rubysolo/dentaku/compare/v2.0.0...v2.0.1
 [v2.0.0]:  https://github.com/rubysolo/dentaku/compare/v1.2.6...v2.0.0
