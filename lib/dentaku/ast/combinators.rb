@@ -15,7 +15,7 @@ module Dentaku
       private
 
       def valid_node?(node)
-        node.is_a?(Identifier) || node.type == :logical
+        node.dependencies.any? || node.type == :logical
       end
     end
 

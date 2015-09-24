@@ -12,6 +12,10 @@ module Dentaku
       def type
         @node.type
       end
+
+      def dependencies(context={})
+        @node.dependencies(context)
+      end
     end
   end
 end

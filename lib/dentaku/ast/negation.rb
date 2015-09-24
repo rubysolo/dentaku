@@ -26,10 +26,14 @@ module Dentaku
         40
       end
 
+      def dependencies(context={})
+        @node.dependencies(context)
+      end
+
       private
 
       def valid_node?(node)
-        node.is_a?(Identifier) || node.type == :numeric
+        node.dependencies.any? || node.type == :numeric
       end
     end
   end

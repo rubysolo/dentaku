@@ -221,6 +221,12 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('round(-1.23, 1)')).to eq(BigDecimal.new('-1.2'))
       expect(calculator.evaluate('NOT(some_boolean) AND -1 > 3', some_boolean: true)).to be_falsey
     end
+
+    it 'evaluates functions with stored variables' do
+      calculator.store("multi_color" => true, "number_of_sheets" => 5000, "sheets_per_minute_black" => 2000, "sheets_per_minute_color" => 1000)
+      result = calculator.evaluate('number_of_sheets / if(multi_color, sheets_per_minute_color, sheets_per_minute_black)')
+      expect(result).to eq(5)
+    end
   end
 
   describe 'math functions' do
