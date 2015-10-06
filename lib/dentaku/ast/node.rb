@@ -8,6 +8,10 @@ module Dentaku
       def self.arity
         nil
       end
+
+      def dependencies(context={})
+        []
+      end
     end
   end
 end
