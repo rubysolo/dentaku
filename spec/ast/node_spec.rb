@@ -22,6 +22,9 @@ describe Dentaku::AST::Node do
 
     node = make_node('if(x > 5, y, z)')
     expect(node.dependencies('x' => 7)).to eq ['y', 'z']
+
+    node = make_node('')
+    expect(node.dependencies).to eq []
   end
 
   it 'returns unique list of dependencies' do
