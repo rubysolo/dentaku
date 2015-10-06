@@ -3,6 +3,9 @@ require "dentaku/calculator"
 require "dentaku/version"
 
 module Dentaku
+  @enable_ast_caching = false
+  @enable_dependency_order_caching = false
+
   def self.evaluate(expression, data={})
     calculator.evaluate(expression, data)
   end
