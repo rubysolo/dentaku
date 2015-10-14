@@ -41,16 +41,26 @@ module Dentaku
         ]
       end
 
-      def scanners=(token_scanners)
-        @scanners = (token_scanners & available_scanners).map { |scanner|
-          self.send(scanner)
-        }
+      def register_default_scanners
+        register_scanners(available_scanners)
+      end
+
+      def register_scanners(scanner_ids)
+        @scanners = scanner_ids.each_with_object({}) do |id, scanners|
+          scanners[id] = self.send(id)
+        end
+      end
+
+      def register_scanner(id, scanner)
+        @scanners[id] = scanner
+      end
+
+      def scanners=(scanner_ids)
+        @scanners.select! { |k,v| scanner_ids.include?(k) }
       end
 
       def scanners
-        @scanners ||= available_scanners.map { |scanner|
-          self.send(scanner)
-        }
+        @scanners.values
       end
 
       def whitespace
@@ -112,8 +122,10 @@ module Dentaku
       end
 
       def identifier
-        new(:identifier, '\w+\b', lambda { |raw| raw.strip.downcase.to_s })
+        new(:identifier, '\w+\b', lambda { |raw| raw.strip.downcase })
       end
     end
+
+    register_default_scanners
   end
 end
