@@ -37,7 +37,7 @@ module Dentaku
     end
 
     def raise_exception_handler
-      ->(ex) { raise ex }
+      ->(ex, var_name) { raise ex }
     end
 
     def load_results(&block)
@@ -46,7 +46,7 @@ module Dentaku
           r[var_name] = calculator.memory[var_name] ||
                         evaluate!(expressions[var_name], expressions.merge(r))
         rescue Dentaku::UnboundVariableError, ZeroDivisionError => ex
-          r[var_name] = block.call(ex)
+          r[var_name] = block.call(ex, var_name)
         end
       end
     end

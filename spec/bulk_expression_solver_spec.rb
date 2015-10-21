@@ -55,5 +55,12 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(described_class.new(expressions, calculator).solve { :foo })
         .to eq(more_apples: :foo)
     end
+
+    it "passes the name of the failed expression in the custom error handler" do
+      expressions = {more_apples: "apples + 1"}
+      solver = described_class.new(expressions, calculator)
+      expect(solver.solve { |ex, name| "#{name}_foo" })
+        .to eq(more_apples: "more_apples_foo")
+    end
   end
 end
