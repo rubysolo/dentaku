@@ -34,7 +34,7 @@ module Dentaku
           end
 
           def value(context={})
-            args = @args.flat_map { |a| a.value(context) }
+            args = @args.map { |a| a.value(context) }
             self.class.implementation.call(*args)
           end
 

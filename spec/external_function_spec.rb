@@ -38,6 +38,19 @@ describe Dentaku::Calculator do
       it 'includes SMALLEST' do
         expect(with_external_funcs.evaluate('SMALLEST(8,6,7,5,3,0,9)')).to eq(0)
       end
+
+      it 'supports array parameters' do
+        calculator = described_class.new
+        calculator.add_function(
+          :includes,
+          :logical,
+          ->(haystack, needle) {
+            haystack.include?(needle)
+          }
+        )
+
+        expect(calculator.evaluate("INCLUDES(list, 2)", list: [1,2,3])).to eq(true)
+      end
     end
   end
 end
