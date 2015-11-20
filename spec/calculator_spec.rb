@@ -125,6 +125,15 @@ describe Dentaku::Calculator do
       expect(calculator.solve(expressions)).to eq(more_apples: :undefined)
     end
 
+    it "solves remainder of expressions with unbound variable" do
+      calculator.store(peaches: 1)
+      expressions = {more_apples: "apples + 1", more_peaches: "peaches + 1"}
+      expect(calculator.solve(expressions)).to eq(
+        more_apples: :undefined,
+        more_peaches: 2
+      )
+    end
+
     it "allows passing in a custom value to an error handler" do
       expressions = {more_apples: "apples + 1"}
       expect(calculator.solve(expressions) { :foo })
