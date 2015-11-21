@@ -32,11 +32,14 @@ module Dentaku
     end
 
     def evaluate!(expression, data={})
+      restore = Hash[memory]
       store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
         node.value(memory)
       end
+    ensure
+      @memory = restore
     end
 
     def solve!(expression_hash)

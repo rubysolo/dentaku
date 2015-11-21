@@ -126,7 +126,7 @@ describe Dentaku::Calculator do
     end
 
     it "solves remainder of expressions with unbound variable" do
-      calculator.store(peaches: 1)
+      calculator.store(peaches: 1, oranges: 1)
       expressions = {more_apples: "apples + 1", more_peaches: "peaches + 1"}
       expect(calculator.solve(expressions)).to eq(
         more_apples: :undefined,
