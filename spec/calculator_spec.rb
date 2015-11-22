@@ -130,6 +130,17 @@ describe Dentaku::Calculator do
       expect(calculator.solve(expressions) { :foo })
         .to eq(more_apples: :foo)
     end
+
+    it "solves remainder of expressions with unbound variable" do
+      calculator.store(peaches: 1, oranges: 1)
+      expressions = { more_apples: "apples + 1", more_peaches: "peaches + 1" }
+      result = calculator.solve(expressions)
+      expect(calculator.memory).to eq("peaches" => 1, "oranges" => 1)
+      expect(result).to eq(
+        more_apples: :undefined,
+        more_peaches: 2
+      )
+    end
   end
 
   it 'evaluates a statement with no variables' do

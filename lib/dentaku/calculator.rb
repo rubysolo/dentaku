@@ -71,9 +71,14 @@ module Dentaku
       end
 
       if block_given?
-        result = yield
-        @memory = restore
-        return result
+        begin
+          result = yield
+          @memory = restore
+          return result
+        rescue => e
+          @memory = restore
+          raise e
+        end
       end
 
       self
