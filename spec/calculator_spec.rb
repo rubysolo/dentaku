@@ -240,6 +240,84 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'case statements' do
+    it 'handles complex then statements' do
+      formula = <<-FORMULA
+      CASE fruit
+      WHEN 'apple'
+        THEN (1 * quantity)
+      WHEN 'banana'
+        THEN (2 * quantity)
+      END
+      FORMULA
+      expect(calculator.evaluate(formula, quantity: 3, fruit: 'apple')).to eq(3)
+      expect(calculator.evaluate(formula, quantity: 3, fruit: 'banana')).to eq(6)
+    end
+
+    it 'handles complex when statements' do
+      formula = <<-FORMULA
+      CASE number
+      WHEN (2 * 2)
+        THEN 1
+      WHEN (2 * 3)
+        THEN 2
+      END
+      FORMULA
+      expect(calculator.evaluate(formula, number: 4)).to eq(1)
+      expect(calculator.evaluate(formula, number: 6)).to eq(2)
+    end
+
+    it 'throws an exception when no match and there is no default value' do
+      formula = <<-FORMULA
+      CASE number
+      WHEN 42
+        THEN 1
+      END
+      FORMULA
+      expect { calculator.evaluate(formula, number: 2) }
+        .to raise_error("No block matched the switch value '2'")
+    end
+
+    it 'handles a default else statement' do
+      formula = <<-FORMULA
+      CASE fruit
+      WHEN 'apple'
+        THEN 1 * quantity
+      WHEN 'banana'
+        THEN 2 * quantity
+      ELSE
+        3 * quantity
+      END
+      FORMULA
+      expect(calculator.evaluate(formula, quantity: 1, fruit: 'banana')).to eq(2)
+      expect(calculator.evaluate(formula, quantity: 1, fruit: 'orange')).to eq(3)
+    end
+
+    it 'handles nested case statements' do
+      formula = <<-FORMULA
+      CASE fruit
+      WHEN 'apple'
+        THEN 1 * quantity
+      WHEN 'banana'
+        THEN
+        CASE quantity
+        WHEN 1 THEN 2
+        WHEN 10 THEN
+          CASE type
+          WHEN 'organic' THEN 5
+          END
+        END
+      END
+      FORMULA
+      value = calculator.evaluate(
+        formula,
+        type: 'organic',
+        quantity: 10,
+        fruit: 'banana')
+      expect(value).to eq(5)
+    end
+  end
+
   describe 'math functions' do
     Math.methods(false).each do |method|
       it method do
