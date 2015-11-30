@@ -58,6 +58,51 @@ module Dentaku
           arities.push 0
           operations.push function(token)
 
+        when :case
+          case token.value
+          when :open
+            operations.push AST::Case
+            arities.push(0)
+          when :close
+            if operations[1] == AST::CaseThen
+              while operations.last != AST::Case
+                consume
+              end
+
+              operations.push(AST::CaseConditional)
+              consume(2)
+              arities[-1] += 1
+            end
+
+            unless operations.count == 1 && operations.last == AST::Case
+              fail "Unprocessed token #{ token.value }"
+            end
+            consume(arities.pop.succ)
+          when :when
+            if operations[1] == AST::CaseThen
+              while ![AST::CaseWhen, AST::Case].include?(operations.last)
+                consume
+              end
+              operations.push(AST::CaseConditional)
+              consume(2)
+              arities[-1] += 1
+            elsif operations.last == AST::Case
+              operations.push(AST::CaseSwitchVariable)
+              consume
+            end
+
+            operations.push(AST::CaseWhen)
+          when :then
+            if operations[1] == AST::CaseWhen
+              while ![AST::CaseThen, AST::Case].include?(operations.last)
+                consume
+              end
+            end
+            operations.push(AST::CaseThen)
+          else
+            fail "Unknown case token #{ token.value }"
+          end
+
         when :grouping
           case token.value
           when :open
