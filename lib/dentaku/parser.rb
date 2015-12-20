@@ -72,6 +72,12 @@ module Dentaku
               operations.push(AST::CaseConditional)
               consume(2)
               arities[-1] += 1
+            elsif operations[1] == AST::CaseElse
+              while operations.last != AST::Case
+                consume
+              end
+
+              arities[-1] += 1
             end
 
             unless operations.count == 1 && operations.last == AST::Case
@@ -99,6 +105,18 @@ module Dentaku
               end
             end
             operations.push(AST::CaseThen)
+          when :else
+            if operations[1] == AST::CaseThen
+              while operations.last != AST::Case
+                consume
+              end
+
+              operations.push(AST::CaseConditional)
+              consume(2)
+              arities[-1] += 1
+            end
+
+            operations.push(AST::CaseElse)
           else
             fail "Unknown case token #{ token.value }"
           end

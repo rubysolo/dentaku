@@ -102,8 +102,8 @@ module Dentaku
       end
 
       def case_statement
-        names = { open: 'case', close: 'end', then: 'then', when: 'when' }.invert
-        new(:case, '(case|end|then|when)\b', lambda { |raw| names[raw.downcase] })
+        names = { open: 'case', close: 'end', then: 'then', when: 'when', else: 'else' }.invert
+        new(:case, '(case|end|then|when|else)\b', lambda { |raw| names[raw.downcase] })
       end
 
       def comparator

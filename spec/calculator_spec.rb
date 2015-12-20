@@ -267,6 +267,21 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate(formula, number: 6)).to eq(2)
     end
 
+    it 'handles a default else statement' do
+      formula = <<-FORMULA
+      CASE fruit
+      WHEN 'apple'
+        THEN 1 * quantity
+      WHEN 'banana'
+        THEN 2 * quantity
+      ELSE
+        3 * quantity
+      END
+      FORMULA
+      expect(calculator.evaluate(formula, quantity: 1, fruit: 'banana')).to eq(2)
+      expect(calculator.evaluate(formula, quantity: 1, fruit: 'orange')).to eq(3)
+    end
+
     xit 'handles nested case statements' do
       formula = <<-FORMULA
       CASE fruit
@@ -275,10 +290,8 @@ describe Dentaku::Calculator do
       WHEN 'banana'
         THEN
         CASE quantity
-        WHEN 1
-          2
-        WHEN 10
-          5
+        WHEN 1 THEN 2
+        WHEN 10 THEN 5
         END
       END
       FORMULA

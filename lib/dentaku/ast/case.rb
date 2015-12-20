@@ -1,7 +1,8 @@
-require_relative './case_conditional'
-require_relative './case_when'
-require_relative './case_then'
-require_relative './case_switch_variable'
+require_relative './case/case_conditional'
+require_relative './case/case_when'
+require_relative './case/case_then'
+require_relative './case/case_switch_variable'
+require_relative './case/case_else'
 
 module Dentaku
   module AST
@@ -14,6 +15,8 @@ module Dentaku
         end
 
         @conditions = nodes
+
+        @else = @conditions.pop if @conditions.last.is_a?(AST::CaseElse)
 
         @conditions.each do |condition|
           unless condition.is_a?(AST::CaseConditional)
@@ -30,7 +33,11 @@ module Dentaku
           end
         end
 
-        raise "No block matched the switch value '#{switch_value}'"
+        if @else
+          return @else.value(context)
+        else
+          raise "No block matched the switch value '#{switch_value}'"
+        end
       end
 
       def dependencies(context={})

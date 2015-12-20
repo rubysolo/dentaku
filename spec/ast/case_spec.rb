@@ -50,6 +50,17 @@ describe Dentaku::AST::Case do
       expect { node.value(fruit: 'orange') }
         .to raise_error("No block matched the switch value 'orange'")
     end
+
+    it 'uses the else value if provided and conditional is not matched' do
+      three = Dentaku::AST::Logical.new Dentaku::Token.new(:numeric, 3)
+      else_statement = Dentaku::AST::CaseElse.new(three)
+      node = described_class.new(
+        switch,
+        conditional1,
+        conditional2,
+        else_statement)
+      expect(node.value(fruit: 'orange')).to eq(3)
+    end
   end
 
   describe '#dependencies' do

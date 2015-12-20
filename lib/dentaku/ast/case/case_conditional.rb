@@ -11,7 +11,7 @@ module Dentaku
         end
         @then = then_statement
         unless @then.is_a?(AST::CaseThen)
-          raise 'Expected first argument to be a CaseThen'
+          raise 'Expected second argument to be a CaseThen'
         end
       end
 
