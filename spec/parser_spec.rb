@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'dentaku/token'
 require 'dentaku/parser'
 
 describe Dentaku::Parser do
@@ -93,5 +94,33 @@ describe Dentaku::Parser do
 
     node  = described_class.new([d_true, d_and, d_false]).parse
     expect(node.value).to eq false
+  end
+
+  it 'evaluates a case statement' do
+    case_start  = Dentaku::Token.new(:case, :open)
+    x     = Dentaku::Token.new(:identifier, :x)
+    case_when1 = Dentaku::Token.new(:case, :when)
+    one  = Dentaku::Token.new(:numeric, 1)
+    case_then1 = Dentaku::Token.new(:case, :then)
+    two  = Dentaku::Token.new(:numeric, 2)
+    case_when2 = Dentaku::Token.new(:case, :when)
+    three  = Dentaku::Token.new(:numeric, 3)
+    case_then2 = Dentaku::Token.new(:case, :then)
+    four  = Dentaku::Token.new(:numeric, 4)
+    case_close  = Dentaku::Token.new(:case, :close)
+
+    node  = described_class.new(
+      [case_start,
+       x,
+       case_when1,
+       one,
+       case_then1,
+       two,
+       case_when2,
+       three,
+       case_then2,
+       four,
+       case_close]).parse
+    expect(node.value(x: 3)).to eq(4)
   end
 end

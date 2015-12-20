@@ -4,11 +4,11 @@ module Dentaku
   class Parser
     attr_reader :input, :output, :operations, :arities
 
-    def initialize(tokens)
+    def initialize(tokens, arities: [], operations: [])
       @input      = tokens.dup
       @output     = []
-      @operations = []
-      @arities    = []
+      @operations = operations
+      @arities    = arities
     end
 
     def get_args(count)
@@ -57,6 +57,90 @@ module Dentaku
         when :function
           arities.push 0
           operations.push function(token)
+
+        when :case
+          case token.value
+          when :open
+            # special handling for case nesting: strip out inner case
+            # statements and parse their AST segments recursively
+            if operations.include?(AST::Case)
+              last_case_close_index = nil
+              first_nested_case_close_index = nil
+              input.each_with_index do |token, index|
+                first_nested_case_close_index = last_case_close_index
+                if token.category == :case && token.value == :close
+                  last_case_close_index = index
+                end
+              end
+              inner_case_inputs = input.slice!(0..first_nested_case_close_index)
+              subparser = Parser.new(
+                inner_case_inputs,
+                operations: [AST::Case],
+                arities: [0]
+              )
+              subparser.parse
+              output.concat(subparser.output)
+            else
+              operations.push AST::Case
+              arities.push(0)
+            end
+          when :close
+            if operations[1] == AST::CaseThen
+              while operations.last != AST::Case
+                consume
+              end
+
+              operations.push(AST::CaseConditional)
+              consume(2)
+              arities[-1] += 1
+            elsif operations[1] == AST::CaseElse
+              while operations.last != AST::Case
+                consume
+              end
+
+              arities[-1] += 1
+            end
+
+            unless operations.count == 1 && operations.last == AST::Case
+              fail "Unprocessed token #{ token.value }"
+            end
+            consume(arities.pop.succ)
+          when :when
+            if operations[1] == AST::CaseThen
+              while ![AST::CaseWhen, AST::Case].include?(operations.last)
+                consume
+              end
+              operations.push(AST::CaseConditional)
+              consume(2)
+              arities[-1] += 1
+            elsif operations.last == AST::Case
+              operations.push(AST::CaseSwitchVariable)
+              consume
+            end
+
+            operations.push(AST::CaseWhen)
+          when :then
+            if operations[1] == AST::CaseWhen
+              while ![AST::CaseThen, AST::Case].include?(operations.last)
+                consume
+              end
+            end
+            operations.push(AST::CaseThen)
+          when :else
+            if operations[1] == AST::CaseThen
+              while operations.last != AST::Case
+                consume
+              end
+
+              operations.push(AST::CaseConditional)
+              consume(2)
+              arities[-1] += 1
+            end
+
+            operations.push(AST::CaseElse)
+          else
+            fail "Unknown case token #{ token.value }"
+          end
 
         when :grouping
           case token.value
