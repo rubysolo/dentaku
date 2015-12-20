@@ -267,6 +267,17 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate(formula, number: 6)).to eq(2)
     end
 
+    it 'throws an exception when no match and there is no default value' do
+      formula = <<-FORMULA
+      CASE number
+      WHEN 42
+        THEN 1
+      END
+      FORMULA
+      expect { calculator.evaluate(formula, number: 2) }
+        .to raise_error("No block matched the switch value '2'")
+    end
+
     it 'handles a default else statement' do
       formula = <<-FORMULA
       CASE fruit
@@ -282,7 +293,7 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate(formula, quantity: 1, fruit: 'orange')).to eq(3)
     end
 
-    xit 'handles nested case statements' do
+    it 'handles nested case statements' do
       formula = <<-FORMULA
       CASE fruit
       WHEN 'apple'
@@ -291,12 +302,19 @@ describe Dentaku::Calculator do
         THEN
         CASE quantity
         WHEN 1 THEN 2
-        WHEN 10 THEN 5
+        WHEN 10 THEN
+          CASE type
+          WHEN 'organic' THEN 5
+          END
         END
       END
       FORMULA
-      expect(calculator.evaluate(formula, quantity: 1, fruit: 'banana')).to eq(2)
-      expect(calculator.evaluate(formula, quantity: 10, fruit: 'banana')).to eq(5)
+      value = calculator.evaluate(
+        formula,
+        type: 'organic',
+        quantity: 10,
+        fruit: 'banana')
+      expect(value).to eq(5)
     end
   end
 

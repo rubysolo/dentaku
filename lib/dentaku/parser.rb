@@ -4,11 +4,11 @@ module Dentaku
   class Parser
     attr_reader :input, :output, :operations, :arities
 
-    def initialize(tokens)
+    def initialize(tokens, arities: [], operations: [])
       @input      = tokens.dup
       @output     = []
-      @operations = []
-      @arities    = []
+      @operations = operations
+      @arities    = arities
     end
 
     def get_args(count)
@@ -61,8 +61,29 @@ module Dentaku
         when :case
           case token.value
           when :open
-            operations.push AST::Case
-            arities.push(0)
+            # special handling for case nesting: strip out inner case
+            # statements and parse their AST segments recursively
+            if operations.include?(AST::Case)
+              last_case_close_index = nil
+              first_nested_case_close_index = nil
+              input.each_with_index do |token, index|
+                first_nested_case_close_index = last_case_close_index
+                if token.category == :case && token.value == :close
+                  last_case_close_index = index
+                end
+              end
+              inner_case_inputs = input.slice!(0..first_nested_case_close_index)
+              subparser = Parser.new(
+                inner_case_inputs,
+                operations: [AST::Case],
+                arities: [0]
+              )
+              subparser.parse
+              output.concat(subparser.output)
+            else
+              operations.push AST::Case
+              arities.push(0)
+            end
           when :close
             if operations[1] == AST::CaseThen
               while operations.last != AST::Case
