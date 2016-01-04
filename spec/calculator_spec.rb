@@ -238,6 +238,26 @@ describe Dentaku::Calculator do
       result = calculator.evaluate('number_of_sheets / if(multi_color, sheets_per_minute_color, sheets_per_minute_black)')
       expect(result).to eq(5)
     end
+
+    describe 'roundup' do
+      it 'should work with one argument' do
+        expect(calculator.evaluate('roundup(1.234)')).to eq(2)
+      end
+
+      it 'should accept second precision argument like in Office formula' do
+        expect(calculator.evaluate('roundup(1.234, 2)')).to eq(1.24)
+      end
+    end
+
+    describe 'rounddown' do
+      it 'should work with one argument' do
+        expect(calculator.evaluate('rounddown(1.234)')).to eq(1)
+      end
+
+      it 'should accept second precision argument like in Office formula' do
+        expect(calculator.evaluate('rounddown(1.234, 2)')).to eq(1.23)
+      end
+    end
   end
 
   describe 'case statements' do
