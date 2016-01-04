@@ -260,21 +260,7 @@ THANKS
 
 Big thanks to [ElkStone Basements](http://www.elkstonebasements.com/) for
 allowing me to extract and open source this code.  Thanks also to all the
-contributors:
-
-* [0xCCD](https://github.com/0xCCD)
-* [AlexeyMK](https://github.com/AlexeyMK)
-* [antonversal](https://github.com/antonversal)
-* [arnaudl](https://github.com/arnaudl)
-* [bernardofire](https://github.com/bernardofire)
-* [brixen](https://github.com/brixen)
-* [CraigCottingham](https://github.com/CraigCottingham)
-* [glanotte](https://github.com/glanotte)
-* [jasonhutchens](https://github.com/jasonhutchens)
-* [jmangs](https://github.com/jmangs)
-* [mvbrocato](https://github.com/mvbrocato)
-* [schneidmaster](https://github.com/schneidmaster)
-* [thbar](https://github.com/thbar) / [BoxCar](https://www.boxcar.io)
+[contributors](https://github.com/rubysolo/dentaku/graphs/contributors)!
 
 
 LICENSE
