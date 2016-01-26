@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased]
+
+## [v2.0.6] 2016-01-26
+- support array parameters for external functions
+- support case statements
+- support precision for `ROUNDUP` and `ROUNDDOWN` functions
+- prevent errors from corrupting calculator memory
+
 ## [v2.0.5] 2015-09-03
 - fix bug with detecting unbound nodes
 - silence warnings
@@ -90,6 +98,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[Unreleased]:  https://github.com/rubysolo/dentaku/compare/v2.0.6...HEAD
+[v2.0.6]:  https://github.com/rubysolo/dentaku/compare/v2.0.5...v2.0.6
 [v2.0.5]:  https://github.com/rubysolo/dentaku/compare/v2.0.4...v2.0.5
 [v2.0.4]:  https://github.com/rubysolo/dentaku/compare/v2.0.3...v2.0.4
 [v2.0.3]:  https://github.com/rubysolo/dentaku/compare/v2.0.1...v2.0.3
