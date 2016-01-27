@@ -8,10 +8,10 @@ module Dentaku
   class Calculator
     attr_reader :result, :memory, :tokenizer
 
-    def initialize
+    def initialize(ast_cache={})
       clear
       @tokenizer = Tokenizer.new
-      @ast_cache = {}
+      @ast_cache = ast_cache
       @disable_ast_cache = false
     end
 
