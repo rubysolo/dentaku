@@ -56,6 +56,7 @@ module Dentaku
 
           r[var_name] = value
         rescue Dentaku::UnboundVariableError, ZeroDivisionError => ex
+          ex.recipient_variable = var_name
           r[var_name] = block.call(ex)
         end
       end

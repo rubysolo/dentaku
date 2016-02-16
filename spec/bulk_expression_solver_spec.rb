@@ -27,7 +27,7 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expressions = {more_apples: "1/0"}
       expect {
         described_class.new(expressions, calculator).solve!
-      }.to raise_error(ZeroDivisionError)
+      }.to raise_error(Dentaku::ZeroDivisionError)
     end
 
     it "does not require keys to be parseable" do
@@ -54,6 +54,24 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expressions = {more_apples: "1/0"}
       expect(described_class.new(expressions, calculator).solve { :foo })
         .to eq(more_apples: :foo)
+    end
+
+    it 'stores the recipient variable on the exception when there is a div/0 error' do
+      expressions = {more_apples: "1/0"}
+      exception = nil
+      described_class.new(expressions, calculator).solve do |ex|
+        exception = ex
+      end
+      expect(exception.recipient_variable).to eq('more_apples')
+    end
+
+    it 'stores the recipient variable on the exception when there is an unbound variable' do
+      expressions = {more_apples: "apples + 1"}
+      exception = nil
+      described_class.new(expressions, calculator).solve do |ex|
+        exception = ex
+      end
+      expect(exception.recipient_variable).to eq('more_apples')
     end
   end
 end
