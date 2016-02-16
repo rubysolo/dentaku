@@ -260,6 +260,12 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'explicit NULL' do
+    it 'can be used in IF statements' do
+      expect(calculator.evaluate('IF(null, 1, 2)')).to eq(2)
+    end
+  end
+
   describe 'case statements' do
     it 'handles complex then statements' do
       formula = <<-FORMULA
