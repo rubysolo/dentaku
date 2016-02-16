@@ -1,5 +1,7 @@
 module Dentaku
   class UnboundVariableError < StandardError
+    attr_accessor :recipient_variable
+
     attr_reader :unbound_variables
 
     def initialize(unbound_variables)
@@ -9,5 +11,9 @@ module Dentaku
   end
 
   class ParseError < StandardError
+  end
+
+  class ZeroDivisionError < ::ZeroDivisionError
+    attr_accessor :recipient_variable
   end
 end

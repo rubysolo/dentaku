@@ -68,7 +68,7 @@ module Dentaku
     class Division < Arithmetic
       def value(context={})
         r = cast(right.value(context), false)
-        raise ZeroDivisionError if r.zero?
+        raise Dentaku::ZeroDivisionError if r.zero?
 
         cast(cast(left.value(context)) / r)
       end
