@@ -7,4 +7,7 @@ module Dentaku
       super("no value provided for variables: #{ unbound_variables.join(', ') }")
     end
   end
+
+  class ParseError < StandardError
+  end
 end

@@ -102,7 +102,7 @@ module Dentaku
             end
 
             unless operations.count == 1 && operations.last == AST::Case
-              fail "Unprocessed token #{ token.value }"
+              fail ParseError, "Unprocessed token #{ token.value }"
             end
             consume(arities.pop.succ)
           when :when
@@ -139,7 +139,7 @@ module Dentaku
 
             operations.push(AST::CaseElse)
           else
-            fail "Unknown case token #{ token.value }"
+            fail ParseError, "Unknown case token #{ token.value }"
           end
 
         when :grouping
@@ -158,7 +158,7 @@ module Dentaku
             end
 
             lparen = operations.pop
-            fail "Unbalanced parenthesis" unless lparen == AST::Grouping
+            fail ParseError, "Unbalanced parenthesis" unless lparen == AST::Grouping
 
             if operations.last && operations.last < AST::Function
               consume(arities.pop.succ)
@@ -171,11 +171,11 @@ module Dentaku
             end
 
           else
-            fail "Unknown grouping token #{ token.value }"
+            fail ParseError, "Unknown grouping token #{ token.value }"
           end
 
         else
-          fail "Not implemented for tokens of category #{ token.category }"
+          fail ParseError, "Not implemented for tokens of category #{ token.category }"
         end
       end
 
@@ -184,7 +184,7 @@ module Dentaku
       end
 
       unless output.count == 1
-        fail "Parse error"
+        fail ParseError, "Invalid statement"
       end
 
       output.first

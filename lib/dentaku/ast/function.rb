@@ -12,7 +12,9 @@ module Dentaku
       end
 
       def self.get(name)
-        registry.fetch(function_name(name)) { fail "Undefined function #{ name } "}
+        registry.fetch(function_name(name)) {
+          fail ParseError, "Undefined function #{ name }"
+        }
       end
 
       def self.register(name, type, implementation)

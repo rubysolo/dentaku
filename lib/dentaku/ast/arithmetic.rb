@@ -7,7 +7,9 @@ module Dentaku
     class Arithmetic < Operation
       def initialize(*)
         super
-        fail "#{ self.class } requires numeric operands" unless valid_node?(left) && valid_node?(right)
+        unless valid_node?(left) && valid_node?(right)
+          fail ParseError, "#{ self.class } requires numeric operands"
+        end
       end
 
       def type
@@ -29,7 +31,7 @@ module Dentaku
       end
 
       def valid_node?(node)
-        node.dependencies.any? || node.type == :numeric
+        node && (node.dependencies.any? || node.type == :numeric)
       end
     end
 

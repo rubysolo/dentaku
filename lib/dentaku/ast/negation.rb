@@ -3,7 +3,7 @@ module Dentaku
     class Negation < Operation
       def initialize(node)
         @node = node
-        fail "Negation requires numeric operand" unless valid_node?(node)
+        fail ParseError, "Negation requires numeric operand" unless valid_node?(node)
       end
 
       def value(context={})
@@ -33,7 +33,7 @@ module Dentaku
       private
 
       def valid_node?(node)
-        node.dependencies.any? || node.type == :numeric
+        node && (node.dependencies.any? || node.type == :numeric)
       end
     end
   end

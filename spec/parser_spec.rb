@@ -123,4 +123,14 @@ describe Dentaku::Parser do
        case_close]).parse
     expect(node.value(x: 3)).to eq(4)
   end
+
+  it 'raises an error on parse failure' do
+    five  = Dentaku::Token.new(:numeric, 5)
+    times = Dentaku::Token.new(:operator, :multiply)
+    minus = Dentaku::Token.new(:operator, :subtract)
+
+    expect {
+      described_class.new([five, times, minus]).parse
+    }.to raise_error(Dentaku::ParseError)
+  end
 end
