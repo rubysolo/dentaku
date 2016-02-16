@@ -54,6 +54,9 @@ module Dentaku
             operations.push op_class
           end
 
+        when :null
+          output.push AST::Nil.new
+
         when :function
           arities.push 0
           operations.push function(token)

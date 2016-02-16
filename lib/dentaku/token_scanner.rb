@@ -26,6 +26,7 @@ module Dentaku
     class << self
       def available_scanners
         [
+          :null,
           :whitespace,
           :numeric,
           :double_quoted_string,
@@ -66,6 +67,10 @@ module Dentaku
 
       def whitespace
         new(:whitespace, '\s+')
+      end
+
+      def null
+        new(:null, 'null\b')
       end
 
       def numeric

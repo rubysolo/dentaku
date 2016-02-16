@@ -133,4 +133,10 @@ describe Dentaku::Parser do
       described_class.new([five, times, minus]).parse
     }.to raise_error(Dentaku::ParseError)
   end
+
+  it "evaluates explicit 'NULL' as a Nil" do
+    null  = Dentaku::Token.new(:null, nil)
+    node = described_class.new([null]).parse
+    expect(node.value).to eq(nil)
+  end
 end

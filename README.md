@@ -125,7 +125,7 @@ BUILT-IN OPERATORS AND FUNCTIONS
 
 Math: `+ - * / %`
 
-Logic: `< > <= >= <> != = AND OR`
+Logic: `< > <= >= <> != = AND OR NULL`
 
 Functions: `IF NOT MIN MAX ROUND ROUNDDOWN ROUNDUP`
 
