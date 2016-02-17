@@ -264,6 +264,22 @@ describe Dentaku::Calculator do
     it 'can be used in IF statements' do
       expect(calculator.evaluate('IF(null, 1, 2)')).to eq(2)
     end
+
+    it 'can be used in IF statements when passed in' do
+      expect(calculator.evaluate('IF(foo, 1, 2)', foo: nil)).to eq(2)
+    end
+
+    it 'nil values are carried across middle terms' do
+      results = calculator.solve!(
+        choice: 'IF(bar, 1, 2)',
+        bar: 'foo',
+        foo: nil)
+      expect(results).to eq(
+        choice: 2,
+        bar: nil,
+        foo: nil
+      )
+    end
   end
 
   describe 'case statements' do
