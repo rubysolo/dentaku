@@ -10,12 +10,13 @@ module Dentaku
       end
 
       def value(context={})
-        v = context[identifier]
+        v = context.fetch(identifier) do
+          raise UnboundVariableError.new([identifier])
+        end
+
         case v
         when Node
           v.value(context)
-        when NilClass
-          raise UnboundVariableError.new([identifier])
         else
           v
         end

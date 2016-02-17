@@ -43,8 +43,18 @@ module Dentaku
     def load_results(&block)
       variables_in_resolve_order.each_with_object({}) do |var_name, r|
         begin
-          r[var_name] = calculator.memory[var_name] ||
-                        evaluate!(expressions[var_name], expressions.merge(r))
+          value_from_memory = calculator.memory[var_name]
+
+          if value_from_memory.nil? &&
+              expressions[var_name].nil? &&
+              !calculator.memory.has_key?(var_name)
+            next
+          end
+
+          value = value_from_memory ||
+            evaluate!(expressions[var_name], expressions.merge(r))
+
+          r[var_name] = value
         rescue Dentaku::UnboundVariableError, ZeroDivisionError => ex
           r[var_name] = block.call(ex)
         end
