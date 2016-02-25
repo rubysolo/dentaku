@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [v2.0.7] 2016-02-25
+- fail with gem-specific error for parsing issues
+- support NULL literals and nil variables
+- keep reference to variable that caused failure when bulk-solving
+
 ## [v2.0.6] 2016-01-26
 - support array parameters for external functions
 - support case statements
@@ -98,7 +103,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[Unreleased]:  https://github.com/rubysolo/dentaku/compare/v2.0.6...HEAD
+[Unreleased]:  https://github.com/rubysolo/dentaku/compare/v2.0.7...HEAD
+[v2.0.7]:  https://github.com/rubysolo/dentaku/compare/v2.0.6...v2.0.7
 [v2.0.6]:  https://github.com/rubysolo/dentaku/compare/v2.0.5...v2.0.6
 [v2.0.5]:  https://github.com/rubysolo/dentaku/compare/v2.0.4...v2.0.5
 [v2.0.4]:  https://github.com/rubysolo/dentaku/compare/v2.0.3...v2.0.4
