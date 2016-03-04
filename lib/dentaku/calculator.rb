@@ -27,7 +27,7 @@ module Dentaku
 
     def evaluate(expression, data={})
       evaluate!(expression, data)
-    rescue UnboundVariableError
+    rescue UnboundVariableError, ArgumentError
       yield expression if block_given?
     end
 

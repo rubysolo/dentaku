@@ -25,6 +25,7 @@ module Dentaku
       private
 
       def cast(value, prefer_integer=true)
+        validate_numeric(value)
         v = BigDecimal.new(value, Float::DIG+1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
@@ -32,6 +33,12 @@ module Dentaku
 
       def valid_node?(node)
         node && (node.dependencies.any? || node.type == :numeric)
+      end
+
+      def validate_numeric(value)
+        Float(value)
+      rescue ArgumentError
+        fail ArgumentError, "#{ self.class } requires numeric operands"
       end
     end
 
