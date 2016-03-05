@@ -57,7 +57,7 @@ calculator.evaluate('(5 + 3) * 2')
 #=> 16
 ```
 
-The `evalutate` method will return `nil` if there is an error in the formula.
+The `evaluate` method will return `nil` if there is an error in the formula.
 If this is not the desired behavior, use `evaluate!`, which will raise an
 exception.
 
