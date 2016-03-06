@@ -281,6 +281,12 @@ describe Dentaku::Calculator do
         foo: nil
       )
     end
+
+    it 'raises errors when used in arithmetic operation' do
+      expect {
+        calculator.solve!(more_apples: "apples + 1", apples: nil)
+      }.to raise_error(Dentaku::ArgumentError)
+    end
   end
 
   describe 'case statements' do

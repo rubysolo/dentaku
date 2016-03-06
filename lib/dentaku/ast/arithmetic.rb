@@ -37,8 +37,8 @@ module Dentaku
 
       def validate_numeric(value)
         Float(value)
-      rescue ArgumentError
-        fail ArgumentError, "#{ self.class } requires numeric operands"
+      rescue ::ArgumentError, ::TypeError
+        fail Dentaku::ArgumentError, "#{ self.class } requires numeric operands"
       end
     end
 
