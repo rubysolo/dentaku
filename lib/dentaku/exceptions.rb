@@ -13,6 +13,9 @@ module Dentaku
   class ParseError < StandardError
   end
 
+  class ArgumentError < ::ArgumentError
+  end
+
   class ZeroDivisionError < ::ZeroDivisionError
     attr_accessor :recipient_variable
   end
