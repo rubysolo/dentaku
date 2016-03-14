@@ -129,10 +129,11 @@ Logic: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`, `AND`, `OR`
 
 Functions: `IF`, `NOT`, `MIN`, `MAX`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
 
+Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/master/spec/calculator_spec.rb#L292))
+
 Math: all functions from Ruby's Math module, including `SIN`, `COS`, `TAN`, etc.
 
 String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`
-
 
 RESOLVING DEPENDENCIES
 ----------------------
