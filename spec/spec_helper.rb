@@ -31,3 +31,11 @@ def type_for(value)
     :identifier
   end
 end
+
+def identifier(name)
+  Dentaku::AST::Identifier.new(Dentaku::Token.new(:identifier, name))
+end
+
+def literal(value)
+  Dentaku::AST::Literal.new(Dentaku::Token.new(type_for(value), value))
+end

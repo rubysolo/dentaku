@@ -378,4 +378,12 @@ describe Dentaku::Calculator do
       end
     end
   end
+
+  describe 'string functions' do
+    it 'concatenates two strings' do
+      expect(
+        calculator.evaluate('CONCAT(s1, s2)', 's1' => 'abc', 's2' => 'def')
+      ).to eq 'abcdef'
+    end
+  end
 end

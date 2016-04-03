@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+- add `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, and `CONCAT` string functions
 
 ## [v2.0.7] 2016-02-25
 - fail with gem-specific error for parsing issues
