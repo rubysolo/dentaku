@@ -1,6 +1,8 @@
 # Change Log
 
-## [Unreleased]
+## [v2.0.8] 2016-05-10
+- numeric input validations
+- fail with gem-specific error for invalid arithmetic operands
 - add `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, and `CONCAT` string functions
 
 ## [v2.0.7] 2016-02-25
@@ -104,7 +106,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[Unreleased]:  https://github.com/rubysolo/dentaku/compare/v2.0.7...HEAD
+[v2.0.8]:  https://github.com/rubysolo/dentaku/compare/v2.0.7...v2.0.8
 [v2.0.7]:  https://github.com/rubysolo/dentaku/compare/v2.0.6...v2.0.7
 [v2.0.6]:  https://github.com/rubysolo/dentaku/compare/v2.0.5...v2.0.6
 [v2.0.5]:  https://github.com/rubysolo/dentaku/compare/v2.0.4...v2.0.5
