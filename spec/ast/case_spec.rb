@@ -67,14 +67,18 @@ describe Dentaku::AST::Case do
     let!(:tax) do
       Dentaku::AST::Identifier.new(Dentaku::Token.new(:identifier, :tax))
     end
+    let!(:fallback) do
+      Dentaku::AST::Identifier.new(Dentaku::Token.new(:identifier, :fallback))
+    end
     let!(:addition) { Dentaku::AST::Addition.new(two, tax) }
     let!(:when2) { Dentaku::AST::CaseWhen.new(banana) }
     let!(:then2) { Dentaku::AST::CaseThen.new(addition) }
+    let!(:else2) { Dentaku::AST::CaseElse.new(fallback) }
     let!(:conditional2) { Dentaku::AST::CaseConditional.new(when2, then2) }
 
     it 'gathers dependencies from switch and conditionals' do
-      node = described_class.new(switch, conditional1, conditional2)
-      expect(node.dependencies).to eq([:fruit, :tax])
+      node = described_class.new(switch, conditional1, conditional2, else2)
+      expect(node.dependencies).to eq([:fruit, :tax, :fallback])
     end
   end
 end
