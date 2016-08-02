@@ -1,4 +1,3 @@
-require 'dentaku'
 require 'dentaku/bulk_expression_solver'
 require 'dentaku/exceptions'
 require 'dentaku/token'
