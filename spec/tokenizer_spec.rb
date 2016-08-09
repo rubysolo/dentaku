@@ -142,8 +142,8 @@ describe Dentaku::Tokenizer do
   end
 
   it 'detects unbalanced parentheses' do
-    expect { tokenizer.tokenize('(5+3') }.to raise_error(RuntimeError, /too many opening parentheses/)
-    expect { tokenizer.tokenize(')')    }.to raise_error(RuntimeError, /too many closing parentheses/)
+    expect { tokenizer.tokenize('(5+3') }.to raise_error(Dentaku::TokenizerError, /too many opening parentheses/)
+    expect { tokenizer.tokenize(')')    }.to raise_error(Dentaku::TokenizerError, /too many closing parentheses/)
   end
 
   it 'recognizes identifiers that share initial substrings with combinators' do
