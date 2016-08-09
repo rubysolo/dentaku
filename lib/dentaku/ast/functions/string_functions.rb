@@ -10,7 +10,9 @@ module Dentaku
         end
 
         def value(context={})
-          @string.value(context)[0, @length.value(context)]
+          string = @string.value(context).to_s
+          length = @length.value(context)
+          string[0, length]
         end
       end
 
@@ -21,7 +23,7 @@ module Dentaku
         end
 
         def value(context={})
-          string = @string.value(context)
+          string = @string.value(context).to_s
           length = @length.value(context)
           string[length * -1, length] || string
         end
@@ -35,7 +37,7 @@ module Dentaku
         end
 
         def value(context={})
-          string = @string.value(context)
+          string = @string.value(context).to_s
           offset = @offset.value(context)
           length = @length.value(context)
           string[offset - 1, length].to_s
@@ -48,7 +50,8 @@ module Dentaku
         end
 
         def value(context={})
-          @string.value(context).length
+          string = @string.value(context).to_s
+          string.length
         end
       end
 
@@ -60,7 +63,8 @@ module Dentaku
 
         def value(context={})
           needle = @needle.value(context)
-          haystack = @haystack.value(context)
+          needle = needle.to_s unless needle.is_a?(Regexp)
+          haystack = @haystack.value(context).to_s
           pos = haystack.index(needle)
           pos && pos + 1
         end
@@ -74,9 +78,10 @@ module Dentaku
         end
 
         def value(context={})
-          original = @original.value(context)
+          original = @original.value(context).to_s
           search = @search.value(context)
-          replacement = @replacement.value(context)
+          search = search.to_s unless search.is_a?(Regexp)
+          replacement = @replacement.value(context).to_s
           original.sub(search, replacement)
         end
       end
@@ -88,7 +93,9 @@ module Dentaku
         end
 
         def value(context={})
-          @left.value(context) + @right.value(context)
+          left = @left.value(context).to_s
+          right = @right.value(context).to_s
+          left + right
         end
       end
     end
