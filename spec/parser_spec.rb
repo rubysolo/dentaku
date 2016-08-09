@@ -27,6 +27,14 @@ describe Dentaku::Parser do
     expect(node.value).to eq false
   end
 
+  it 'calculates unary percentage' do
+    five = Dentaku::Token.new(:numeric, 5)
+    mod  = Dentaku::Token.new(:operator, :mod)
+
+    node  = described_class.new([five, mod]).parse
+    expect(node.value).to eq 0.05
+  end
+
   it 'performs multiple operations in one stream' do
     five  = Dentaku::Token.new(:numeric, 5)
     plus  = Dentaku::Token.new(:operator, :add)

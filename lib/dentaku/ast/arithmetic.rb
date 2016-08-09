@@ -86,6 +86,27 @@ module Dentaku
     end
 
     class Modulo < Arithmetic
+      def initialize(left, right)
+        @left  = left
+        @right = right
+
+        unless (valid_node?(left) || left.nil?) && valid_node?(right)
+          fail ParseError, "#{ self.class } requires numeric operands"
+        end
+      end
+
+      def percent?
+        left.nil?
+      end
+
+      def value(context={})
+        if percent?
+          cast(right.value(context)) * 0.01
+        else
+          super
+        end
+      end
+
       def operator
         :%
       end
