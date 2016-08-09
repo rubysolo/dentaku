@@ -13,6 +13,9 @@ module Dentaku
   class ParseError < StandardError
   end
 
+  class TokenizerError < StandardError
+  end
+
   class ArgumentError < ::ArgumentError
   end
 
