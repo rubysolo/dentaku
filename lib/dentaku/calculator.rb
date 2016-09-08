@@ -12,6 +12,7 @@ module Dentaku
       clear
       @tokenizer = Tokenizer.new
       @ast_cache = {}
+      @temporary_disable_cache_ast = false
     end
 
     def add_function(name, type, body)
@@ -22,6 +23,13 @@ module Dentaku
     def add_functions(fns)
       fns.each { |(name, type, body)| add_function(name, type, body) }
       self
+    end
+
+    def disable_cache
+      @temporary_disable_cache_ast = true
+      yield(self) if block_given?
+    ensure
+      @temporary_disable_cache_ast = false
     end
 
     def evaluate(expression, data={})
@@ -53,7 +61,7 @@ module Dentaku
     def ast(expression)
       @ast_cache.fetch(expression) {
         Parser.new(tokenizer.tokenize(expression)).parse.tap do |node|
-          @ast_cache[expression] = node if Dentaku.cache_ast?
+          @ast_cache[expression] = node if cache_ast?
         end
       }
     end
@@ -94,6 +102,10 @@ module Dentaku
 
     def empty?
       memory.empty?
+    end
+
+    def cache_ast?
+      Dentaku.cache_ast? && !@temporary_disable_cache_ast
     end
   end
 end
