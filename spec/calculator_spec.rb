@@ -379,6 +379,20 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'disable_cache' do
+    before do
+      allow(Dentaku).to receive(:cache_ast?) { true }
+    end
+
+    it 'dont use ast cache' do
+      expect(calculator.disable_cache{ |c| c.cache_ast? }).to be false
+    end
+
+    it 'calculate normally' do
+      expect(calculator.disable_cache{ |c| c.evaluate("2 + 2") }).to eq(4)
+    end
+  end
+
   describe 'string functions' do
     it 'concatenates two strings' do
       expect(
