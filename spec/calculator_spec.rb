@@ -142,6 +142,20 @@ describe Dentaku::Calculator do
         more_peaches: 2
       )
     end
+
+    it "solves remainder of expressions when one cannot be evaluated" do
+      result = calculator.solve(
+        conditional: "IF(d != 0, ratio, 0)",
+        ratio:       "10/d",
+        d:           0,
+      )
+
+      expect(result).to eq(
+        conditional: 0,
+        ratio:       :undefined,
+        d:           0,
+      )
+    end
   end
 
   it 'evaluates a statement with no variables' do
