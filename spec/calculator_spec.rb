@@ -384,12 +384,45 @@ describe Dentaku::Calculator do
       allow(Dentaku).to receive(:cache_ast?) { true }
     end
 
-    it 'dont use ast cache' do
+    it 'disables the AST cache' do
       expect(calculator.disable_cache{ |c| c.cache_ast? }).to be false
     end
 
-    it 'calculate normally' do
+    it 'calculates normally' do
       expect(calculator.disable_cache{ |c| c.evaluate("2 + 2") }).to eq(4)
+    end
+  end
+
+  describe 'clear_cache' do
+    before do
+      allow(Dentaku).to receive(:cache_ast?) { true }
+
+      calculator.ast("1+1")
+      calculator.ast("pineapples * 5")
+      calculator.ast("pi * radius ^ 2")
+
+      def calculator.ast_cache
+        @ast_cache
+      end
+    end
+
+    it 'clears all items from cache' do
+      expect(calculator.ast_cache.length).to eq 3
+      calculator.clear_cache
+      expect(calculator.ast_cache.keys).to be_empty
+    end
+
+    it 'clears one item from cache' do
+      calculator.clear_cache("1+1")
+      expect(calculator.ast_cache.keys.sort).to eq([
+        'pi * radius ^ 2',
+        'pineapples * 5',
+      ])
+    end
+
+    it 'clears items matching regex from cache' do
+      calculator.clear_cache(/^pi/)
+      expect(calculator.ast_cache.keys.sort).to eq(['1+1'])
     end
   end
 

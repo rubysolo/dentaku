@@ -66,6 +66,19 @@ module Dentaku
       }
     end
 
+    def clear_cache(pattern=:all)
+      case pattern
+      when :all
+        @ast_cache = {}
+      when String
+        @ast_cache.delete(pattern)
+      when Regexp
+        @ast_cache.delete_if { |k,_| k =~ pattern }
+      else
+        fail Dentaku::ArgumentError
+      end
+    end
+
     def store(key_or_hash, value=nil)
       restore = Hash[memory]
 
