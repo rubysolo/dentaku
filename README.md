@@ -169,11 +169,11 @@ calc.dependencies("annual_income / 5")
 #=> [:annual_income]
 ```
 
-#### Calculator.solve!
+#### Calculator.solve! / Calculator.solve
 Have Dentaku figure out the order in which your formulas need to be evaluated.
 
 Pass in a hash of `{eventual_variable_name: "expression"}` to `solve!` and
-have Dentaku figure out dependencies (using `TSort`) for you.
+have Dentaku resolve dependencies (using `TSort`) for you.
 
 Raises `TSort::Cyclic` when a valid expression order cannot be found.
 
@@ -193,6 +193,11 @@ calc.solve!(
 }
 #=> raises TSort::Cyclic
 ```
+
+`solve!` will also raise an exception if any of the formulas in the set cannot
+be evaluated (e.g. raise `ZeroDivisionError`).  The non-bang `solve` method will
+find as many solutions as possible and return the symbol `:undefined` for the
+problem formulas.
 
 INLINE COMMENTS
 ---------------------------------
@@ -272,7 +277,7 @@ LICENSE
 
 (The MIT License)
 
-Copyright © 2012 Solomon White
+Copyright © 2012-2016 Solomon White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the ‘Software’), to deal in
