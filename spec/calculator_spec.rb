@@ -379,6 +379,34 @@ describe Dentaku::Calculator do
         fruit: 'banana')
       expect(value).to eq(5)
     end
+
+    it 'handles multiple nested case statements' do
+      formula = <<-FORMULA
+      CASE fruit
+      WHEN 'apple'
+        THEN
+        CASE quantity
+        WHEN 2 THEN 3
+        END
+      WHEN 'banana'
+        THEN
+        CASE quantity
+        WHEN 1 THEN 2
+        END
+      END
+      FORMULA
+      value = calculator.evaluate(
+        formula,
+        quantity: 1,
+        fruit: 'banana')
+      expect(value).to eq(2)
+
+      value = calculator.evaluate(
+        formula,
+        quantity: 2,
+        fruit: 'apple')
+      expect(value).to eq(3)
+    end
   end
 
   describe 'math functions' do
