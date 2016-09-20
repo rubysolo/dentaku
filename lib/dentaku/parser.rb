@@ -67,15 +67,24 @@ module Dentaku
             # special handling for case nesting: strip out inner case
             # statements and parse their AST segments recursively
             if operations.include?(AST::Case)
-              last_case_close_index = nil
-              first_nested_case_close_index = nil
+              open_cases = 0
+              case_end_index = nil
+
               input.each_with_index do |token, index|
-                first_nested_case_close_index = last_case_close_index
+                if token.category == :case && token.value == :open
+                  open_cases += 1
+                end
+
                 if token.category == :case && token.value == :close
-                  last_case_close_index = index
+                  if open_cases > 0
+                    open_cases -= 1
+                  else
+                    case_end_index = index
+                    break
+                  end
                 end
               end
-              inner_case_inputs = input.slice!(0..first_nested_case_close_index)
+              inner_case_inputs = input.slice!(0..case_end_index)
               subparser = Parser.new(
                 inner_case_inputs,
                 operations: [AST::Case],
