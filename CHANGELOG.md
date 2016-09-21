@@ -1,5 +1,9 @@
 # Change Log
 
+## [HEAD] Unreleased
+- fix issues with CASE statements
+- allow injecting AST cache
+
 ## [v2.0.9] 2016-09-19
 - namespace tokenization errors
 - automatically coerce arguments to string functions as strings
@@ -111,6 +115,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...HEAD
 [v2.0.9]:  https://github.com/rubysolo/dentaku/compare/v2.0.8...v2.0.9
 [v2.0.8]:  https://github.com/rubysolo/dentaku/compare/v2.0.7...v2.0.8
 [v2.0.7]:  https://github.com/rubysolo/dentaku/compare/v2.0.6...v2.0.7
