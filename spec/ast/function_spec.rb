@@ -1,6 +1,8 @@
 require 'spec_helper'
 require 'dentaku/ast/function'
 
+class Clazz; end
+
 describe Dentaku::AST::Function do
   it 'maintains a function registry' do
     expect(described_class).to respond_to(:get)
@@ -17,5 +19,9 @@ describe Dentaku::AST::Function do
     expect { described_class.get("flarble") }.not_to raise_error
     function = described_class.get("flarble").new
     expect(function.value).to eq "flarble"
+  end
+
+  it 'does not throw an error when registering a function with a name that matches a currently defined constant' do
+    expect { described_class.register("clazz", :string, -> { "clazzified" }) }.not_to raise_error
   end
 end
