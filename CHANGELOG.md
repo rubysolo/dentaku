@@ -1,6 +1,7 @@
 # Change Log
 
-## [HEAD] Unreleased
+## [v2.0.10] 2016-12-30
+- fix string function initialization bug
 - fix issues with CASE statements
 - allow injecting AST cache
 
