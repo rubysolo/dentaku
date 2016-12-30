@@ -66,6 +66,12 @@ describe Dentaku::Calculator do
       expect(calculator.dependencies("bob + dole / 3")).to eq(['bob', 'dole'])
     end
 
+    it "finds dependencies in formula arguments" do
+      allow(Dentaku).to receive(:cache_ast?) { true }
+
+      expect(calculator.dependencies("CONCAT(bob, dole)")).to eq(['bob', 'dole'])
+    end
+
     it "doesn't consider variables in memory as dependencies" do
       expect(with_memory.dependencies("apples + oranges")).to eq(['oranges'])
     end

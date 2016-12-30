@@ -4,9 +4,9 @@ module Dentaku
   module AST
     module StringFunctions
       class Left < Function
-        def initialize(string, length)
-          @string = string
-          @length = length
+        def initialize(*args)
+          super
+          @string, @length = *@args
         end
 
         def value(context={})
@@ -17,9 +17,9 @@ module Dentaku
       end
 
       class Right < Function
-        def initialize(string, length)
-          @string = string
-          @length = length
+        def initialize(*args)
+          super
+          @string, @length = *@args
         end
 
         def value(context={})
@@ -30,10 +30,9 @@ module Dentaku
       end
 
       class Mid < Function
-        def initialize(string, offset, length)
-          @string = string
-          @offset = offset
-          @length = length
+        def initialize(*args)
+          super
+          @string, @offset, @length = *@args
         end
 
         def value(context={})
@@ -45,8 +44,9 @@ module Dentaku
       end
 
       class Len < Function
-        def initialize(string)
-          @string = string
+        def initialize(*args)
+          super
+          @string = @args[0]
         end
 
         def value(context={})
@@ -56,9 +56,9 @@ module Dentaku
       end
 
       class Find < Function
-        def initialize(needle, haystack)
-          @needle = needle
-          @haystack = haystack
+        def initialize(*args)
+          super
+          @needle, @haystack = *@args
         end
 
         def value(context={})
@@ -71,10 +71,9 @@ module Dentaku
       end
 
       class Substitute < Function
-        def initialize(original, search, replacement)
-          @original = original
-          @search = search
-          @replacement = replacement
+        def initialize(*args)
+          super
+          @original, @search, @replacement = *@args
         end
 
         def value(context={})
@@ -87,9 +86,9 @@ module Dentaku
       end
 
       class Concat < Function
-        def initialize(left, right)
-          @left  = left
-          @right = right
+        def initialize(*args)
+          super
+          @left, @right = *@args
         end
 
         def value(context={})
