@@ -133,7 +133,7 @@ module Dentaku
       end
 
       def identifier
-        new(:identifier, '\w+\b', lambda { |raw| raw.strip.downcase })
+        new(:identifier, '[\w\.]+\b', lambda { |raw| raw.strip.downcase })
       end
     end
 
