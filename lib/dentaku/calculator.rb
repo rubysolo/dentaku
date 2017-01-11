@@ -4,6 +4,7 @@ require 'dentaku/token'
 require 'dentaku/dependency_resolver'
 require 'dentaku/parser'
 
+
 module Dentaku
   class Calculator
     attr_reader :result, :memory, :tokenizer
@@ -79,11 +80,13 @@ module Dentaku
       end
     end
 
+
+
     def store(key_or_hash, value=nil)
       restore = Hash[memory]
 
       if value.nil?
-        key_or_hash.each do |key, val|
+        _flat_hash(key_or_hash).each do |key, val|
           memory[key.to_s.downcase] = val
         end
       else
@@ -119,6 +122,17 @@ module Dentaku
 
     def cache_ast?
       Dentaku.cache_ast? && !@disable_ast_cache
+    end
+
+    private
+
+    def _flat_hash(hash, k = [])
+      if hash.is_a?(Hash)
+        hash.inject({}) { |h, v| h.merge! _flat_hash(v[-1], k + [v[0]]) }
+      else
+        return { k.join('.') => hash } if k.is_a?(Array)
+        { k => hash }
+      end
     end
   end
 end

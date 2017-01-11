@@ -62,6 +62,12 @@ describe Dentaku::Calculator do
       calculator.store_formula('area', 'length * width')
       expect(calculator.evaluate!('area', length: 5, width: 5)).to eq 25
     end
+
+    it 'stores nested hashes' do
+      calculator.store({a: {basket: {of: 'apples'}}, b: 2})
+      expect(calculator.evaluate!('a.basket.of')).to eq 'apples'
+      expect(calculator.evaluate!('b')).to eq 2
+    end
   end
 
   describe 'dependencies' do
