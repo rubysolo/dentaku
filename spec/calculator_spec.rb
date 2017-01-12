@@ -180,6 +180,11 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate(unbound) { |e| e }).to eq unbound
   end
 
+  it 'fails to evaluate incomplete statements' do
+    incomplete = 'true AND'
+    expect { calculator.evaluate!(incomplete) }.to raise_error(Dentaku::ParseError)
+  end
+
   it 'evaluates unbound statements given a binding in memory' do
     expect(calculator.evaluate('foo * 1.5', foo: 2)).to eq(3)
     expect(calculator.bind(monkeys: 3).evaluate('monkeys < 7')).to be_truthy
