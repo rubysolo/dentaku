@@ -19,4 +19,10 @@ describe Dentaku do
     expect(Dentaku('40 + n', 'N' => 2)).to eql(42)
     expect(Dentaku('40 + n', 'n' => 2)).to eql(42)
   end
+
+  it 'raises a parse error for bad logic expressions' do
+    expect {
+      Dentaku('true AND')
+    }.to raise_error(Dentaku::ParseError)
+  end
 end

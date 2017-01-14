@@ -132,14 +132,25 @@ describe Dentaku::Parser do
     expect(node.value(x: 3)).to eq(4)
   end
 
-  it 'raises an error on parse failure' do
-    five  = Dentaku::Token.new(:numeric, 5)
-    times = Dentaku::Token.new(:operator, :multiply)
-    minus = Dentaku::Token.new(:operator, :subtract)
+  context 'invalid expression' do
+    it 'raises a parse error for bad math' do
+      five  = Dentaku::Token.new(:numeric, 5)
+      times = Dentaku::Token.new(:operator, :multiply)
+      minus = Dentaku::Token.new(:operator, :subtract)
 
-    expect {
-      described_class.new([five, times, minus]).parse
-    }.to raise_error(Dentaku::ParseError)
+      expect {
+        described_class.new([five, times, minus]).parse
+      }.to raise_error(Dentaku::ParseError)
+    end
+
+    it 'raises a parse error for bad logic' do
+      this = Dentaku::Token.new(:logical, true)
+      also = Dentaku::Token.new(:combinator, :and)
+
+      expect {
+        described_class.new([this, also]).parse
+      }.to raise_error(Dentaku::ParseError)
+    end
   end
 
   it "evaluates explicit 'NULL' as a Nil" do
