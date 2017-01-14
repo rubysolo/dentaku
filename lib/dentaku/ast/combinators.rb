@@ -17,7 +17,7 @@ module Dentaku
       private
 
       def valid_node?(node)
-        !node.nil? && (node.dependencies.any? || node.type == :logical)
+        node && (node.dependencies.any? || node.type == :logical)
       end
     end
 

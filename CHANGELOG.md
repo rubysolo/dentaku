@@ -116,7 +116,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...HEAD
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.10...HEAD
+[v2.0.10]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...v2.0.10
 [v2.0.9]:  https://github.com/rubysolo/dentaku/compare/v2.0.8...v2.0.9
 [v2.0.8]:  https://github.com/rubysolo/dentaku/compare/v2.0.7...v2.0.8
 [v2.0.7]:  https://github.com/rubysolo/dentaku/compare/v2.0.6...v2.0.7
