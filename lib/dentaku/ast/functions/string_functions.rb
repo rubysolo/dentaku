@@ -88,13 +88,10 @@ module Dentaku
       class Concat < Function
         def initialize(*args)
           super
-          @left, @right = *@args
         end
 
         def value(context={})
-          left = @left.value(context).to_s
-          right = @right.value(context).to_s
-          left + right
+          @args.map { |arg| arg.value(context).to_s }.join
         end
       end
     end
