@@ -166,10 +166,17 @@ describe Dentaku::Tokenizer do
   end
 
   it 'tokenizes Time literals' do
-    tokens = tokenizer.tokenize('2017-01-01 < 2017-01-02 12:23:42')
-    expect(tokens.length).to eq(3)
-    expect(tokens.map(&:category)).to eq([:datetime, :comparator, :datetime])
-    expect(tokens.map(&:value)).to eq([Time.local(2017, 1, 1).to_datetime, :lt, Time.local(2017, 1, 2, 12, 23, 42).to_datetime])
+    tokens = tokenizer.tokenize('2017-01-01 2017-01-2 2017-1-03 2017-01-04 12:23:42 2017-1-5 1:2:3 2017-1-06 1:02:30')
+    expect(tokens.length).to eq(6)
+    expect(tokens.map(&:category)).to eq([:datetime, :datetime, :datetime, :datetime, :datetime, :datetime])
+    expect(tokens.map(&:value)).to eq([
+      Time.local(2017, 1, 1).to_datetime,
+      Time.local(2017, 1, 2).to_datetime,
+      Time.local(2017, 1, 3).to_datetime,
+      Time.local(2017, 1, 4, 12, 23, 42).to_datetime,
+      Time.local(2017, 1, 5, 1, 2, 3).to_datetime,
+      Time.local(2017, 1, 6, 1, 2, 30).to_datetime
+    ])
   end
 
   describe 'functions' do
