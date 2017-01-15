@@ -32,6 +32,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('0.253/0.253')).to eq(1)
     expect(calculator.evaluate('0.253/d', d: 0.253)).to eq(1)
     expect(calculator.evaluate('10 + x', x: 'abc')).to be_nil
+    expect(calculator.evaluate('t + 1*24*60*60', t: Time.local(2017, 1, 1))).to eq(Time.local(2017, 1, 2))
   end
 
   describe 'memory' do
@@ -226,6 +227,13 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('some_boolean OR 7 > 5', some_boolean: true)).to be_truthy
     expect(calculator.evaluate('some_boolean OR 7 < 5', some_boolean: true)).to be_truthy
     expect(calculator.evaluate('some_boolean OR 7 < 5', some_boolean: false)).to be_falsey
+  end
+
+  it 'compares Time variables' do
+    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 1), t2: Time.local(2017, 1, 2))).to be_truthy
+    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 2), t2: Time.local(2017, 1, 1))).to be_falsy
+    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 1), t2: Time.local(2017, 1, 2))).to be_falsy
+    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 2), t2: Time.local(2017, 1, 1))).to be_truthy
   end
 
   describe 'functions' do

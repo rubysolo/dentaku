@@ -29,6 +29,9 @@ module Dentaku
         v = BigDecimal.new(value, Float::DIG+1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
+      rescue ::TypeError
+        # If we got a TypeError BigDecimal or to_i failed; let value through so ruby things like Time - integer work
+        value
       end
 
       def valid_node?(node)
