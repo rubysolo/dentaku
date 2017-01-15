@@ -25,6 +25,9 @@ module Dentaku
 
       while token = input.shift
         case token.category
+        when :datetime
+          output.push AST::DateTime.new(token)
+
         when :numeric
           output.push AST::Numeric.new(token)
 

@@ -230,10 +230,17 @@ describe Dentaku::Calculator do
   end
 
   it 'compares Time variables' do
-    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 1), t2: Time.local(2017, 1, 2))).to be_truthy
-    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 2), t2: Time.local(2017, 1, 1))).to be_falsy
-    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 1), t2: Time.local(2017, 1, 2))).to be_falsy
-    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 2), t2: Time.local(2017, 1, 1))).to be_truthy
+    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 1).to_datetime, t2: Time.local(2017, 1, 2).to_datetime)).to be_truthy
+    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 2).to_datetime, t2: Time.local(2017, 1, 1).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 1).to_datetime, t2: Time.local(2017, 1, 2).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 2).to_datetime, t2: Time.local(2017, 1, 1).to_datetime)).to be_truthy
+  end
+
+  it 'compares Time literals with Time variables' do
+    expect(calculator.evaluate('t1 < 2017-01-02', t1: Time.local(2017, 1, 1).to_datetime)).to be_truthy
+    expect(calculator.evaluate('t1 < 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 1).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_truthy
   end
 
   describe 'functions' do

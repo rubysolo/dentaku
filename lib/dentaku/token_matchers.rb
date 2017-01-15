@@ -12,7 +12,7 @@ module Dentaku
 
     def self.matcher(symbol)
       @matchers ||= [
-        :numeric, :string, :addsub, :subtract, :muldiv, :pow, :mod,
+        :datetime, :numeric, :string, :addsub, :subtract, :muldiv, :pow, :mod,
         :comparator, :comp_gt, :comp_lt, :open, :close, :comma,
         :non_close_plus, :non_group, :non_group_star, :arguments,
         :logical, :combinator, :if, :round, :roundup, :rounddown, :not,

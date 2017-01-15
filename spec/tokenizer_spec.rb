@@ -165,6 +165,13 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['true_lies', :and, 'falsehoods'])
   end
 
+  it 'tokenizes Time literals' do
+    tokens = tokenizer.tokenize('2017-01-01 < 2017-01-02 12:23:42')
+    expect(tokens.length).to eq(3)
+    expect(tokens.map(&:category)).to eq([:datetime, :comparator, :datetime])
+    expect(tokens.map(&:value)).to eq([Time.local(2017, 1, 1).to_datetime, :lt, Time.local(2017, 1, 2, 12, 23, 42).to_datetime])
+  end
+
   describe 'functions' do
     it 'include IF' do
       tokens = tokenizer.tokenize('if(x < 10, y, z)')
