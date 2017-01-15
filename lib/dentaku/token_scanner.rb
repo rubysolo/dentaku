@@ -1,4 +1,5 @@
 require 'bigdecimal'
+require 'time'
 require 'dentaku/token'
 
 module Dentaku
@@ -28,6 +29,7 @@ module Dentaku
         [
           :null,
           :whitespace,
+          :datetime, # before numeric so it can pick up timestamps
           :numeric,
           :double_quoted_string,
           :single_quoted_string,
@@ -71,6 +73,11 @@ module Dentaku
 
       def null
         new(:null, 'null\b')
+      end
+
+      # NOTE: Convert to DateTime as Array(Time) returns the parts of the time for some reason
+      def datetime
+        new(:datetime, '\d{2}\d{2}?-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})?', lambda { |raw| Time.parse(raw).to_datetime })
       end
 
       def numeric

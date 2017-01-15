@@ -93,11 +93,12 @@ module Dentaku
       @values.empty? || @values.key?(value)
     end
 
+    def self.datetime;       new(:datetime);                       end
     def self.numeric;        new(:numeric);                        end
     def self.string;         new(:string);                         end
     def self.logical;        new(:logical);                        end
     def self.value
-      new(:numeric) | new(:string) | new(:logical)
+      new(:datetime) | new(:numeric) | new(:string) | new(:logical)
     end
 
     def self.addsub;         new(:operator, [:add, :subtract]);    end
