@@ -1,13 +1,13 @@
 module Dentaku
   module AST
-    class Negation < Operation
+    class Negation < Arithmetic
       def initialize(node)
         @node = node
         fail ParseError, "Negation requires numeric operand" unless valid_node?(node)
       end
 
       def value(context={})
-        @node.value(context) * -1
+        cast(@node.value(context)) * -1
       end
 
       def type

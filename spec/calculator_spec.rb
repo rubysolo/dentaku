@@ -169,6 +169,13 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('(1+1+1)/3*100')).to eq(100)
   end
 
+  it 'evaluates negation' do
+    expect(calculator.evaluate('-negative', negative: -1)).to eq(1)
+    expect(calculator.evaluate('-negative', negative: '-1')).to eq(1)
+    expect(calculator.evaluate('-negative - 1', negative: '-1')).to eq(0)
+    expect(calculator.evaluate('-negative - 1', negative: '1')).to eq(-2)
+  end
+
   it 'fails to evaluate unbound statements' do
     unbound = 'foo * 1.5'
     expect { calculator.evaluate!(unbound) }.to raise_error(Dentaku::UnboundVariableError)
