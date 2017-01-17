@@ -1,5 +1,11 @@
 # Change Log
 
+## [HEAD] Unreleased
+- fix dependency checking for logical AST nodes
+- make CONCAT variadic
+- fix casting strings to numeric in negation operations
+- add date/time support
+
 ## [v2.0.10] 2016-12-30
 - fix string function initialization bug
 - fix issues with CASE statements
