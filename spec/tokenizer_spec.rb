@@ -45,12 +45,6 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['number', :eq, 5])
   end
 
-  it 'tokenizes comparison with =' do
-    tokens = tokenizer.tokenize('number = 5')
-    expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])
-    expect(tokens.map(&:value)).to eq(['number', :eq, 5])
-  end
-
   it 'tokenizes comparison with alternate ==' do
     tokens = tokenizer.tokenize('number == 5')
     expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])
@@ -63,19 +57,19 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq([1, :divide, 1])
   end
 
-  it 'tokenizes power operations' do
+  it 'tokenizes power operations in simple expressions' do
     tokens = tokenizer.tokenize('10 ^ 2')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([10, :pow, 2])
   end
 
-  it 'tokenizes power operations' do
+  it 'tokenizes power operations in complex expressions' do
     tokens = tokenizer.tokenize('0 * 10 ^ -5')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric, :operator, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([0, :multiply, 10, :pow, :negate, 5])
   end
 
-  it 'handles floating point' do
+  it 'handles floating point operands' do
     tokens = tokenizer.tokenize('1.5 * 3.7')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([1.5, :multiply, 3.7])
@@ -111,13 +105,13 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq([2, :subtract, 3])
   end
 
-  it 'recognizes unary minus operator' do
+  it 'recognizes unary minus operator applied to left operand' do
     tokens = tokenizer.tokenize('-2 + 3')
     expect(tokens.map(&:category)).to eq([:operator, :numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([:negate, 2, :add, 3])
   end
 
-  it 'recognizes unary minus operator' do
+  it 'recognizes unary minus operator applied to right operand' do
     tokens = tokenizer.tokenize('2 - -3')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([2, :subtract, :negate, 3])
