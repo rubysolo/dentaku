@@ -6,6 +6,10 @@ module Dentaku
         fail ParseError, "Negation requires numeric operand" unless valid_node?(node)
       end
 
+      def operator
+        :*
+      end
+
       def value(context={})
         cast(@node.value(context)) * -1
       end

@@ -26,4 +26,31 @@ describe Dentaku::AST::Addition do
       described_class.new(group, five)
     }.not_to raise_error
   end
+
+  it 'allows operands that respond to addition' do
+    # Sample struct that has a custom definition for addition
+    
+    Operand = Struct.new(:value) do
+      def +(other)
+        case other
+        when Operand
+          value + other.value
+        when Numeric
+          value + other
+        end
+      end
+    end
+
+    operand_five = Dentaku::AST::Logical.new Dentaku::Token.new(:numeric, Operand.new(5))
+    operand_six = Dentaku::AST::Logical.new Dentaku::Token.new(:numeric, Operand.new(6))
+
+    expect {
+      described_class.new(operand_five, operand_six)
+    }.not_to raise_error
+
+    expect {
+      described_class.new(operand_five, six)
+    }.not_to raise_error
+
+  end
 end

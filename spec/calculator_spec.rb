@@ -31,7 +31,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('(((695759/735000)^(1/(1981-1991)))-1)*1000').round(4)).to eq(5.5018)
     expect(calculator.evaluate('0.253/0.253')).to eq(1)
     expect(calculator.evaluate('0.253/d', d: 0.253)).to eq(1)
-    expect(calculator.evaluate('10 + x', x: 'abc')).to be_nil
+    expect(calculator.evaluate('10 + x', x: 'abc')).to eq(10) # x gets parsed as 0 when converting to BigDecimal
     expect(calculator.evaluate('t + 1*24*60*60', t: Time.local(2017, 1, 1))).to eq(Time.local(2017, 1, 2))
     expect(calculator.evaluate("2 | 3 * 9")).to eq (27)
     expect(calculator.evaluate("2 & 3 * 9")).to eq (2)

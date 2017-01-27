@@ -16,6 +16,10 @@ module Dentaku
         :numeric
       end
 
+      def operator
+        raise "Not implemented"
+      end
+
       def value(context={})
         l = cast(left.value(context))
         r = cast(right.value(context))
@@ -25,12 +29,13 @@ module Dentaku
       private
 
       def cast(value, prefer_integer=true)
-        validate_numeric(value)
+        validate_operation(value)
         v = BigDecimal.new(value, Float::DIG+1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
       rescue ::TypeError
-        # If we got a TypeError BigDecimal or to_i failed; let value through so ruby things like Time - integer work
+        # If we got a TypeError BigDecimal or to_i failed;
+        # let value through so ruby things like Time - integer work
         value
       end
 
@@ -38,10 +43,10 @@ module Dentaku
         node && (node.dependencies.any? || node.type == :numeric)
       end
 
-      def validate_numeric(value)
-        Float(value)
-      rescue ::ArgumentError, ::TypeError
-        fail Dentaku::ArgumentError, "#{ self.class } requires numeric operands"
+      def validate_operation(value)
+        unless value.respond_to?(operator)
+          fail Dentaku::ArgumentError, "#{ self.class } requires operands that respond to #{ operator }"
+        end
       end
     end
 
@@ -76,6 +81,10 @@ module Dentaku
     end
 
     class Division < Arithmetic
+      def operator
+        :/
+      end
+
       def value(context={})
         r = cast(right.value(context), false)
         raise Dentaku::ZeroDivisionError if r.zero?
