@@ -133,7 +133,7 @@ module Dentaku
       end
 
       def function
-        new(:function, '\w+\s*\(', lambda do |raw|
+        new(:function, '\w+!?\s*\(', lambda do |raw|
           function_name = raw.gsub('(', '')
           [Token.new(:function, function_name.strip.downcase.to_sym, function_name), Token.new(:grouping, :open, '(')]
         end)

@@ -6,6 +6,7 @@
 - fix casting strings to numeric in negation operations
 - add date/time support
 - add `&` (bitwise and) and `|` (bitwise or) operators
+- fix incompatibility with 'mathn' module
 
 ## [v2.0.10] 2016-12-30
 - fix string function initialization bug

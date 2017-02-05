@@ -52,5 +52,11 @@ describe Dentaku::Calculator do
         expect(calculator.evaluate("INCLUDES(list, 2)", list: [1,2,3])).to eq(true)
       end
     end
+
+    it 'allows registering "bang" functions' do
+      calculator = described_class.new
+      calculator.add_function(:hey!, :string, -> { "hey!" })
+      expect(calculator.evaluate("hey!()")).to eq("hey!")
+    end
   end
 end

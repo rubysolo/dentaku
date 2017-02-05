@@ -228,5 +228,12 @@ describe Dentaku::Tokenizer do
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :comparator, :numeric, :grouping])
       expect(tokens.map(&:value)).to eq([:not, :open, 8, :lt, 5, :close])
     end
+
+    it 'can end with a bang' do
+      tokens = tokenizer.tokenize('exp!(5 * 3)')
+      expect(tokens.length).to eq(6)
+      expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :operator, :numeric, :grouping])
+      expect(tokens.map(&:value)).to eq([:exp!, :open, 5, :multiply, 3, :close])
+    end
   end
 end
