@@ -214,6 +214,8 @@ module Dentaku
         pow:      AST::Exponentiation,
         negate:   AST::Negation,
         mod:      AST::Modulo,
+        bitor:    AST::BitwiseOr,
+        bitand:   AST::BitwiseAnd,
 
         lt:       AST::LessThan,
         gt:       AST::GreaterThan,

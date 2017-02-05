@@ -35,6 +35,15 @@ describe Dentaku::Parser do
     expect(node.value).to eq 0.05
   end
 
+  it 'calculates bitwise OR' do
+    two   = Dentaku::Token.new(:numeric, 2)
+    bitor = Dentaku::Token.new(:operator, :bitor)
+    three = Dentaku::Token.new(:numeric, 3)
+
+    node  = described_class.new([two, bitor, three]).parse
+    expect(node.value).to eq 3
+  end
+
   it 'performs multiple operations in one stream' do
     five  = Dentaku::Token.new(:numeric, 5)
     plus  = Dentaku::Token.new(:operator, :add)

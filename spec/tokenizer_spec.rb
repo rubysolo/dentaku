@@ -51,6 +51,18 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['number', :eq, 5])
   end
 
+  it 'tokenizes bitwise OR' do
+    tokens = tokenizer.tokenize('2 | 3')
+    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([2, :bitor, 3])
+  end
+
+  it 'tokenizes bitwise AND' do
+    tokens = tokenizer.tokenize('2 & 3')
+    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([2, :bitand, 3])
+  end
+
   it 'ignores whitespace' do
     tokens = tokenizer.tokenize('1     / 1     ')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])

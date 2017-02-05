@@ -33,6 +33,8 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('0.253/d', d: 0.253)).to eq(1)
     expect(calculator.evaluate('10 + x', x: 'abc')).to be_nil
     expect(calculator.evaluate('t + 1*24*60*60', t: Time.local(2017, 1, 1))).to eq(Time.local(2017, 1, 2))
+    expect(calculator.evaluate("2 | 3 * 9")).to eq (27)
+    expect(calculator.evaluate("2 & 3 * 9")).to eq (2)
   end
 
   describe 'memory' do
