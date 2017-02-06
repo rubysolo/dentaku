@@ -4,6 +4,12 @@ require 'dentaku/token'
 require 'dentaku/dependency_resolver'
 require 'dentaku/parser'
 
+def _flat_hash(hash, k = [])
+  return {k.join('.') => hash} unless hash.is_a?(Hash) and k.is_a?(Array) 
+  return {k => hash} unless hash.is_a?(Hash)
+  hash.inject({}){ |h, v| h.merge! _flat_hash(v[-1], k + [v[0]]) }
+end
+
 module Dentaku
   class Calculator
     attr_reader :result, :memory, :tokenizer
@@ -79,12 +85,20 @@ module Dentaku
       end
     end
 
+    
+
     def store(key_or_hash, value=nil)
       restore = Hash[memory]
 
       if value.nil?
-        key_or_hash.each do |key, val|
-          memory[key.to_s.downcase] = val
+        # Check if is a nested hash
+        if key_or_hash.select { |k,v| v.is_a?(Hash) }.empty?
+          key_or_hash.each do |key, val|
+            memory[key.to_s.downcase] = val
+          end
+        else
+          new_hash = _flat_hash(key_or_hash)
+          self.store(new_hash, value)
         end
       else
         memory[key_or_hash.to_s.downcase] = value
