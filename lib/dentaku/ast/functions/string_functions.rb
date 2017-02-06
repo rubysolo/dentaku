@@ -94,6 +94,17 @@ module Dentaku
           @args.map { |arg| arg.value(context).to_s }.join
         end
       end
+
+      class Contains < Function
+        def initialize(*args)
+          super
+          @needle, @haystack = *args
+        end
+
+        def value(context={})
+          @haystack.value(context).to_s.include? @needle.value(context).to_s
+        end
+      end
     end
   end
 end
@@ -105,3 +116,4 @@ Dentaku::AST::Function.register_class(:len,        Dentaku::AST::StringFunctions
 Dentaku::AST::Function.register_class(:find,       Dentaku::AST::StringFunctions::Find)
 Dentaku::AST::Function.register_class(:substitute, Dentaku::AST::StringFunctions::Substitute)
 Dentaku::AST::Function.register_class(:concat,     Dentaku::AST::StringFunctions::Concat)
+Dentaku::AST::Function.register_class(:contains,   Dentaku::AST::StringFunctions::Contains)

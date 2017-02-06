@@ -133,3 +133,12 @@ describe Dentaku::AST::StringFunctions::Concat do
     expect(subject.value).to eq ''
   end
 end
+
+describe Dentaku::AST::StringFunctions::Contains do
+  it 'checks for substrings' do
+    subject = described_class.new(literal('app'), literal('apple'))
+    expect(subject.value).to be_truthy
+    subject = described_class.new(literal('app'), literal('orange'))
+    expect(subject.value).to be_falsy
+  end
+end

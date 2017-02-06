@@ -135,7 +135,7 @@ Functions: `MIN`, `MAX`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
 
 Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/master/spec/calculator_spec.rb#L292))
 
-String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`
+String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`, `CONTAINS`
 
 RESOLVING DEPENDENCIES
 ----------------------
