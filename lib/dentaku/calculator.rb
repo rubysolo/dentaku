@@ -80,8 +80,6 @@ module Dentaku
       end
     end
 
-
-
     def store(key_or_hash, value=nil)
       restore = Hash[memory]
 

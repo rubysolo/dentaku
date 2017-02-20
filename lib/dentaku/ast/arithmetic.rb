@@ -30,10 +30,14 @@ module Dentaku
 
       def cast(value, prefer_integer=true)
         validate_operation(value)
+        numeric(value, prefer_integer)
+      end
+
+      def numeric(value, prefer_integer)
         v = BigDecimal.new(value, Float::DIG+1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
-      rescue ::TypeError
+      rescue ::TypeError, ::ArgumentError
         # If we got a TypeError BigDecimal or to_i failed;
         # let value through so ruby things like Time - integer work
         value

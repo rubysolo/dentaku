@@ -317,16 +317,16 @@ describe Dentaku::Calculator do
     end
   end
 
-  describe 'explicit NULL' do
-    it 'can be used in IF statements' do
+  describe 'nil values' do
+    it 'can be used explicitly' do
       expect(calculator.evaluate('IF(null, 1, 2)')).to eq(2)
     end
 
-    it 'can be used in IF statements when passed in' do
+    it 'can be assigned to a variable' do
       expect(calculator.evaluate('IF(foo, 1, 2)', foo: nil)).to eq(2)
     end
 
-    it 'nil values are carried across middle terms' do
+    it 'are carried across middle terms' do
       results = calculator.solve!(
         choice: 'IF(bar, 1, 2)',
         bar: 'foo',
@@ -338,7 +338,7 @@ describe Dentaku::Calculator do
       )
     end
 
-    it 'raises errors when used in arithmetic operation' do
+    it 'raise errors when used in arithmetic operations' do
       expect {
         calculator.solve!(more_apples: "apples + 1", apples: nil)
       }.to raise_error(Dentaku::ArgumentError)
