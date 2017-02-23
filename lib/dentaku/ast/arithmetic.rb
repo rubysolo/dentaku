@@ -28,28 +28,35 @@ module Dentaku
 
       private
 
-      def cast(value, prefer_integer=true)
-        validate_operation(value)
-        numeric(value, prefer_integer)
+      def cast(val, prefer_integer=true)
+        validate_operation(val)
+        validate_format(val) if val.is_a?(::String)
+        numeric(val, prefer_integer)
       end
 
-      def numeric(value, prefer_integer)
-        v = BigDecimal.new(value, Float::DIG+1)
+      def numeric(val, prefer_integer)
+        v = BigDecimal.new(val, Float::DIG+1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
-      rescue ::TypeError, ::ArgumentError
+      rescue ::TypeError
         # If we got a TypeError BigDecimal or to_i failed;
         # let value through so ruby things like Time - integer work
-        value
+        val
       end
 
       def valid_node?(node)
         node && (node.dependencies.any? || node.type == :numeric)
       end
 
-      def validate_operation(value)
-        unless value.respond_to?(operator)
+      def validate_operation(val)
+        unless val.respond_to?(operator)
           fail Dentaku::ArgumentError, "#{ self.class } requires operands that respond to #{ operator }"
+        end
+      end
+
+      def validate_format(string)
+        unless string =~ /\A-?\d+(\.\d+)?\z/
+          fail Dentaku::ArgumentError, "String input '#{ string }' is not coercible to numeric"
         end
       end
     end
