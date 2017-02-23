@@ -14,10 +14,19 @@ module Dentaku
       @tokenizer = Tokenizer.new
       @ast_cache = ast_cache
       @disable_ast_cache = false
+      @function_registry = Dentaku::AST::FunctionRegistry.new
+    end
+
+    def self.add_function(name, type, body)
+      Dentaku::AST::FunctionRegistry.default.register(name, type, body)
+    end
+
+    def add_functions(fns)
+      fns.each { |(name, type, body)| add_function(name, type, body) }
     end
 
     def add_function(name, type, body)
-      Dentaku::AST::Function.register(name, type, body)
+      @function_registry.register(name, type, body)
       self
     end
 
@@ -61,7 +70,7 @@ module Dentaku
 
     def ast(expression)
       @ast_cache.fetch(expression) {
-        Parser.new(tokenizer.tokenize(expression)).parse.tap do |node|
+        Parser.new(tokenizer.tokenize(expression), function_registry: @function_registry).parse.tap do |node|
           @ast_cache[expression] = node if cache_ast?
         end
       }

@@ -7,8 +7,9 @@ module Dentaku
     def initialize(tokens, options={})
       @input      = tokens.dup
       @output     = []
-      @operations = options.fetch(:operations, [])
-      @arities    = options.fetch(:arities, [])
+      @operations        = options.fetch(:operations, [])
+      @arities           = options.fetch(:arities, [])
+      @function_registry = options.fetch(:function_registry, nil)
     end
 
     def get_args(count)
@@ -230,7 +231,11 @@ module Dentaku
     end
 
     def function(token)
-      Dentaku::AST::Function.get(token.value)
+      function_registry.get(token.value)
+    end
+
+    def function_registry
+      @function_registry ||= Dentaku::AST::FunctionRegistry.new
     end
   end
 end
