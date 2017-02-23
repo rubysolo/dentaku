@@ -58,5 +58,22 @@ describe Dentaku::Calculator do
       calculator.add_function(:hey!, :string, -> { "hey!" })
       expect(calculator.evaluate("hey!()")).to eq("hey!")
     end
+
+    it 'does not store functions across all calculators' do
+      calculator1 = Dentaku::Calculator.new
+      calculator1.add_function(:my_function, :numeric, ->(x) { 2*x + 1 })
+      expect(calculator1.evaluate("1 + my_function(2)")). to eq (1 + 2*2 + 1)
+
+      calculator2 = Dentaku::Calculator.new
+      calculator2.add_function(:my_function, :numeric, ->(x) { 4*x + 3 })
+      expect(calculator2.evaluate("1 + my_function(2)")). to eq (1 + 4*2 + 3)
+
+      expect{Dentaku::Calculator.new.evaluate("1 + my_function(2)")}.to raise_error(Dentaku::ParseError)
+    end
+
+    it 'self.add_function adds to default/global function registry' do
+      Dentaku::Calculator.add_function(:global_function, :numeric, ->(x) { 10 + x**2 })
+      expect(Dentaku::Calculator.new.evaluate("global_function(3) + 5")).to eq (10 + 3**2 + 5)
+    end
   end
 end
