@@ -36,10 +36,6 @@ module Dentaku
           end
         end
 
-        function_class = name.to_s.capitalize.gsub('!', '_')
-        Dentaku::AST.send(:remove_const, function_class) if Dentaku::AST.const_defined?(function_class, false)
-        Dentaku::AST.const_set(function_class, function)
-
         function.implementation = implementation
         function.type = type
 
