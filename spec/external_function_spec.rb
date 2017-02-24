@@ -62,10 +62,11 @@ describe Dentaku::Calculator do
     it 'does not store functions across all calculators' do
       calculator1 = Dentaku::Calculator.new
       calculator1.add_function(:my_function, :numeric, ->(x) { 2*x + 1 })
-      expect(calculator1.evaluate("1 + my_function(2)")). to eq (1 + 2*2 + 1)
 
       calculator2 = Dentaku::Calculator.new
       calculator2.add_function(:my_function, :numeric, ->(x) { 4*x + 3 })
+
+      expect(calculator1.evaluate("1 + my_function(2)")). to eq (1 + 2*2 + 1)
       expect(calculator2.evaluate("1 + my_function(2)")). to eq (1 + 4*2 + 3)
 
       expect{Dentaku::Calculator.new.evaluate("1 + my_function(2)")}.to raise_error(Dentaku::ParseError)
