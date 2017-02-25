@@ -7,7 +7,7 @@ module Dentaku
     class Arithmetic < Operation
       def initialize(*)
         super
-        unless valid_node?(left) && valid_node?(right)
+        unless valid_left? && valid_right?
           fail ParseError, "#{ self.class } requires numeric operands"
         end
       end
@@ -46,6 +46,14 @@ module Dentaku
 
       def valid_node?(node)
         node && (node.dependencies.any? || node.type == :numeric)
+      end
+
+      def valid_left?
+        valid_node?(left)
+      end
+
+      def valid_right?
+        valid_node?(right)
       end
 
       def validate_operation(val)
@@ -109,15 +117,6 @@ module Dentaku
     end
 
     class Modulo < Arithmetic
-      def initialize(left, right)
-        @left  = left
-        @right = right
-
-        unless (valid_node?(left) || left.nil?) && valid_node?(right)
-          fail ParseError, "#{ self.class } requires numeric operands"
-        end
-      end
-
       def percent?
         left.nil?
       end
@@ -136,6 +135,10 @@ module Dentaku
 
       def self.precedence
         20
+      end
+
+      def valid_left?
+        valid_node?(left) || left.nil?
       end
     end
 
