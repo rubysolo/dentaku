@@ -30,3 +30,5 @@ module Dentaku
     end
   end
 end
+
+require_relative 'custom_function'
