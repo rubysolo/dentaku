@@ -94,7 +94,13 @@ module Dentaku
 
       if value.nil?
         _flat_hash(key_or_hash).each do |key, val|
-          memory[key.to_s.downcase] = val
+          if val.is_a?(Array)
+            val.each_with_index { |subval, idx| 
+              memory[key.to_s.downcase + "[#{idx}]"] = subval
+            }
+          else
+            memory[key.to_s.downcase] = val
+          end
         end
       else
         memory[key_or_hash.to_s.downcase] = value
