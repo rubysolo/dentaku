@@ -88,13 +88,21 @@ module Dentaku
       class Concat < Function
         def initialize(*args)
           super
-          @left, @right = *@args
         end
 
         def value(context={})
-          left = @left.value(context).to_s
-          right = @right.value(context).to_s
-          left + right
+          @args.map { |arg| arg.value(context).to_s }.join
+        end
+      end
+
+      class Contains < Function
+        def initialize(*args)
+          super
+          @needle, @haystack = *args
+        end
+
+        def value(context={})
+          @haystack.value(context).to_s.include? @needle.value(context).to_s
         end
       end
     end
@@ -108,3 +116,4 @@ Dentaku::AST::Function.register_class(:len,        Dentaku::AST::StringFunctions
 Dentaku::AST::Function.register_class(:find,       Dentaku::AST::StringFunctions::Find)
 Dentaku::AST::Function.register_class(:substitute, Dentaku::AST::StringFunctions::Substitute)
 Dentaku::AST::Function.register_class(:concat,     Dentaku::AST::StringFunctions::Concat)
+Dentaku::AST::Function.register_class(:contains,   Dentaku::AST::StringFunctions::Contains)

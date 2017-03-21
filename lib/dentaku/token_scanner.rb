@@ -1,4 +1,5 @@
 require 'bigdecimal'
+require 'time'
 require 'dentaku/token'
 
 module Dentaku
@@ -28,6 +29,7 @@ module Dentaku
         [
           :null,
           :whitespace,
+          :datetime, # before numeric so it can pick up timestamps
           :numeric,
           :double_quoted_string,
           :single_quoted_string,
@@ -73,6 +75,11 @@ module Dentaku
         new(:null, 'null\b')
       end
 
+      # NOTE: Convert to DateTime as Array(Time) returns the parts of the time for some reason
+      def datetime
+        new(:datetime, /\d{2}\d{2}?-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})? ?(Z|((\+|\-)\d{2}\:?\d{2}))?/, lambda { |raw| Time.parse(raw).to_datetime })
+      end
+
       def numeric
         new(:numeric, '(\d+(\.\d+)?|\.\d+)\b', lambda { |raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
       end
@@ -97,8 +104,8 @@ module Dentaku
       end
 
       def operator
-        names = { pow: '^', add: '+', subtract: '-', multiply: '*', divide: '/', mod: '%' }.invert
-        new(:operator, '\^|\+|-|\*|\/|%', lambda { |raw| names[raw] })
+        names = { pow: '^', add: '+', subtract: '-', multiply: '*', divide: '/', mod: '%', bitor: '|', bitand: '&' }.invert
+        new(:operator, '\^|\+|-|\*|\/|%|\||&', lambda { |raw| names[raw] })
       end
 
       def grouping
@@ -126,14 +133,14 @@ module Dentaku
       end
 
       def function
-        new(:function, '\w+\s*\(', lambda do |raw|
+        new(:function, '\w+!?\s*\(', lambda do |raw|
           function_name = raw.gsub('(', '')
           [Token.new(:function, function_name.strip.downcase.to_sym, function_name), Token.new(:grouping, :open, '(')]
         end)
       end
 
       def identifier
-        new(:identifier, '[\w\.]+\b', lambda { |raw| raw.strip.downcase })
+        new(:identifier, '[\w\.]+(?:\[\d+\])?', lambda { |raw| raw.strip.downcase })
       end
     end
 

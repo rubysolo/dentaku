@@ -45,16 +45,22 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['number', :eq, 5])
   end
 
-  it 'tokenizes comparison with =' do
-    tokens = tokenizer.tokenize('number = 5')
-    expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])
-    expect(tokens.map(&:value)).to eq(['number', :eq, 5])
-  end
-
   it 'tokenizes comparison with alternate ==' do
     tokens = tokenizer.tokenize('number == 5')
     expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric])
     expect(tokens.map(&:value)).to eq(['number', :eq, 5])
+  end
+
+  it 'tokenizes bitwise OR' do
+    tokens = tokenizer.tokenize('2 | 3')
+    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([2, :bitor, 3])
+  end
+
+  it 'tokenizes bitwise AND' do
+    tokens = tokenizer.tokenize('2 & 3')
+    expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
+    expect(tokens.map(&:value)).to eq([2, :bitand, 3])
   end
 
   it 'ignores whitespace' do
@@ -63,19 +69,19 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq([1, :divide, 1])
   end
 
-  it 'tokenizes power operations' do
+  it 'tokenizes power operations in simple expressions' do
     tokens = tokenizer.tokenize('10 ^ 2')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([10, :pow, 2])
   end
 
-  it 'tokenizes power operations' do
+  it 'tokenizes power operations in complex expressions' do
     tokens = tokenizer.tokenize('0 * 10 ^ -5')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric, :operator, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([0, :multiply, 10, :pow, :negate, 5])
   end
 
-  it 'handles floating point' do
+  it 'handles floating point operands' do
     tokens = tokenizer.tokenize('1.5 * 3.7')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([1.5, :multiply, 3.7])
@@ -111,13 +117,13 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq([2, :subtract, 3])
   end
 
-  it 'recognizes unary minus operator' do
+  it 'recognizes unary minus operator applied to left operand' do
     tokens = tokenizer.tokenize('-2 + 3')
     expect(tokens.map(&:category)).to eq([:operator, :numeric, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([:negate, 2, :add, 3])
   end
 
-  it 'recognizes unary minus operator' do
+  it 'recognizes unary minus operator applied to right operand' do
     tokens = tokenizer.tokenize('2 - -3')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :operator, :numeric])
     expect(tokens.map(&:value)).to eq([2, :subtract, :negate, 3])
@@ -165,6 +171,22 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['true_lies', :and, 'falsehoods'])
   end
 
+  it 'tokenizes Time literals' do
+    tokens = tokenizer.tokenize('2017-01-01 2017-01-2 2017-1-03 2017-01-04 12:23:42 2017-1-5 1:2:3 2017-1-06 1:02:30 2017-01-07 12:34:56 Z 2017-01-08 1:2:3 +0800')
+    expect(tokens.length).to eq(8)
+    expect(tokens.map(&:category)).to eq([:datetime, :datetime, :datetime, :datetime, :datetime, :datetime, :datetime, :datetime])
+    expect(tokens.map(&:value)).to eq([
+      Time.local(2017, 1, 1).to_datetime,
+      Time.local(2017, 1, 2).to_datetime,
+      Time.local(2017, 1, 3).to_datetime,
+      Time.local(2017, 1, 4, 12, 23, 42).to_datetime,
+      Time.local(2017, 1, 5, 1, 2, 3).to_datetime,
+      Time.local(2017, 1, 6, 1, 2, 30).to_datetime,
+      Time.utc(2017, 1, 7, 12, 34, 56).to_datetime,
+      Time.new(2017, 1, 8, 1, 2, 3, "+08:00").to_datetime
+    ])
+  end
+
   describe 'functions' do
     it 'include IF' do
       tokens = tokenizer.tokenize('if(x < 10, y, z)')
@@ -207,6 +229,13 @@ describe Dentaku::Tokenizer do
       expect(tokens.length).to eq(6)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :comparator, :numeric, :grouping])
       expect(tokens.map(&:value)).to eq([:not, :open, 8, :lt, 5, :close])
+    end
+
+    it 'can end with a bang' do
+      tokens = tokenizer.tokenize('exp!(5 * 3)')
+      expect(tokens.length).to eq(6)
+      expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :operator, :numeric, :grouping])
+      expect(tokens.map(&:value)).to eq([:exp!, :open, 5, :multiply, 3, :close])
     end
   end
 end

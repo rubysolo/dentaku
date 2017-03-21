@@ -4,11 +4,6 @@ require 'dentaku/token'
 require 'dentaku/dependency_resolver'
 require 'dentaku/parser'
 
-def _flat_hash(hash, k = [])
-  return {k.join('.') => hash} unless hash.is_a?(Hash) and k.is_a?(Array) 
-  return {k => hash} unless hash.is_a?(Hash)
-  hash.inject({}){ |h, v| h.merge! _flat_hash(v[-1], k + [v[0]]) }
-end
 
 module Dentaku
   class Calculator
@@ -19,10 +14,19 @@ module Dentaku
       @tokenizer = Tokenizer.new
       @ast_cache = ast_cache
       @disable_ast_cache = false
+      @function_registry = Dentaku::AST::FunctionRegistry.new
+    end
+
+    def self.add_function(name, type, body)
+      Dentaku::AST::FunctionRegistry.default.register(name, type, body)
+    end
+
+    def add_functions(fns)
+      fns.each { |(name, type, body)| add_function(name, type, body) }
     end
 
     def add_function(name, type, body)
-      Dentaku::AST::Function.register(name, type, body)
+      @function_registry.register(name, type, body)
       self
     end
 
@@ -66,7 +70,7 @@ module Dentaku
 
     def ast(expression)
       @ast_cache.fetch(expression) {
-        Parser.new(tokenizer.tokenize(expression)).parse.tap do |node|
+        Parser.new(tokenizer.tokenize(expression), function_registry: @function_registry).parse.tap do |node|
           @ast_cache[expression] = node if cache_ast?
         end
       }
@@ -85,20 +89,18 @@ module Dentaku
       end
     end
 
-    
-
     def store(key_or_hash, value=nil)
       restore = Hash[memory]
 
       if value.nil?
-        # Check if is a nested hash
-        if key_or_hash.select { |k,v| v.is_a?(Hash) }.empty?
-          key_or_hash.each do |key, val|
+        _flat_hash(key_or_hash).each do |key, val|
+          if val.is_a?(Array)
+            val.each_with_index { |subval, idx| 
+              memory[key.to_s.downcase + "[#{idx}]"] = subval
+            }
+          else
             memory[key.to_s.downcase] = val
           end
-        else
-          new_hash = _flat_hash(key_or_hash)
-          self.store(new_hash, value)
         end
       else
         memory[key_or_hash.to_s.downcase] = value
@@ -133,6 +135,17 @@ module Dentaku
 
     def cache_ast?
       Dentaku.cache_ast? && !@disable_ast_cache
+    end
+
+    private
+
+    def _flat_hash(hash, k = [])
+      if hash.is_a?(Hash)
+        hash.inject({}) { |h, v| h.merge! _flat_hash(v[-1], k + [v[0]]) }
+      else
+        return { k.join('.') => hash } if k.is_a?(Array)
+        { k => hash }
+      end
     end
   end
 end

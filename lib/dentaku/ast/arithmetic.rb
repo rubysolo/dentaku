@@ -7,13 +7,17 @@ module Dentaku
     class Arithmetic < Operation
       def initialize(*)
         super
-        unless valid_node?(left) && valid_node?(right)
+        unless valid_left? && valid_right?
           fail ParseError, "#{ self.class } requires numeric operands"
         end
       end
 
       def type
         :numeric
+      end
+
+      def operator
+        raise "Not implemented"
       end
 
       def value(context={})
@@ -24,21 +28,44 @@ module Dentaku
 
       private
 
-      def cast(value, prefer_integer=true)
-        validate_numeric(value)
-        v = BigDecimal.new(value, Float::DIG+1)
+      def cast(val, prefer_integer=true)
+        validate_operation(val)
+        validate_format(val) if val.is_a?(::String)
+        numeric(val, prefer_integer)
+      end
+
+      def numeric(val, prefer_integer)
+        v = BigDecimal.new(val, Float::DIG+1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
+      rescue ::TypeError
+        # If we got a TypeError BigDecimal or to_i failed;
+        # let value through so ruby things like Time - integer work
+        val
       end
 
       def valid_node?(node)
         node && (node.dependencies.any? || node.type == :numeric)
       end
 
-      def validate_numeric(value)
-        Float(value)
-      rescue ::ArgumentError, ::TypeError
-        fail Dentaku::ArgumentError, "#{ self.class } requires numeric operands"
+      def valid_left?
+        valid_node?(left)
+      end
+
+      def valid_right?
+        valid_node?(right)
+      end
+
+      def validate_operation(val)
+        unless val.respond_to?(operator)
+          fail Dentaku::ArgumentError, "#{ self.class } requires operands that respond to #{ operator }"
+        end
+      end
+
+      def validate_format(string)
+        unless string =~ /\A-?\d+(\.\d+)?\z/
+          fail Dentaku::ArgumentError, "String input '#{ string }' is not coercible to numeric"
+        end
       end
     end
 
@@ -73,6 +100,10 @@ module Dentaku
     end
 
     class Division < Arithmetic
+      def operator
+        :/
+      end
+
       def value(context={})
         r = cast(right.value(context), false)
         raise Dentaku::ZeroDivisionError if r.zero?
@@ -86,15 +117,6 @@ module Dentaku
     end
 
     class Modulo < Arithmetic
-      def initialize(left, right)
-        @left  = left
-        @right = right
-
-        unless (valid_node?(left) || left.nil?) && valid_node?(right)
-          fail ParseError, "#{ self.class } requires numeric operands"
-        end
-      end
-
       def percent?
         left.nil?
       end
@@ -113,6 +135,10 @@ module Dentaku
 
       def self.precedence
         20
+      end
+
+      def valid_left?
+        valid_node?(left) || left.nil?
       end
     end
 

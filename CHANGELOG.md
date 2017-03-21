@@ -1,5 +1,14 @@
 # Change Log
 
+## [HEAD] Unreleased
+- fix dependency checking for logical AST nodes
+- make `CONCAT` variadic
+- fix casting strings to numeric in negation operations
+- add date/time support
+- add `&` (bitwise and) and `|` (bitwise or) operators
+- fix incompatibility with 'mathn' module
+- add `CONTAINS` string function
+
 ## [v2.0.10] 2016-12-30
 - fix string function initialization bug
 - fix issues with CASE statements
@@ -116,7 +125,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...HEAD
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.10...HEAD
+[v2.0.10]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...v2.0.10
 [v2.0.9]:  https://github.com/rubysolo/dentaku/compare/v2.0.8...v2.0.9
 [v2.0.8]:  https://github.com/rubysolo/dentaku/compare/v2.0.7...v2.0.8
 [v2.0.7]:  https://github.com/rubysolo/dentaku/compare/v2.0.6...v2.0.7

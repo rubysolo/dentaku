@@ -32,6 +32,9 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('0.253/0.253')).to eq(1)
     expect(calculator.evaluate('0.253/d', d: 0.253)).to eq(1)
     expect(calculator.evaluate('10 + x', x: 'abc')).to be_nil
+    expect(calculator.evaluate('t + 1*24*60*60', t: Time.local(2017, 1, 1))).to eq(Time.local(2017, 1, 2))
+    expect(calculator.evaluate("2 | 3 * 9")).to eq (27)
+    expect(calculator.evaluate("2 & 3 * 9")).to eq (2)
   end
 
   describe 'memory' do
@@ -58,6 +61,18 @@ describe Dentaku::Calculator do
     it 'stores formulas' do
       calculator.store_formula('area', 'length * width')
       expect(calculator.evaluate!('area', length: 5, width: 5)).to eq 25
+    end
+
+    it 'stores nested hashes' do
+      calculator.store({a: {basket: {of: 'apples'}}, b: 2})
+      expect(calculator.evaluate!('a.basket.of')).to eq 'apples'
+      expect(calculator.evaluate!('b')).to eq 2
+    end
+
+    it 'stores arrays with indexes' do
+      calculator.store({a: {basket: [1, 2, 3]}, b: [3, 4, 5]})
+      expect(calculator.evaluate!('a.basket[1]')).to eq 2
+      expect(calculator.evaluate!('b[2]')).to eq 5
     end
   end
 
@@ -169,6 +184,14 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('(1+1+1)/3*100')).to eq(100)
   end
 
+  it 'evaluates negation' do
+    expect(calculator.evaluate('-negative', negative: -1)).to eq(1)
+    expect(calculator.evaluate('-negative', negative: '-1')).to eq(1)
+    expect(calculator.evaluate('-negative - 1', negative: '-1')).to eq(0)
+    expect(calculator.evaluate('-negative - 1', negative: '1')).to eq(-2)
+    expect(calculator.evaluate('-(negative) - 1', negative: '1')).to eq(-2)
+  end
+
   it 'fails to evaluate unbound statements' do
     unbound = 'foo * 1.5'
     expect { calculator.evaluate!(unbound) }.to raise_error(Dentaku::UnboundVariableError)
@@ -178,6 +201,11 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate(unbound)).to be_nil
     expect(calculator.evaluate(unbound) { :bar }).to eq :bar
     expect(calculator.evaluate(unbound) { |e| e }).to eq unbound
+  end
+
+  it 'fails to evaluate incomplete statements' do
+    incomplete = 'true AND'
+    expect { calculator.evaluate!(incomplete) }.to raise_error(Dentaku::ParseError)
   end
 
   it 'evaluates unbound statements given a binding in memory' do
@@ -221,6 +249,20 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('some_boolean OR 7 > 5', some_boolean: true)).to be_truthy
     expect(calculator.evaluate('some_boolean OR 7 < 5', some_boolean: true)).to be_truthy
     expect(calculator.evaluate('some_boolean OR 7 < 5', some_boolean: false)).to be_falsey
+  end
+
+  it 'compares Time variables' do
+    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 1).to_datetime, t2: Time.local(2017, 1, 2).to_datetime)).to be_truthy
+    expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 2).to_datetime, t2: Time.local(2017, 1, 1).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 1).to_datetime, t2: Time.local(2017, 1, 2).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 2).to_datetime, t2: Time.local(2017, 1, 1).to_datetime)).to be_truthy
+  end
+
+  it 'compares Time literals with Time variables' do
+    expect(calculator.evaluate('t1 < 2017-01-02', t1: Time.local(2017, 1, 1).to_datetime)).to be_truthy
+    expect(calculator.evaluate('t1 < 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 1).to_datetime)).to be_falsy
+    expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_truthy
   end
 
   describe 'functions' do
@@ -281,16 +323,16 @@ describe Dentaku::Calculator do
     end
   end
 
-  describe 'explicit NULL' do
-    it 'can be used in IF statements' do
+  describe 'nil values' do
+    it 'can be used explicitly' do
       expect(calculator.evaluate('IF(null, 1, 2)')).to eq(2)
     end
 
-    it 'can be used in IF statements when passed in' do
+    it 'can be assigned to a variable' do
       expect(calculator.evaluate('IF(foo, 1, 2)', foo: nil)).to eq(2)
     end
 
-    it 'nil values are carried across middle terms' do
+    it 'are carried across middle terms' do
       results = calculator.solve!(
         choice: 'IF(bar, 1, 2)',
         bar: 'foo',
@@ -302,7 +344,7 @@ describe Dentaku::Calculator do
       )
     end
 
-    it 'raises errors when used in arithmetic operation' do
+    it 'raise errors when used in arithmetic operations' do
       expect {
         calculator.solve!(more_apples: "apples + 1", apples: nil)
       }.to raise_error(Dentaku::ArgumentError)
@@ -475,9 +517,9 @@ describe Dentaku::Calculator do
   end
 
   describe 'string functions' do
-    it 'concatenates two strings' do
+    it 'concatenates strings' do
       expect(
-        calculator.evaluate('CONCAT(s1, s2)', 's1' => 'abc', 's2' => 'def')
+        calculator.evaluate('CONCAT(s1, s2, s3)', 's1' => 'ab', 's2' => 'cd', 's3' => 'ef')
       ).to eq 'abcdef'
     end
   end

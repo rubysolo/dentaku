@@ -35,6 +35,15 @@ describe Dentaku::Parser do
     expect(node.value).to eq 0.05
   end
 
+  it 'calculates bitwise OR' do
+    two   = Dentaku::Token.new(:numeric, 2)
+    bitor = Dentaku::Token.new(:operator, :bitor)
+    three = Dentaku::Token.new(:numeric, 3)
+
+    node  = described_class.new([two, bitor, three]).parse
+    expect(node.value).to eq 3
+  end
+
   it 'performs multiple operations in one stream' do
     five  = Dentaku::Token.new(:numeric, 5)
     plus  = Dentaku::Token.new(:operator, :add)
@@ -132,14 +141,25 @@ describe Dentaku::Parser do
     expect(node.value(x: 3)).to eq(4)
   end
 
-  it 'raises an error on parse failure' do
-    five  = Dentaku::Token.new(:numeric, 5)
-    times = Dentaku::Token.new(:operator, :multiply)
-    minus = Dentaku::Token.new(:operator, :subtract)
+  context 'invalid expression' do
+    it 'raises a parse error for bad math' do
+      five  = Dentaku::Token.new(:numeric, 5)
+      times = Dentaku::Token.new(:operator, :multiply)
+      minus = Dentaku::Token.new(:operator, :subtract)
 
-    expect {
-      described_class.new([five, times, minus]).parse
-    }.to raise_error(Dentaku::ParseError)
+      expect {
+        described_class.new([five, times, minus]).parse
+      }.to raise_error(Dentaku::ParseError)
+    end
+
+    it 'raises a parse error for bad logic' do
+      this = Dentaku::Token.new(:logical, true)
+      also = Dentaku::Token.new(:combinator, :and)
+
+      expect {
+        described_class.new([this, also]).parse
+      }.to raise_error(Dentaku::ParseError)
+    end
   end
 
   it "evaluates explicit 'NULL' as a Nil" do

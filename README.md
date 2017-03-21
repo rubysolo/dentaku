@@ -123,17 +123,19 @@ application, AST caching will consume more memory with each new formula.
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
 
-Math: `+`, `-`, `*`, `/`, `%`
+Math: `+`, `-`, `*`, `/`, `%`, `^`, `|`, `&`
 
-Logic: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`, `AND`, `OR`
+Also, all functions from Ruby's Math module, including `SIN`, `COS`, `TAN`, etc.
 
-Functions: `IF`, `NOT`, `MIN`, `MAX`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
+Comparison: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`,
+
+Logic: `IF`, `AND`, `OR`, `NOT`
+
+Functions: `MIN`, `MAX`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
 
 Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/master/spec/calculator_spec.rb#L292))
 
-Math: all functions from Ruby's Math module, including `SIN`, `COS`, `TAN`, etc.
-
-String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`
+String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`, `CONTAINS`
 
 RESOLVING DEPENDENCIES
 ----------------------
