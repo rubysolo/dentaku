@@ -1,6 +1,6 @@
 # Change Log
 
-## [HEAD] Unreleased
+## [v2.0.11] 2017-05-08
 - fix dependency checking for logical AST nodes
 - make `CONCAT` variadic
 - fix casting strings to numeric in negation operations
@@ -125,7 +125,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.10...HEAD
+[v2.0.11]:  https://github.com/rubysolo/dentaku/compare/v2.0.10...v2.0.11
 [v2.0.10]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...v2.0.10
 [v2.0.9]:  https://github.com/rubysolo/dentaku/compare/v2.0.8...v2.0.9
 [v2.0.8]:  https://github.com/rubysolo/dentaku/compare/v2.0.7...v2.0.8
