@@ -8,6 +8,12 @@
 - add `&` (bitwise and) and `|` (bitwise or) operators
 - fix incompatibility with 'mathn' module
 - add `CONTAINS` string function
+- allow storage of nested hashes in calculator memory
+- allow duck type arithmetic
+- fix error handling code to work with Ruby 2.4.0
+- allow calculators to store own registry of functions
+- add timezone support to time literals
+- optimizations
 
 ## [v2.0.10] 2016-12-30
 - fix string function initialization bug
