@@ -1,4 +1,3 @@
-require 'dentaku/calculator'
 require 'dentaku/dependency_resolver'
 require 'dentaku/exceptions'
 require 'dentaku/parser'
