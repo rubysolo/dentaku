@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'dentaku/calculator'
+require 'dentaku'
 
 describe Dentaku::Calculator do
   let(:calculator)  { described_class.new }
@@ -191,6 +191,9 @@ describe Dentaku::Calculator do
     expect { calculator.evaluate!(unbound) }.to raise_error(Dentaku::UnboundVariableError)
     expect { calculator.evaluate!(unbound) }.to raise_error do |error|
       expect(error.unbound_variables).to eq ['foo']
+    end
+    expect { calculator.evaluate!('a + b') }.to raise_error do |error|
+      expect(error.unbound_variables).to eq ['a', 'b']
     end
     expect(calculator.evaluate(unbound)).to be_nil
     expect(calculator.evaluate(unbound) { :bar }).to eq :bar
