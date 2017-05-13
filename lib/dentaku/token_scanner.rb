@@ -34,11 +34,11 @@ module Dentaku
           :double_quoted_string,
           :single_quoted_string,
           :negate,
+          :combinator,
           :operator,
           :grouping,
           :case_statement,
           :comparator,
-          :combinator,
           :boolean,
           :function,
           :identifier
@@ -125,7 +125,11 @@ module Dentaku
       end
 
       def combinator
-        new(:combinator, '(and|or)\b', lambda { |raw| raw.strip.downcase.to_sym })
+        names = { and: '&&', or: '||' }.invert
+        new(:combinator, '(and|or|&&|\|\|)(\b|\s)', lambda { |raw|
+          norm = raw.strip.downcase
+          names.fetch(norm) { norm.to_sym }
+        })
       end
 
       def boolean

@@ -135,14 +135,26 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['perimeter', :le, 7500])
   end
 
-  it 'matches "and" for logical expressions' do
+  it 'tokenizes "and" for logical expressions' do
     tokens = tokenizer.tokenize('octopi <= 7500 AND sharks > 1500')
     expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric, :combinator, :identifier, :comparator, :numeric])
     expect(tokens.map(&:value)).to eq(['octopi', :le, 7500, :and, 'sharks', :gt, 1500])
   end
 
-  it 'matches "or" for logical expressions' do
+  it 'tokenizes "or" for logical expressions' do
     tokens = tokenizer.tokenize('size < 3 or admin = 1')
+    expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric, :combinator, :identifier, :comparator, :numeric])
+    expect(tokens.map(&:value)).to eq(['size', :lt, 3, :or, 'admin', :eq, 1])
+  end
+
+  it 'tokenizes "&&" for logical expressions' do
+    tokens = tokenizer.tokenize('octopi <= 7500 && sharks > 1500')
+    expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric, :combinator, :identifier, :comparator, :numeric])
+    expect(tokens.map(&:value)).to eq(['octopi', :le, 7500, :and, 'sharks', :gt, 1500])
+  end
+
+  it 'tokenizes "||" for logical expressions' do
+    tokens = tokenizer.tokenize('size < 3 || admin = 1')
     expect(tokens.map(&:category)).to eq([:identifier, :comparator, :numeric, :combinator, :identifier, :comparator, :numeric])
     expect(tokens.map(&:value)).to eq(['size', :lt, 3, :or, 'admin', :eq, 1])
   end
