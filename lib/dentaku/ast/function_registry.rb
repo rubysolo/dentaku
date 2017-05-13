@@ -9,33 +9,9 @@ module Dentaku
       end
 
       def register(name, type, implementation)
-        function = Class.new(Function) do
-          def self.implementation=(impl)
-            @implementation = impl
-          end
+        function = Class.new(Dentaku::AST::CustomFunction)
 
-          def self.implementation
-            @implementation
-          end
-
-          def self.type=(type)
-            @type = type
-          end
-
-          def self.type
-            @type
-          end
-
-          def value(context={})
-            args = @args.map { |a| a.value(context) }
-            self.class.implementation.call(*args)
-          end
-
-          def type
-            self.class.type
-          end
-        end
-
+        function.name = name.to_sym
         function.implementation = implementation
         function.type = type
 

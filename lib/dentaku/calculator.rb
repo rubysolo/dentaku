@@ -7,7 +7,7 @@ require 'dentaku/parser'
 
 module Dentaku
   class Calculator
-    attr_reader :result, :memory, :tokenizer
+    attr_reader :result, :memory, :tokenizer, :function_registry
 
     def initialize(ast_cache={})
       clear
