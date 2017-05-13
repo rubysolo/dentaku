@@ -7,6 +7,18 @@ describe Dentaku::Tokenizer do
     expect(tokenizer.tokenize('')).to be_empty
   end
 
+  it 'tokenizes numeric literal in decimal' do
+    token = tokenizer.tokenize('80').first
+    expect(token.category).to eq(:numeric)
+    expect(token.value).to eq(80)
+  end
+
+  it 'tokenizes numeric literal in hexadecimal' do
+    token = tokenizer.tokenize('0x80').first
+    expect(token.category).to eq(:numeric)
+    expect(token.value).to eq(128)
+  end
+
   it 'tokenizes addition' do
     tokens = tokenizer.tokenize('1+1')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])
