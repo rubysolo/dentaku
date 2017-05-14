@@ -520,4 +520,12 @@ describe Dentaku::Calculator do
       ).to eq 'abcdef'
     end
   end
+
+  describe 'zero-arity functions' do
+    it 'can be used in formulas' do
+      calculator.add_function(:two, :numeric, -> { 2 })
+      expect(calculator.evaluate("max(two(), 1)")).to eq 2
+      expect(calculator.evaluate("max(1, two())")).to eq 2
+    end
+  end
 end

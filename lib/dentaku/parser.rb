@@ -163,6 +163,7 @@ module Dentaku
           when :open
             if input.first && input.first.value == :close
               input.shift
+              arities.pop
               consume(0)
             else
               operations.push AST::Grouping
