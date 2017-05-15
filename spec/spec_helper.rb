@@ -1,4 +1,8 @@
 require 'pry'
+require 'coveralls'
+
+# Check the amount of testcoverage
+Coveralls.wear!
 
 # automatically create a token stream from bare values
 def token_stream(*args)
