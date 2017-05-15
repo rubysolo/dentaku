@@ -27,6 +27,15 @@ module Dentaku
       def self.registry
         @registry ||= FunctionRegistry.new
       end
+
+      # @return [Numeric] where possible it returns an Integer otherwise a BigDecimal.
+      # An Exception will be raised if a value is passed that cannot be cast to a Number.
+      def self.numeric(value)
+        return value if value.is_a?(::Numeric)
+
+        decimal = BigDecimal.new(value, Float::DIG + 1)
+        decimal.frac.zero? ? decimal.to_i : decimal
+      end
     end
   end
 end

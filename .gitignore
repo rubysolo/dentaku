@@ -9,3 +9,5 @@ vendor/*
 /.ruby-gemset
 /.ruby-version
 /.rspec
+
+.byebug_history

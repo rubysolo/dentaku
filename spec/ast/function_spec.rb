@@ -24,4 +24,16 @@ describe Dentaku::AST::Function do
   it 'does not throw an error when registering a function with a name that matches a currently defined constant' do
     expect { described_class.register("clazz", :string, -> { "clazzified" }) }.not_to raise_error
   end
+
+  it 'casts a String to an Integer if possible' do
+    expect(described_class.numeric('3')).to eq 3
+  end
+
+  it 'casts a String to a BigDecimal if possible and if Integer would loose information' do
+    expect(described_class.numeric('3.2')).to eq 3.2
+  end
+
+  it 'raises an error if the value could not be cast to a Numeric' do
+    expect { described_class.numeric('flarble') }.to raise_error ArgumentError
+  end
 end
