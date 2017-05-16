@@ -11,3 +11,4 @@ vendor/*
 /.rspec
 
 .byebug_history
+coverage
