@@ -31,14 +31,15 @@ module Dentaku
           :whitespace,
           :datetime, # before numeric so it can pick up timestamps
           :numeric,
+          :hexadecimal,
           :double_quoted_string,
           :single_quoted_string,
           :negate,
+          :combinator,
           :operator,
           :grouping,
           :case_statement,
           :comparator,
-          :combinator,
           :boolean,
           :function,
           :identifier
@@ -84,6 +85,10 @@ module Dentaku
         new(:numeric, '(\d+(\.\d+)?|\.\d+)\b', lambda { |raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
       end
 
+      def hexadecimal
+        new(:numeric, '(0x[0-9a-f]+)\b', lambda { |raw| raw[2..-1].to_i(16) })
+      end
+
       def double_quoted_string
         new(:string, '"[^"]*"', lambda { |raw| raw.gsub(/^"|"$/, '') })
       end
@@ -125,7 +130,11 @@ module Dentaku
       end
 
       def combinator
-        new(:combinator, '(and|or)\b', lambda { |raw| raw.strip.downcase.to_sym })
+        names = { and: '&&', or: '||' }.invert
+        new(:combinator, '(and|or|&&|\|\|)(\b|\s)', lambda { |raw|
+          norm = raw.strip.downcase
+          names.fetch(norm) { norm.to_sym }
+        })
       end
 
       def boolean

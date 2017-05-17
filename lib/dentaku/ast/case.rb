@@ -42,9 +42,23 @@ module Dentaku
 
       def dependencies(context={})
         # TODO: should short-circuit
-        @switch.dependencies(context) +
-          @conditions.flat_map { |condition| condition.dependencies(context) } +
-          @else.dependencies(context)
+        switch_dependencies(context) +
+        condition_dependencies(context) +
+        else_dependencies(context)
+      end
+
+      private
+
+      def switch_dependencies(context={})
+        @switch.dependencies(context)
+      end
+
+      def condition_dependencies(context={})
+        @conditions.flat_map { |condition| condition.dependencies(context) }
+      end
+
+      def else_dependencies(context={})
+        @else ? @else.dependencies(context) : []
       end
     end
   end
