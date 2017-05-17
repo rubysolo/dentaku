@@ -455,7 +455,7 @@ describe Dentaku::Calculator do
     Math.methods(false).each do |method|
       it method do
         if Math.method(method).arity == 2
-          expect(calculator.evaluate("#{method}(1,2)")).to eq Math.send(method, 1, 2)
+          expect(calculator.evaluate("#{method}(x,y)", x: 1, y: '2')).to eq Math.send(method, 1, 2)
         else
           expect(calculator.evaluate("#{method}(1)")).to eq Math.send(method, 1)
         end
