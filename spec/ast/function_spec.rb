@@ -1,5 +1,7 @@
+require 'bigdecimal'
 require 'spec_helper'
 require 'dentaku/ast/function'
+require 'dentaku/exceptions'
 
 class Clazz; end
 
@@ -33,7 +35,19 @@ describe Dentaku::AST::Function do
     expect(described_class.numeric('3.2')).to eq 3.2
   end
 
+  it 'casts a String to a BigDecimal with a negative number' do
+    expect(described_class.numeric('-3.2')).to eq -3.2
+  end
+
+  it 'casts a String to a BigDecimal without a leading zero' do
+    expect(described_class.numeric('-.2')).to eq -0.2
+  end
+
   it 'raises an error if the value could not be cast to a Numeric' do
-    expect { described_class.numeric('flarble') }.to raise_error ArgumentError
+    expect { described_class.numeric('flarble') }.to raise_error TypeError
+    expect { described_class.numeric('-') }.to raise_error TypeError
+    expect { described_class.numeric('') }.to raise_error TypeError
+    expect { described_class.numeric(nil) }.to raise_error TypeError
+    expect { described_class.numeric('-.') }.to raise_error TypeError
   end
 end

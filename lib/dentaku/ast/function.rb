@@ -4,6 +4,9 @@ require_relative 'function_registry'
 module Dentaku
   module AST
     class Function < Node
+      # @return [Integer] with the number of significant decimal digits to use.
+      DIG = Float::DIG + 1
+
       def initialize(*args)
         @args = args
       end
@@ -33,8 +36,12 @@ module Dentaku
       def self.numeric(value)
         return value if value.is_a?(::Numeric)
 
-        decimal = BigDecimal.new(value, Float::DIG + 1)
-        decimal.frac.zero? ? decimal.to_i : decimal
+        if value.is_a?(::String)
+          number = value[/\A-?\d*\.?\d+\z/]
+          return number.include?('.') ? ::BigDecimal.new(number, DIG) : number.to_i if number
+        end
+
+        raise TypeError, "#{value || value.class} could not be cast to a number."
       end
     end
   end

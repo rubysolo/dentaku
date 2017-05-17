@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'dentaku/ast/functions/min'
+require 'dentaku'
 
 describe 'Dentaku::AST::Function::Min' do
   it 'returns the smallest numeric value in an array of Numeric values' do

@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'dentaku/ast/functions/max'
+require 'dentaku'
 
 describe 'Dentaku::AST::Function::Max' do
   it 'returns the largest numeric value in an array of Numeric values' do
