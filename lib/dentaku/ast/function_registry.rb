@@ -10,6 +10,14 @@ module Dentaku
 
       def register(name, type, implementation)
         function = Class.new(Function) do
+          def self.name=(name)
+            @name = name
+          end
+
+          def self.name
+            @name
+          end
+
           def self.implementation=(impl)
             @implementation = impl
           end
@@ -26,6 +34,10 @@ module Dentaku
             @type
           end
 
+          def self.arity
+            @implementation.arity < 0 ? nil : @implementation.arity
+          end
+
           def value(context={})
             args = @args.map { |a| a.value(context) }
             self.class.implementation.call(*args)
@@ -36,8 +48,9 @@ module Dentaku
           end
         end
 
-        function.implementation = implementation
+        function.name = name
         function.type = type
+        function.implementation = implementation
 
         self[function_name(name)] = function
       end

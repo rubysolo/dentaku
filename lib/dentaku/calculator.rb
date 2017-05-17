@@ -52,6 +52,8 @@ module Dentaku
       store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
+        unbound = node.dependencies - memory.keys
+        raise UnboundVariableError.new(unbound) unless unbound.empty?
         node.value(memory)
       end
     end

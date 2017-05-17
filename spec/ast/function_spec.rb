@@ -31,7 +31,7 @@ describe Dentaku::AST::Function do
     expect(described_class.numeric('3')).to eq 3
   end
 
-  it 'casts a String to a BigDecimal if possible and if Integer would loose information' do
+  it 'casts a String to a BigDecimal if possible' do
     expect(described_class.numeric('3.2')).to eq 3.2
   end
 
@@ -50,5 +50,21 @@ describe Dentaku::AST::Function do
     expect { described_class.numeric(nil) }.to raise_error TypeError
     expect { described_class.numeric('7.') }.to raise_error TypeError
     expect { described_class.numeric(true) }.to raise_error TypeError
+  end
+  
+  describe "#arity" do
+    it "gives the correct arity for custom functions" do
+      zero = described_class.register("zero", :numeric, ->() { 0 })
+      expect(zero.arity).to eq 0
+
+      one = described_class.register("one", :numeric, ->(x) { x * 2 })
+      expect(one.arity).to eq 1
+
+      two = described_class.register("two", :numeric, ->(x,y) { x + y })
+      expect(two.arity).to eq 2
+
+      many = described_class.register("many", :numeric, ->(*args) { args.max })
+      expect(many.arity).to be_nil
+    end
   end
 end
