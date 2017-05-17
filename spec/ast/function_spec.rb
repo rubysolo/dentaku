@@ -64,6 +64,7 @@ describe Dentaku::AST::Function do
     expect { described_class.numeric('-') }.to raise_error TypeError
     expect { described_class.numeric('') }.to raise_error TypeError
     expect { described_class.numeric(nil) }.to raise_error TypeError
-    expect { described_class.numeric('-.') }.to raise_error TypeError
+    expect { described_class.numeric('7.') }.to raise_error TypeError
+    expect { described_class.numeric(true) }.to raise_error TypeError
   end
 end
