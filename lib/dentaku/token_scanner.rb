@@ -131,7 +131,7 @@ module Dentaku
 
       def combinator
         names = { and: '&&', or: '||' }.invert
-        new(:combinator, '(and|or|&&|\|\|)(\b|\s)', lambda { |raw|
+        new(:combinator, '(and|or|&&|\|\|)\s', lambda { |raw|
           norm = raw.strip.downcase
           names.fetch(norm) { norm.to_sym }
         })
