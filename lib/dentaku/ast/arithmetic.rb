@@ -29,12 +29,7 @@ module Dentaku
       private
 
       def cast(val, prefer_integer=true)
-        if val.is_a?(::String)
-          validate_format(val)
-        else
-          validate_operation(val)
-        end
-
+        validate_value(val)
         numeric(val, prefer_integer)
       end
 
@@ -58,6 +53,14 @@ module Dentaku
 
       def valid_right?
         valid_node?(right)
+      end
+
+      def validate_value(val)
+        if val.is_a?(::String)
+          validate_format(val)
+        else
+          validate_operation(val)
+        end
       end
 
       def validate_operation(val)
