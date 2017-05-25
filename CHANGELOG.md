@@ -5,6 +5,7 @@
 - add hexadecimal literal support
 - add the SWITCH function
 - add AND and OR functions
+- add array access
 - make UnboundVariableError show all missing values
 - cast inputs to numeric function to numeric
 - fix issue with zero-arity functions used as function args

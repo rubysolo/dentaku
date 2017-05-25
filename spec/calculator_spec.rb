@@ -69,6 +69,13 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('a.basket.of')).to eq 'apples'
       expect(calculator.evaluate!('b')).to eq 2
     end
+
+    it 'stores arrays' do
+      calculator.store({a: [1, 2, 3]})
+      expect(calculator.evaluate!('a[0]')).to eq 1
+      expect(calculator.evaluate!('a[x]', x: 1)).to eq 2
+      expect(calculator.evaluate!('a[x+1]', x: 1)).to eq 3
+    end
   end
 
   describe 'dependencies' do

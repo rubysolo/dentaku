@@ -38,6 +38,7 @@ module Dentaku
           :combinator,
           :operator,
           :grouping,
+          :access,
           :case_statement,
           :comparator,
           :boolean,
@@ -116,6 +117,11 @@ module Dentaku
       def grouping
         names = { open: '(', close: ')', comma: ',' }.invert
         new(:grouping, '\(|\)|,', lambda { |raw| names[raw] })
+      end
+
+      def access
+        names = { lbracket: '[', rbracket: ']' }.invert
+        new(:access, '\[|\]', lambda { |raw| names[raw] })
       end
 
       def case_statement

@@ -104,6 +104,17 @@ describe Dentaku::Parser do
     expect(node.value(x: 3)).to eq 15
   end
 
+  it 'evaluates access into data structures' do
+    a        = token(:a)
+    lbracket = token(:lbracket)
+    one      = token(1)
+    rbracket = token(:rbracket)
+
+    node  = described_class.new([a, lbracket, one, rbracket]).parse
+    expect { node.value }.to raise_error(Dentaku::UnboundVariableError)
+    expect(node.value(a: [1, 2, 3])).to eq 2
+  end
+
   it 'evaluates boolean expressions' do
     d_true  = Dentaku::Token.new(:logical, true)
     d_and   = Dentaku::Token.new(:combinator, :and)

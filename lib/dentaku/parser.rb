@@ -158,6 +158,19 @@ module Dentaku
             fail ParseError, "Unknown case token #{ token.value }"
           end
 
+        when :access
+          case token.value
+          when :lbracket
+            operations.push AST::Access
+          when :rbracket
+            while operations.any? && operations.last != AST::Access
+              consume
+            end
+
+            fail ParseError, "Unbalanced bracket" unless operations.last == AST::Access
+            consume
+          end
+
         when :grouping
           case token.value
           when :open

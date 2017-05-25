@@ -25,6 +25,8 @@ def type_for(value)
     :operator
   when :open, :close, :comma
     :grouping
+  when :lbracket, :rbracket
+    :access
   when :le, :ge, :ne, :ne, :lt, :gt, :eq
     :comparator
   when :and, :or
@@ -37,9 +39,13 @@ def type_for(value)
 end
 
 def identifier(name)
-  Dentaku::AST::Identifier.new(Dentaku::Token.new(:identifier, name))
+  Dentaku::AST::Identifier.new(token(name))
 end
 
 def literal(value)
-  Dentaku::AST::Literal.new(Dentaku::Token.new(type_for(value), value))
+  Dentaku::AST::Literal.new(token(value))
+end
+
+def token(value)
+  Dentaku::Token.new(type_for(value), value)
 end
