@@ -4,8 +4,8 @@ require 'dentaku/ast/arithmetic'
 require 'dentaku/token'
 
 describe Dentaku::AST::Addition do
-  let(:five) { Dentaku::AST::Logical.new Dentaku::Token.new(:numeric, 5) }
-  let(:six)  { Dentaku::AST::Logical.new Dentaku::Token.new(:numeric, 6) }
+  let(:five) { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 5) }
+  let(:six)  { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 6) }
 
   let(:t)    { Dentaku::AST::Numeric.new Dentaku::Token.new(:logical, true) }
 
@@ -29,7 +29,7 @@ describe Dentaku::AST::Addition do
 
   it 'allows operands that respond to addition' do
     # Sample struct that has a custom definition for addition
-    
+
     Operand = Struct.new(:value) do
       def +(other)
         case other
@@ -41,8 +41,8 @@ describe Dentaku::AST::Addition do
       end
     end
 
-    operand_five = Dentaku::AST::Logical.new Dentaku::Token.new(:numeric, Operand.new(5))
-    operand_six = Dentaku::AST::Logical.new Dentaku::Token.new(:numeric, Operand.new(6))
+    operand_five = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, Operand.new(5))
+    operand_six = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, Operand.new(6))
 
     expect {
       described_class.new(operand_five, operand_six)
