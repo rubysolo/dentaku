@@ -1,5 +1,16 @@
 # Change Log
 
+## [HEAD] Unreleased
+- add && and || as aliases for AND and OR
+- add hexadecimal literal support
+- add the SWITCH function
+- add AND and OR functions
+- make UnboundVariableError show all missing values
+- cast inputs to numeric function to numeric
+- fix issue with zero-arity functions used as function args
+- fix division when context values contain one or more strings
+- drop Ruby 1.9 support
+
 ## [v2.0.11] 2017-05-08
 - fix dependency checking for logical AST nodes
 - make `CONCAT` variadic
@@ -131,6 +142,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.11...HEAD
 [v2.0.11]:  https://github.com/rubysolo/dentaku/compare/v2.0.10...v2.0.11
 [v2.0.10]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...v2.0.10
 [v2.0.9]:  https://github.com/rubysolo/dentaku/compare/v2.0.8...v2.0.9
