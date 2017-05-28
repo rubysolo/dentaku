@@ -130,9 +130,9 @@ Also, all functions from Ruby's Math module, including `SIN`, `COS`, `TAN`, etc.
 
 Comparison: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`,
 
-Logic: `IF`, `AND`, `OR`, `NOT`
+Logic: `IF`, `AND`, `OR`, `NOT`, `SWITCH`
 
-Functions: `MIN`, `MAX`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
+Numeric: `MIN`, `MAX`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
 
 Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/master/spec/calculator_spec.rb#L292))
 
