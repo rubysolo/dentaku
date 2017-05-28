@@ -27,6 +27,31 @@ describe Dentaku::AST::Function do
     expect { described_class.register("clazz", :string, -> { "clazzified" }) }.not_to raise_error
   end
 
+  it 'casts a String to an Integer if possible' do
+    expect(described_class.numeric('3')).to eq 3
+  end
+
+  it 'casts a String to a BigDecimal if possible' do
+    expect(described_class.numeric('3.2')).to eq 3.2
+  end
+
+  it 'casts a String to a BigDecimal with a negative number' do
+    expect(described_class.numeric('-3.2')).to eq -3.2
+  end
+
+  it 'casts a String to a BigDecimal without a leading zero' do
+    expect(described_class.numeric('-.2')).to eq -0.2
+  end
+
+  it 'raises an error if the value could not be cast to a Numeric' do
+    expect { described_class.numeric('flarble') }.to raise_error TypeError
+    expect { described_class.numeric('-') }.to raise_error TypeError
+    expect { described_class.numeric('') }.to raise_error TypeError
+    expect { described_class.numeric(nil) }.to raise_error TypeError
+    expect { described_class.numeric('7.') }.to raise_error TypeError
+    expect { described_class.numeric(true) }.to raise_error TypeError
+  end
+  
   describe "#arity" do
     it "gives the correct arity for custom functions" do
       zero = described_class.register("zero", :numeric, ->() { 0 })
