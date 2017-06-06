@@ -5,6 +5,9 @@ module Dentaku
         2
       end
 
+      def self.peek(*)
+      end
+
       def initialize(data_structure, index)
         @structure = data_structure
         @index = index

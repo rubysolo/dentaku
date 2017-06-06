@@ -9,6 +9,9 @@ module Dentaku
         nil
       end
 
+      def self.peek(*)
+      end
+
       def dependencies(context={})
         []
       end

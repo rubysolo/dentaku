@@ -209,8 +209,11 @@ describe Dentaku::Calculator do
   end
 
   it 'fails to evaluate incomplete statements' do
-    incomplete = 'true AND'
-    expect { calculator.evaluate!(incomplete) }.to raise_error(Dentaku::ParseError)
+    ['true AND', 'a a ^&'].each do |statement|
+      expect {
+        calculator.evaluate!(statement)
+      }.to raise_error(Dentaku::ParseError)
+    end
   end
 
   it 'evaluates unbound statements given a binding in memory' do

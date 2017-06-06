@@ -13,11 +13,13 @@ module Dentaku
     end
 
     def get_args(count)
+      fail ParseError, "operation has too few operands" if count > output.length
       Array.new(count) { output.pop }.reverse
     end
 
     def consume(count=2)
       operator = operations.pop
+      operator.peek(output)
       output.push operator.new(*get_args(operator.arity || count))
     end
 

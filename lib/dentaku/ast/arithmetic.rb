@@ -124,6 +124,28 @@ module Dentaku
     end
 
     class Modulo < Arithmetic
+      def self.arity
+        @arity
+      end
+
+      def self.peek(input)
+        @arity = 1
+        @arity = 2 if input.length > 1
+      end
+
+      def initialize(left, right=nil)
+        if right
+          @left  = left
+          @right = right
+        else
+          @right = left
+        end
+
+        unless valid_left? && valid_right?
+          fail ParseError, "#{ self.class } requires numeric operand(s)"
+        end
+      end
+
       def percent?
         left.nil?
       end

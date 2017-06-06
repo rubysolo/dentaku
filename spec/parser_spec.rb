@@ -14,7 +14,7 @@ describe Dentaku::Parser do
     plus = Dentaku::Token.new(:operator, :add)
     four = Dentaku::Token.new(:numeric, 4)
 
-    node  = described_class.new([five, plus, four]).parse
+    node = described_class.new([five, plus, four]).parse
     expect(node.value).to eq 9
   end
 
@@ -23,7 +23,7 @@ describe Dentaku::Parser do
     lt   = Dentaku::Token.new(:comparator, :lt)
     four = Dentaku::Token.new(:numeric, 4)
 
-    node  = described_class.new([five, lt, four]).parse
+    node = described_class.new([five, lt, four]).parse
     expect(node.value).to eq false
   end
 
@@ -31,7 +31,7 @@ describe Dentaku::Parser do
     five = Dentaku::Token.new(:numeric, 5)
     mod  = Dentaku::Token.new(:operator, :mod)
 
-    node  = described_class.new([five, mod]).parse
+    node = described_class.new([five, mod]).parse
     expect(node.value).to eq 0.05
   end
 
