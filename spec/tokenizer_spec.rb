@@ -19,6 +19,14 @@ describe Dentaku::Tokenizer do
     expect(token.value).to eq(128)
   end
 
+  it 'tokenizes numeric literal in scientific notation' do
+    %w( 6.02e23 .602E+24 ).each do |s|
+      tokens = tokenizer.tokenize(s)
+      expect(tokens.map(&:category)).to eq([:numeric])
+      expect(tokens.map(&:value)).to eq([6.02e23])
+    end
+  end
+
   it 'tokenizes addition' do
     tokens = tokenizer.tokenize('1+1')
     expect(tokens.map(&:category)).to eq([:numeric, :operator, :numeric])

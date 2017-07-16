@@ -83,7 +83,9 @@ module Dentaku
       end
 
       def numeric
-        new(:numeric, '(\d+(\.\d+)?|\.\d+)\b', lambda { |raw| raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
+        new(:numeric, '((?:\d+(\.\d+)?|\.\d+)(?:(e|E)(\+|-)?\d+)?)\b', lambda { |raw|
+          raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i
+        })
       end
 
       def hexadecimal
