@@ -30,6 +30,12 @@ module Dentaku
   end
 
   class TokenizerError < StandardError
+    attr_reader :reason, :meta
+
+    def initialize(reason, **meta)
+      @reason = reason
+      @meta = meta
+    end
   end
 
   class ArgumentError < ::ArgumentError

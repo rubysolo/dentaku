@@ -13,13 +13,17 @@ module Dentaku
       input    = strip_comments(string.to_s.dup)
 
       until input.empty?
-        fail TokenizerError, "parse error at: '#{ input }'" unless TokenScanner.scanners.any? do |scanner|
+        scanned = TokenScanner.scanners.any? do |scanner|
           scanned, input = scan(input, scanner)
           scanned
         end
+
+        unless scanned
+          fail! :parse_error, at: input
+        end
       end
 
-      fail TokenizerError, "too many opening parentheses" if @nesting > 0
+      fail! :too_many_opening_parentheses if @nesting > 0
 
       @tokens
     end
@@ -31,11 +35,14 @@ module Dentaku
     def scan(string, scanner)
       if tokens = scanner.scan(string, last_token)
         tokens.each do |token|
-          fail TokenizerError, "unexpected zero-width match (:#{ token.category }) at '#{ string }'" if token.length == 0
+          if token.empty?
+            fail! :unexpected_zero_width_match,
+                  token_category: token.category, at: string
+          end
 
           @nesting += 1 if LPAREN == token
           @nesting -= 1 if RPAREN == token
-          fail TokenizerError, "too many closing parentheses" if @nesting < 0
+          fail! :too_many_closing_parentheses if @nesting < 0
 
           @tokens << token unless token.is?(:whitespace)
         end
@@ -49,6 +56,26 @@ module Dentaku
 
     def strip_comments(input)
       input.gsub(/\/\*[^*]*\*+(?:[^*\/][^*]*\*+)*\//, '')
+    end
+
+    private
+
+    def fail!(reason, **meta)
+      message =
+        case reason
+        when :parse_error
+          "parse error at: '#{meta.fetch(:at)}'"
+        when :too_many_opening_parentheses
+          "too many opening parentheses"
+        when :too_many_closing_parentheses
+          "too many closing parentheses"
+        when :unexpected_zero_width_match
+          "unexpected zero-width match (:#{meta.fetch(:category)}) at '#{meta.fetch(:at)}'"
+        else
+          raise ::ArgumentError, "Unhandled #{reason}"
+        end
+
+      raise TokenizerError.new(reason, meta), message
     end
   end
 end
