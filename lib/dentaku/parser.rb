@@ -64,8 +64,13 @@ module Dentaku
           output.push AST::Nil.new
 
         when :function
+          func = function(token)
+          if func.nil?
+            fail ParseError, "Undefined function #{ token.value }"
+          end
+
           arities.push 0
-          operations.push function(token)
+          operations.push func
 
         when :case
           case token.value
