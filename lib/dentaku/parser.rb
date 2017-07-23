@@ -18,13 +18,13 @@ module Dentaku
 
       args_size = operator.arity || count
       if args_size > output.length
-        fail! :too_few_operands, operator
+        fail! :too_few_operands, operator: operator, expect: args_size, actual: output.length
       end
       args = Array.new(args_size) { output.pop }.reverse
 
       output.push operator.new(*args)
     rescue NodeError => e
-      fail!(:node_invalid, operator, e)
+      fail! :node_invalid, operator: operator, child: e.child, expect: e.expect, actual: e.actual
     end
 
     def parse
@@ -70,7 +70,7 @@ module Dentaku
         when :function
           func = function(token)
           if func.nil?
-            fail! :undefined_function, token
+            fail! :undefined_function, function_name: token.value
           end
 
           arities.push 0
@@ -129,7 +129,7 @@ module Dentaku
             end
 
             unless operations.count == 1 && operations.last == AST::Case
-              fail! :unprocessed_token, token
+              fail! :unprocessed_token, token_name: token.value
             end
             consume(arities.pop.succ)
           when :when
@@ -166,7 +166,7 @@ module Dentaku
 
             operations.push(AST::CaseElse)
           else
-            fail! :unknown_case_token, token
+            fail! :unknown_case_token, token_name: token.value
           end
 
         when :access
@@ -216,11 +216,11 @@ module Dentaku
             end
 
           else
-            fail! :unknown_grouping_token, token
+            fail! :unknown_grouping_token, token_name: token.value
           end
 
         else
-          fail! :not_implemented_token_category, token
+          fail! :not_implemented_token_category, token_category: token.category
         end
       end
 
@@ -229,7 +229,7 @@ module Dentaku
       end
 
       unless output.count == 1
-        fail! :invalid_statement, nil
+        fail! :invalid_statement
       end
 
       output.first
@@ -269,33 +269,34 @@ module Dentaku
 
     private
 
-    def fail!(category, token_or_operator, upstream_error = nil)
-      case category
-      when :node_invalid
-        raise ParseError,
-              "#{token_or_operator} requires #{upstream_error.expect.join(', ')} operands, but got #{upstream_error.actual}"
-      when :too_few_operands
-        raise ParseError,
-              "#{token_or_operator} has too few operands"
-      when :undefined_function
-        raise ParseError, "Undefined function #{token_or_operator.value}"
-      when :unprocessed_token
-        raise ParseError, "Unprocessed token #{token_or_operator.value}"
-      when :unknown_case_token
-        raise ParseError, "Unknown case token #{token_or_operator.value}"
-      when :unbalanced_bracket
-        raise ParseError, "Unbalanced bracket"
-      when :unbalanced_parenthesis
-        raise ParseError, "Unbalanced parenthesis"
-      when :unknown_grouping_token
-        raise ParseError, "Unknown grouping token #{token_or_operator.value}"
-      when :not_implemented_token_category
-        raise ParseError, "Not implemented for tokens of category #{token_or_operator.category}"
-      when :invalid_statement
-        raise ParseError, "Invalid statement"
-      else
-        raise ::ArgumentError, "Unhandled #{category}"
-      end
+    def fail!(reason, **meta)
+      message =
+        case reason
+        when :node_invalid
+          "#{meta.fetch(:operator)} requires #{meta.fetch(:expect).join(', ')} operands, but got #{meta.fetch(:actual)}"
+        when :too_few_operands
+          "#{meta.fetch(:operator)} has too few operands"
+        when :undefined_function
+          "Undefined function #{meta.fetch(:function_name)}"
+        when :unprocessed_token
+          "Unprocessed token #{meta.fetch(:token_name)}"
+        when :unknown_case_token
+          "Unknown case token #{meta.fetch(:token_name)}"
+        when :unbalanced_bracket
+          "Unbalanced bracket"
+        when :unbalanced_parenthesis
+          "Unbalanced parenthesis"
+        when :unknown_grouping_token
+          "Unknown grouping token #{meta.fetch(:token_name)}"
+        when :not_implemented_token_category
+          "Not implemented for tokens of category #{meta.fetch(:token_category)}"
+        when :invalid_statement
+          "Invalid statement"
+        else
+          raise ::ArgumentError, "Unhandled #{reason}"
+        end
+
+      raise ParseError.new(reason, meta), message
     end
   end
 end
