@@ -21,10 +21,6 @@ module Dentaku
       Dentaku::AST::FunctionRegistry.default.register(name, type, body)
     end
 
-    def add_functions(fns)
-      fns.each { |(name, type, body)| add_function(name, type, body) }
-    end
-
     def add_function(name, type, body)
       @function_registry.register(name, type, body)
       self
