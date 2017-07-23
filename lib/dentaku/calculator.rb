@@ -87,7 +87,7 @@ module Dentaku
       when Regexp
         @ast_cache.delete_if { |k,_| k =~ pattern }
       else
-        fail Dentaku::ArgumentError
+        raise ::ArgumentError
       end
     end
 
