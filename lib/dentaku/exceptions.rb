@@ -6,7 +6,6 @@ module Dentaku
 
     def initialize(unbound_variables)
       @unbound_variables = unbound_variables
-      super("no value provided for variables: #{ unbound_variables.join(', ') }")
     end
   end
 

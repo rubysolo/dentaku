@@ -49,7 +49,10 @@ module Dentaku
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
         unbound = node.dependencies - memory.keys
-        raise UnboundVariableError.new(unbound) unless unbound.empty?
+        unless unbound.empty?
+          raise UnboundVariableError.new(unbound),
+                "no value provided for variables: #{unbound.join(', ')}"
+        end
         node.value(memory)
       end
     end
