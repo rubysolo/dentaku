@@ -12,17 +12,19 @@ module Dentaku
       @function_registry = options.fetch(:function_registry, nil)
     end
 
-    def get_args(count)
-      fail ParseError, "operation has too few operands" if count > output.length
-      Array.new(count) { output.pop }.reverse
-    end
-
     def consume(count=2)
       operator = operations.pop
       operator.peek(output)
-      output.push operator.new(*get_args(operator.arity || count))
+
+      args_size = operator.arity || count
+      if args_size > output.length
+        fail! :too_few_operands, operator
+      end
+      args = Array.new(args_size) { output.pop }.reverse
+
+      output.push operator.new(*args)
     rescue NodeError => e
-      raise ParseError, "#{ operator } requires #{e.expect.join(', ')} operands, but got #{ e.actual }"
+      fail!(:node_invalid, operator, e)
     end
 
     def parse
@@ -68,7 +70,7 @@ module Dentaku
         when :function
           func = function(token)
           if func.nil?
-            fail ParseError, "Undefined function #{ token.value }"
+            fail! :undefined_function, token
           end
 
           arities.push 0
@@ -127,7 +129,7 @@ module Dentaku
             end
 
             unless operations.count == 1 && operations.last == AST::Case
-              fail ParseError, "Unprocessed token #{ token.value }"
+              fail! :unprocessed_token, token
             end
             consume(arities.pop.succ)
           when :when
@@ -164,7 +166,7 @@ module Dentaku
 
             operations.push(AST::CaseElse)
           else
-            fail ParseError, "Unknown case token #{ token.value }"
+            fail! :unknown_case_token, token
           end
 
         when :access
@@ -176,7 +178,9 @@ module Dentaku
               consume
             end
 
-            fail ParseError, "Unbalanced bracket" unless operations.last == AST::Access
+            unless operations.last == AST::Access
+              fail! :unbalanced_bracket, token
+            end
             consume
           end
 
@@ -197,7 +201,9 @@ module Dentaku
             end
 
             lparen = operations.pop
-            fail ParseError, "Unbalanced parenthesis" unless lparen == AST::Grouping
+            unless lparen == AST::Grouping
+              fail! :unbalanced_parenthesis, token
+            end
 
             if operations.last && operations.last < AST::Function
               consume(arities.pop.succ)
@@ -210,11 +216,11 @@ module Dentaku
             end
 
           else
-            fail ParseError, "Unknown grouping token #{ token.value }"
+            fail! :unknown_grouping_token, token
           end
 
         else
-          fail ParseError, "Not implemented for tokens of category #{ token.category }"
+          fail! :not_implemented_token_category, token
         end
       end
 
@@ -223,7 +229,7 @@ module Dentaku
       end
 
       unless output.count == 1
-        fail ParseError, "Invalid statement"
+        fail! :invalid_statement, nil
       end
 
       output.first
@@ -259,6 +265,37 @@ module Dentaku
 
     def function_registry
       @function_registry ||= Dentaku::AST::FunctionRegistry.new
+    end
+
+    private
+
+    def fail!(category, token_or_operator, upstream_error = nil)
+      case category
+      when :node_invalid
+        raise ParseError,
+              "#{token_or_operator} requires #{upstream_error.expect.join(', ')} operands, but got #{upstream_error.actual}"
+      when :too_few_operands
+        raise ParseError,
+              "#{token_or_operator} has too few operands"
+      when :undefined_function
+        raise ParseError, "Undefined function #{token_or_operator.value}"
+      when :unprocessed_token
+        raise ParseError, "Unprocessed token #{token_or_operator.value}"
+      when :unknown_case_token
+        raise ParseError, "Unknown case token #{token_or_operator.value}"
+      when :unbalanced_bracket
+        raise ParseError, "Unbalanced bracket"
+      when :unbalanced_parenthesis
+        raise ParseError, "Unbalanced parenthesis"
+      when :unknown_grouping_token
+        raise ParseError, "Unknown grouping token #{token_or_operator.value}"
+      when :not_implemented_token_category
+        raise ParseError, "Not implemented for tokens of category #{token_or_operator.category}"
+      when :invalid_statement
+        raise ParseError, "Invalid statement"
+      else
+        raise ::ArgumentError, "Unhandled #{category}"
+      end
     end
   end
 end
