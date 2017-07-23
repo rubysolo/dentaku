@@ -23,7 +23,7 @@ module Dentaku
       end
 
       def operator
-        raise "Not implemented"
+        raise NotImplementedError
       end
 
       def value(context={})
