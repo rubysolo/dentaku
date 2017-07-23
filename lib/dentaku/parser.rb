@@ -296,7 +296,7 @@ module Dentaku
           raise ::ArgumentError, "Unhandled #{reason}"
         end
 
-      raise ParseError.new(reason, meta), message
+      raise ParseError.for(reason, meta), message
     end
   end
 end

@@ -71,14 +71,14 @@ module Dentaku
 
       def validate_operation(val)
         unless val.respond_to?(operator)
-          raise Dentaku::ArgumentError.new(:invalid_operator, operation: self.class, operator: operator),
-                "#{self.class} requires operands that respond to #{operator}"
+          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator),
+                "#{ self.class } requires operands that respond to #{operator}"
         end
       end
 
       def validate_format(string)
         unless string =~ /\A-?\d+(\.\d+)?\z/
-          raise Dentaku::ArgumentError.new(:input_not_coercible_to_numeric, input: string),
+          raise Dentaku::ArgumentError.for(:invalid_value, value: string, for: BigDecimal),
                 "String input '#{string}' is not coercible to numeric"
         end
       end

@@ -3,7 +3,7 @@ require_relative '../../exceptions'
 
 Dentaku::AST::Function.register(:and, :logical, lambda { |*args|
   if args.empty?
-    raise Dentaku::ArgumentError.new(
+    raise Dentaku::ArgumentError.for(
       :too_few_arguments,
       function_name: 'AND()', at_least: 1, given: 0
     ), 'AND() requires at least one argument'
@@ -16,7 +16,7 @@ Dentaku::AST::Function.register(:and, :logical, lambda { |*args|
     when FalseClass
       false
     else
-      raise Dentaku::ArgumentError.new(
+      raise Dentaku::ArgumentError.for(
         :incompatible_type,
         function_name: 'AND()', expect: :logical, actual: arg.class
       ), 'AND() requires arguments to be logical expressions'
