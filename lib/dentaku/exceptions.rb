@@ -10,6 +10,16 @@ module Dentaku
     end
   end
 
+  class NodeError < StandardError
+    attr_reader :child, :expect, :actual
+
+    def initialize(expect, actual, child)
+      @expect = Array(expect)
+      @actual = actual
+      @child = child
+    end
+  end
+
   class ParseError < StandardError
   end
 

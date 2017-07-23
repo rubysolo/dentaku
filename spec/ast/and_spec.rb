@@ -17,7 +17,7 @@ describe Dentaku::AST::And do
   it 'requires logical operands' do
     expect {
       described_class.new(t, five)
-    }.to raise_error(Dentaku::ParseError, /requires logical operands/)
+    }.to raise_error(Dentaku::NodeError, /requires logical operands/)
 
     expression = Dentaku::AST::LessThanOrEqual.new(five, five)
     expect {

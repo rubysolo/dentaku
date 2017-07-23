@@ -21,6 +21,8 @@ module Dentaku
       operator = operations.pop
       operator.peek(output)
       output.push operator.new(*get_args(operator.arity || count))
+    rescue NodeError => e
+      raise ParseError, "#{ operator } requires #{e.expect.join(', ')} operands, but got #{ e.actual }"
     end
 
     def parse

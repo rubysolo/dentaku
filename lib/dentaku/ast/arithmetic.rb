@@ -7,8 +7,14 @@ module Dentaku
     class Arithmetic < Operation
       def initialize(*)
         super
-        unless valid_left? && valid_right?
-          fail ParseError, "#{ self.class } requires numeric operands"
+
+        unless valid_left?
+          raise NodeError.new(:numeric, left.type, :left),
+                "#{self.class} requires numeric operands"
+        end
+        unless valid_right?
+          raise NodeError.new(:numeric, right.type, :right),
+                "#{self.class} requires numeric operands"
         end
       end
 
@@ -141,8 +147,13 @@ module Dentaku
           @right = left
         end
 
-        unless valid_left? && valid_right?
-          fail ParseError, "#{ self.class } requires numeric operand(s)"
+        unless valid_left?
+          raise NodeError.new(%i[numeric nil], left.type, :left),
+                "#{self.class} requires numeric operands or nil"
+        end
+        unless valid_right?
+          raise NodeError.new(:numeric, right.type, :right),
+                "#{self.class} requires numeric operands"
         end
       end
 
