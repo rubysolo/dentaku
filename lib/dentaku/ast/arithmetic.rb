@@ -71,13 +71,15 @@ module Dentaku
 
       def validate_operation(val)
         unless val.respond_to?(operator)
-          fail Dentaku::ArgumentError, "#{ self.class } requires operands that respond to #{ operator }"
+          raise Dentaku::ArgumentError.new(:invalid_operator, operation: self.class, operator: operator),
+                "#{self.class} requires operands that respond to #{operator}"
         end
       end
 
       def validate_format(string)
         unless string =~ /\A-?\d+(\.\d+)?\z/
-          fail Dentaku::ArgumentError, "String input '#{ string }' is not coercible to numeric"
+          raise Dentaku::ArgumentError.new(:input_not_coercible_to_numeric, input: string),
+                "String input '#{string}' is not coercible to numeric"
         end
       end
     end
