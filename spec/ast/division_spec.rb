@@ -17,7 +17,7 @@ describe Dentaku::AST::Division do
   it 'requires numeric operands' do
     expect {
       described_class.new(five, t)
-    }.to raise_error(Dentaku::ParseError, /requires numeric operands/)
+    }.to raise_error(Dentaku::NodeError, /requires numeric operands/)
 
     expression = Dentaku::AST::Multiplication.new(five, five)
     group = Dentaku::AST::Grouping.new(expression)

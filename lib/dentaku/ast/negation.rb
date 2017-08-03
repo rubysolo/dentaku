@@ -3,7 +3,11 @@ module Dentaku
     class Negation < Arithmetic
       def initialize(node)
         @node = node
-        fail ParseError, "Negation requires numeric operand" unless valid_node?(node)
+
+        unless valid_node?(node)
+          raise NodeError.new(:numeric, left.type, :left),
+                "#{self.class} requires numeric operands"
+        end
       end
 
       def operator

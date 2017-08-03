@@ -5,8 +5,14 @@ module Dentaku
     class Combinator < Operation
       def initialize(*)
         super
-        unless valid_node?(left) && valid_node?(right)
-          fail ParseError, "#{ self.class } requires logical operands"
+
+        unless valid_node?(left)
+          raise NodeError.new(:logical, left.type, :left),
+                "#{self.class} requires logical operands"
+        end
+        unless valid_node?(right)
+          raise NodeError.new(:logical, right.type, :right),
+                "#{self.class} requires logical operands"
         end
       end
 

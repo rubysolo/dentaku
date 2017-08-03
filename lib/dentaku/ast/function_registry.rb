@@ -5,7 +5,7 @@ module Dentaku
         name = function_name(name)
         return self[name] if has_key?(name)
         return default[name] if default.has_key?(name)
-        fail ParseError, "Undefined function #{ name }"
+        nil
       end
 
       def register(name, type, implementation)

@@ -171,6 +171,14 @@ describe Dentaku::Parser do
         described_class.new([this, also]).parse
       }.to raise_error(Dentaku::ParseError)
     end
+
+    it 'raises an exception when trying to access an undefined function' do
+      fn = Dentaku::Token.new(:function, 'non_exists_func')
+
+      expect {
+        described_class.new([fn]).parse
+      }.to raise_error(Dentaku::ParseError)
+    end
   end
 
   it "evaluates explicit 'NULL' as a Nil" do

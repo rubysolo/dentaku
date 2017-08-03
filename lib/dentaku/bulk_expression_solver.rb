@@ -54,7 +54,7 @@ module Dentaku
             evaluate!(expressions[var_name], expressions.merge(r))
 
           r[var_name] = value
-        rescue Dentaku::UnboundVariableError, ZeroDivisionError => ex
+        rescue UnboundVariableError, Dentaku::ZeroDivisionError => ex
           ex.recipient_variable = var_name
           r[var_name] = block.call(ex)
         end

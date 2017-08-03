@@ -12,15 +12,19 @@ module Dentaku
       @function_registry = options.fetch(:function_registry, nil)
     end
 
-    def get_args(count)
-      fail ParseError, "operation has too few operands" if count > output.length
-      Array.new(count) { output.pop }.reverse
-    end
-
     def consume(count=2)
       operator = operations.pop
       operator.peek(output)
-      output.push operator.new(*get_args(operator.arity || count))
+
+      args_size = operator.arity || count
+      if args_size > output.length
+        fail! :too_few_operands, operator: operator, expect: args_size, actual: output.length
+      end
+      args = Array.new(args_size) { output.pop }.reverse
+
+      output.push operator.new(*args)
+    rescue NodeError => e
+      fail! :node_invalid, operator: operator, child: e.child, expect: e.expect, actual: e.actual
     end
 
     def parse
@@ -64,8 +68,13 @@ module Dentaku
           output.push AST::Nil.new
 
         when :function
+          func = function(token)
+          if func.nil?
+            fail! :undefined_function, function_name: token.value
+          end
+
           arities.push 0
-          operations.push function(token)
+          operations.push func
 
         when :case
           case token.value
@@ -120,7 +129,7 @@ module Dentaku
             end
 
             unless operations.count == 1 && operations.last == AST::Case
-              fail ParseError, "Unprocessed token #{ token.value }"
+              fail! :unprocessed_token, token_name: token.value
             end
             consume(arities.pop.succ)
           when :when
@@ -157,7 +166,7 @@ module Dentaku
 
             operations.push(AST::CaseElse)
           else
-            fail ParseError, "Unknown case token #{ token.value }"
+            fail! :unknown_case_token, token_name: token.value
           end
 
         when :access
@@ -169,7 +178,9 @@ module Dentaku
               consume
             end
 
-            fail ParseError, "Unbalanced bracket" unless operations.last == AST::Access
+            unless operations.last == AST::Access
+              fail! :unbalanced_bracket, token
+            end
             consume
           end
 
@@ -190,7 +201,9 @@ module Dentaku
             end
 
             lparen = operations.pop
-            fail ParseError, "Unbalanced parenthesis" unless lparen == AST::Grouping
+            unless lparen == AST::Grouping
+              fail! :unbalanced_parenthesis, token
+            end
 
             if operations.last && operations.last < AST::Function
               consume(arities.pop.succ)
@@ -203,11 +216,11 @@ module Dentaku
             end
 
           else
-            fail ParseError, "Unknown grouping token #{ token.value }"
+            fail! :unknown_grouping_token, token_name: token.value
           end
 
         else
-          fail ParseError, "Not implemented for tokens of category #{ token.category }"
+          fail! :not_implemented_token_category, token_category: token.category
         end
       end
 
@@ -216,7 +229,7 @@ module Dentaku
       end
 
       unless output.count == 1
-        fail ParseError, "Invalid statement"
+        fail! :invalid_statement
       end
 
       output.first
@@ -252,6 +265,38 @@ module Dentaku
 
     def function_registry
       @function_registry ||= Dentaku::AST::FunctionRegistry.new
+    end
+
+    private
+
+    def fail!(reason, **meta)
+      message =
+        case reason
+        when :node_invalid
+          "#{meta.fetch(:operator)} requires #{meta.fetch(:expect).join(', ')} operands, but got #{meta.fetch(:actual)}"
+        when :too_few_operands
+          "#{meta.fetch(:operator)} has too few operands"
+        when :undefined_function
+          "Undefined function #{meta.fetch(:function_name)}"
+        when :unprocessed_token
+          "Unprocessed token #{meta.fetch(:token_name)}"
+        when :unknown_case_token
+          "Unknown case token #{meta.fetch(:token_name)}"
+        when :unbalanced_bracket
+          "Unbalanced bracket"
+        when :unbalanced_parenthesis
+          "Unbalanced parenthesis"
+        when :unknown_grouping_token
+          "Unknown grouping token #{meta.fetch(:token_name)}"
+        when :not_implemented_token_category
+          "Not implemented for tokens of category #{meta.fetch(:token_category)}"
+        when :invalid_statement
+          "Invalid statement"
+        else
+          raise ::ArgumentError, "Unhandled #{reason}"
+        end
+
+      raise ParseError.for(reason, meta), message
     end
   end
 end

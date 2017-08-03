@@ -2,7 +2,12 @@ require_relative '../function'
 require_relative '../../exceptions'
 
 Dentaku::AST::Function.register(:or, :logical, lambda { |*args|
-  fail Dentaku::ArgumentError, 'OR() requires at least one argument' if args.empty?
+  if args.empty?
+    raise Dentaku::ArgumentError.for(
+      :too_few_arguments,
+      function_name: 'OR()', at_least: 1, given: 0
+    ), 'OR() requires at least one argument'
+  end
 
   args.any? do |arg|
     case arg
@@ -11,7 +16,10 @@ Dentaku::AST::Function.register(:or, :logical, lambda { |*args|
     when FalseClass
       false
     else
-      fail Dentaku::ArgumentError, 'OR() requires arguments to be logical expressions'
+      raise Dentaku::ArgumentError.for(
+        :incompatible_type,
+        function_name: 'AND()', expect: :logical, actual: arg.class
+      ), 'AND() requires arguments to be logical expressions'
     end
   end
 })

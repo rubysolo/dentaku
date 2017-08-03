@@ -21,10 +21,6 @@ module Dentaku
       Dentaku::AST::FunctionRegistry.default.register(name, type, body)
     end
 
-    def add_functions(fns)
-      fns.each { |(name, type, body)| add_function(name, type, body) }
-    end
-
     def add_function(name, type, body)
       @function_registry.register(name, type, body)
       self
@@ -44,7 +40,7 @@ module Dentaku
 
     def evaluate(expression, data={})
       evaluate!(expression, data)
-    rescue UnboundVariableError, ArgumentError
+    rescue UnboundVariableError, Dentaku::ArgumentError
       yield expression if block_given?
     end
 
@@ -53,7 +49,10 @@ module Dentaku
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
         unbound = node.dependencies - memory.keys
-        raise UnboundVariableError.new(unbound) unless unbound.empty?
+        unless unbound.empty?
+          raise UnboundVariableError.new(unbound),
+                "no value provided for variables: #{unbound.join(', ')}"
+        end
         node.value(memory)
       end
     end
@@ -87,7 +86,7 @@ module Dentaku
       when Regexp
         @ast_cache.delete_if { |k,_| k =~ pattern }
       else
-        fail Dentaku::ArgumentError
+        raise ::ArgumentError
       end
     end
 

@@ -11,7 +11,8 @@ module Dentaku
 
       def value(context={})
         v = context.fetch(identifier) do
-          raise UnboundVariableError.new([identifier])
+          raise UnboundVariableError.new([identifier]),
+                "no value provided for variables: #{identifier}"
         end
 
         case v
@@ -23,7 +24,7 @@ module Dentaku
       end
 
       def dependencies(context={})
-        context.has_key?(identifier) ? dependencies_of(context[identifier]) : [identifier]
+        context.key?(identifier) ? dependencies_of(context[identifier]) : [identifier]
       end
 
       private
