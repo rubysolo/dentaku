@@ -11,7 +11,7 @@ module Dentaku
         @args = args
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         @args.flat_map { |a| a.dependencies(context) }
       end
 

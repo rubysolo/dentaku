@@ -38,7 +38,7 @@ module Dentaku
             @implementation.arity < 0 ? nil : @implementation.arity
           end
 
-          def value(context={})
+          def value(context = {})
             args = @args.map { |a| a.value(context) }
             self.class.implementation.call(*args)
           end

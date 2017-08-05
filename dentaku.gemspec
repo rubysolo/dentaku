@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["rubysolo@gmail.com"]
   s.homepage    = "http://github.com/rubysolo/dentaku"
   s.licenses    = %w(MIT)
-  s.summary     = %q{A formula language parser and evaluator}
+  s.summary     = 'A formula language parser and evaluator'
   s.description = <<-DESC
     Dentaku is a parser and evaluator for mathematical formulas
   DESC
@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 end

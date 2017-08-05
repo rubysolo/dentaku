@@ -4,14 +4,14 @@ require 'dentaku/token'
 
 module Dentaku
   class TokenScanner
-    def initialize(category, regexp, converter=nil, condition=nil)
+    def initialize(category, regexp, converter = nil, condition = nil)
       @category  = category
       @regexp    = %r{\A(#{ regexp })}i
       @converter = converter
       @condition = condition || ->(*) { true }
     end
 
-    def scan(string, last_token=nil)
+    def scan(string, last_token = nil)
       if (m = @regexp.match(string)) && @condition.call(last_token)
         value = raw = m.to_s
         value = @converter.call(raw) if @converter
@@ -62,7 +62,7 @@ module Dentaku
       end
 
       def scanners=(scanner_ids)
-        @scanners.select! { |k,v| scanner_ids.include?(k) }
+        @scanners.select! { |k, v| scanner_ids.include?(k) }
       end
 
       def scanners

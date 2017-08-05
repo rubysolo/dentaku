@@ -5,7 +5,7 @@ module Dentaku
         @node = node
       end
 
-      def value(context={})
+      def value(context = {})
         @node.value(context)
       end
 
@@ -13,7 +13,7 @@ module Dentaku
         @node.type
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         @node.dependencies(context)
       end
     end

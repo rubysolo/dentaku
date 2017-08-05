@@ -110,7 +110,7 @@ describe Dentaku::Parser do
     one      = token(1)
     rbracket = token(:rbracket)
 
-    node  = described_class.new([a, lbracket, one, rbracket]).parse
+    node = described_class.new([a, lbracket, one, rbracket]).parse
     expect { node.value }.to raise_error(Dentaku::UnboundVariableError)
     expect(node.value(a: [1, 2, 3])).to eq 2
   end
@@ -120,24 +120,24 @@ describe Dentaku::Parser do
     d_and   = Dentaku::Token.new(:combinator, :and)
     d_false = Dentaku::Token.new(:logical, false)
 
-    node  = described_class.new([d_true, d_and, d_false]).parse
+    node = described_class.new([d_true, d_and, d_false]).parse
     expect(node.value).to eq false
   end
 
   it 'evaluates a case statement' do
-    case_start  = Dentaku::Token.new(:case, :open)
-    x     = Dentaku::Token.new(:identifier, :x)
+    case_start = Dentaku::Token.new(:case, :open)
+    x = Dentaku::Token.new(:identifier, :x)
     case_when1 = Dentaku::Token.new(:case, :when)
-    one  = Dentaku::Token.new(:numeric, 1)
+    one = Dentaku::Token.new(:numeric, 1)
     case_then1 = Dentaku::Token.new(:case, :then)
-    two  = Dentaku::Token.new(:numeric, 2)
+    two = Dentaku::Token.new(:numeric, 2)
     case_when2 = Dentaku::Token.new(:case, :when)
-    three  = Dentaku::Token.new(:numeric, 3)
+    three = Dentaku::Token.new(:numeric, 3)
     case_then2 = Dentaku::Token.new(:case, :then)
-    four  = Dentaku::Token.new(:numeric, 4)
-    case_close  = Dentaku::Token.new(:case, :close)
+    four = Dentaku::Token.new(:numeric, 4)
+    case_close = Dentaku::Token.new(:case, :close)
 
-    node  = described_class.new(
+    node = described_class.new(
       [case_start,
        x,
        case_when1,
@@ -182,7 +182,7 @@ describe Dentaku::Parser do
   end
 
   it "evaluates explicit 'NULL' as a Nil" do
-    null  = Dentaku::Token.new(:null, nil)
+    null = Dentaku::Token.new(:null, nil)
     node = described_class.new([null]).parse
     expect(node.value).to eq(nil)
   end

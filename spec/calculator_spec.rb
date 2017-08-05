@@ -65,13 +65,13 @@ describe Dentaku::Calculator do
     end
 
     it 'stores nested hashes' do
-      calculator.store({a: {basket: {of: 'apples'}}, b: 2})
+      calculator.store(a: {basket: {of: 'apples'}}, b: 2)
       expect(calculator.evaluate!('a.basket.of')).to eq 'apples'
       expect(calculator.evaluate!('b')).to eq 2
     end
 
     it 'stores arrays' do
-      calculator.store({a: [1, 2, 3]})
+      calculator.store(a: [1, 2, 3])
       expect(calculator.evaluate!('a[0]')).to eq 1
       expect(calculator.evaluate!('a[x]', x: 1)).to eq 2
       expect(calculator.evaluate!('a[x+1]', x: 1)).to eq 3
@@ -286,7 +286,7 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('round(8.8)')).to eq(9)
       expect(calculator.evaluate('round(8.75, 1)')).to eq(BigDecimal.new('8.8'))
 
-      expect(calculator.evaluate('ROUND(apples * 0.93)', { apples: 10 })).to eq(9)
+      expect(calculator.evaluate('ROUND(apples * 0.93)', apples: 10)).to eq(9)
     end
 
     it 'include NOT' do
@@ -483,11 +483,11 @@ describe Dentaku::Calculator do
     end
 
     it 'disables the AST cache' do
-      expect(calculator.disable_cache{ |c| c.cache_ast? }).to be false
+      expect(calculator.disable_cache { |c| c.cache_ast? }).to be false
     end
 
     it 'calculates normally' do
-      expect(calculator.disable_cache{ |c| c.evaluate("2 + 2") }).to eq(4)
+      expect(calculator.disable_cache { |c| c.evaluate("2 + 2") }).to eq(4)
     end
   end
 
