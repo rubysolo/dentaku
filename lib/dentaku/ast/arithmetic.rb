@@ -26,7 +26,7 @@ module Dentaku
         raise NotImplementedError
       end
 
-      def value(context={})
+      def value(context = {})
         l = cast(left.value(context))
         r = cast(right.value(context))
         l.public_send(operator, r)
@@ -34,13 +34,13 @@ module Dentaku
 
       private
 
-      def cast(val, prefer_integer=true)
+      def cast(val, prefer_integer = true)
         validate_value(val)
         numeric(val, prefer_integer)
       end
 
       def numeric(val, prefer_integer)
-        v = BigDecimal.new(val, Float::DIG+1)
+        v = BigDecimal.new(val, Float::DIG + 1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
       rescue ::TypeError
@@ -119,7 +119,7 @@ module Dentaku
         :/
       end
 
-      def value(context={})
+      def value(context = {})
         r = cast(right.value(context), false)
         raise Dentaku::ZeroDivisionError if r.zero?
 
@@ -141,7 +141,7 @@ module Dentaku
         @arity = 2 if input.length > 1
       end
 
-      def initialize(left, right=nil)
+      def initialize(left, right = nil)
         if right
           @left  = left
           @right = right
@@ -163,7 +163,7 @@ module Dentaku
         left.nil?
       end
 
-      def value(context={})
+      def value(context = {})
         if percent?
           cast(right.value(context)) * 0.01
         else

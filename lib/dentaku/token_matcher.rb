@@ -4,10 +4,10 @@ module Dentaku
   class TokenMatcher
     attr_reader :children, :categories, :values
 
-    def initialize(categories=nil, values=nil, children=[])
+    def initialize(categories = nil, values = nil, children = [])
       # store categories and values as hash to optimize key lookup, h/t @jan-mangs
-      @categories = [categories].compact.flatten.each_with_object({}) { |c,h| h[c] = 1 }
-      @values     = [values].compact.flatten.each_with_object({}) { |v,h| h[v] = 1 }
+      @categories = [categories].compact.flatten.each_with_object({}) { |c, h| h[c] = 1 }
+      @values     = [values].compact.flatten.each_with_object({}) { |v, h| h[v] = 1 }
       @children   = children.compact
       @invert     = false
 
@@ -29,7 +29,7 @@ module Dentaku
       leaf_matcher? ? matches_token?(token) : any_child_matches_token?(token)
     end
 
-    def match(token_stream, offset=0)
+    def match(token_stream, offset = 0)
       matched_tokens = []
       matched = false
 

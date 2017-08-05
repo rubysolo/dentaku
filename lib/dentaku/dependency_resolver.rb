@@ -10,7 +10,7 @@ module Dentaku
 
     def initialize(vars_to_dependencies_hash)
       # ensure variables are strings
-      @vars_to_deps = Hash[vars_to_dependencies_hash.map { |k, v| [k.to_s, v]}]
+      @vars_to_deps = Hash[vars_to_dependencies_hash.map { |k, v| [k.to_s, v] }]
     end
 
     def tsort_each_node(&block)

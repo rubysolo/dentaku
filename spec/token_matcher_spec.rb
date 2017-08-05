@@ -132,4 +132,3 @@ describe Dentaku::TokenMatcher do
     end
   end
 end
-

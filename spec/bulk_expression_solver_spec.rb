@@ -35,7 +35,7 @@ RSpec.describe Dentaku::BulkExpressionSolver do
     it "does not require keys to be parseable" do
       expressions = { "the value of x, incremented" => "x + 1" }
       solver = described_class.new(expressions, calculator.store("x" => 3))
-      expect(solver.solve!).to eq({ "the value of x, incremented" => 4 })
+      expect(solver.solve!).to eq("the value of x, incremented" => 4)
     end
 
     it "evaluates expressions in hashes and arrays, and expands the results" do

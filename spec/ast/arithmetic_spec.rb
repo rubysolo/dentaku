@@ -8,10 +8,10 @@ describe Dentaku::AST::Arithmetic do
   let(:two) { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 2) }
   let(:x)   { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'x') }
   let(:y)   { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'y') }
-  let(:ctx) {{'x' => 1, 'y' => 2}}
+  let(:ctx) { {'x' => 1, 'y' => 2} }
 
   it 'performs an arithmetic operation with numeric operands' do
-    expect(add(one, two)).to eq  3
+    expect(add(one, two)).to eq 3
     expect(sub(one, two)).to eq -1
     expect(mul(one, two)).to eq  2
     expect(div(one, two)).to eq  0.5

@@ -5,12 +5,11 @@ require 'dentaku/flat_hash'
 require 'dentaku/parser'
 require 'dentaku/token'
 
-
 module Dentaku
   class Calculator
     attr_reader :result, :memory, :tokenizer
 
-    def initialize(ast_cache={})
+    def initialize(ast_cache = {})
       clear
       @tokenizer = Tokenizer.new
       @ast_cache = ast_cache
@@ -39,13 +38,13 @@ module Dentaku
       @disable_ast_cache = false
     end
 
-    def evaluate(expression, data={})
+    def evaluate(expression, data = {})
       evaluate!(expression, data)
     rescue UnboundVariableError, Dentaku::ArgumentError
       yield expression if block_given?
     end
 
-    def evaluate!(expression, data={})
+    def evaluate!(expression, data = {})
       return expression.map { |e| evaluate!(e, data) } if expression.is_a? Array
       store(data) do
         node = expression
@@ -83,20 +82,20 @@ module Dentaku
       }
     end
 
-    def clear_cache(pattern=:all)
+    def clear_cache(pattern = :all)
       case pattern
       when :all
         @ast_cache = {}
       when String
         @ast_cache.delete(pattern)
       when Regexp
-        @ast_cache.delete_if { |k,_| k =~ pattern }
+        @ast_cache.delete_if { |k, _| k =~ pattern }
       else
         raise ::ArgumentError
       end
     end
 
-    def store(key_or_hash, value=nil)
+    def store(key_or_hash, value = nil)
       restore = Hash[memory]
 
       if value.nil?

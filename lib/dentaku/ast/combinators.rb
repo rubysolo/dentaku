@@ -28,13 +28,13 @@ module Dentaku
     end
 
     class And < Combinator
-      def value(context={})
+      def value(context = {})
         left.value(context) && right.value(context)
       end
     end
 
     class Or < Combinator
-      def value(context={})
+      def value(context = {})
         left.value(context) || right.value(context)
       end
     end

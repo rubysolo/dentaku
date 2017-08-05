@@ -4,7 +4,7 @@ module Dentaku
   class Parser
     attr_reader :input, :output, :operations, :arities
 
-    def initialize(tokens, options={})
+    def initialize(tokens, options = {})
       @input             = tokens.dup
       @output            = []
       @operations        = options.fetch(:operations, [])
@@ -12,7 +12,7 @@ module Dentaku
       @function_registry = options.fetch(:function_registry, nil)
     end
 
-    def consume(count=2)
+    def consume(count = 2)
       operator = operations.pop
       operator.peek(output)
 

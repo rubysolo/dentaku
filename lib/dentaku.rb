@@ -6,7 +6,7 @@ module Dentaku
   @enable_ast_caching = false
   @enable_dependency_order_caching = false
 
-  def self.evaluate(expression, data={})
+  def self.evaluate(expression, data = {})
     calculator.evaluate(expression, data)
   end
 
@@ -38,6 +38,6 @@ module Dentaku
   end
 end
 
-def Dentaku(expression, data={})
+def Dentaku(expression, data = {})
   Dentaku.evaluate(expression, data)
 end
