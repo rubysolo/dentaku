@@ -1,6 +1,6 @@
 # Change Log
 
-## [HEAD] Unreleased
+## [v3.0.0] 2017-10-11
 - add && and || as aliases for AND and OR
 - add hexadecimal literal support
 - add the SWITCH function
@@ -143,7 +143,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[HEAD]:  https://github.com/rubysolo/dentaku/compare/v2.0.11...HEAD
+[v3.0.0]:  https://github.com/rubysolo/dentaku/compare/v2.0.11...v3.0.0
 [v2.0.11]:  https://github.com/rubysolo/dentaku/compare/v2.0.10...v2.0.11
 [v2.0.10]:  https://github.com/rubysolo/dentaku/compare/v2.0.9...v2.0.10
 [v2.0.9]:  https://github.com/rubysolo/dentaku/compare/v2.0.8...v2.0.9
