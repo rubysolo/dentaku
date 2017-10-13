@@ -13,13 +13,13 @@ module Dentaku
         @index = index
       end
 
-      def value(context={})
+      def value(context = {})
         structure = @structure.value(context)
         index = @index.value(context)
         structure[index]
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         @structure.dependencies(context) + @index.dependencies(context)
       end
     end

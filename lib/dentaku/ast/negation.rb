@@ -14,7 +14,7 @@ module Dentaku
         :*
       end
 
-      def value(context={})
+      def value(context = {})
         cast(@node.value(context)) * -1
       end
 
@@ -34,7 +34,7 @@ module Dentaku
         40
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         @node.dependencies(context)
       end
 

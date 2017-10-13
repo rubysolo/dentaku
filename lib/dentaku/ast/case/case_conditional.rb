@@ -15,7 +15,7 @@ module Dentaku
         end
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         @when.dependencies(context) + @then.dependencies(context)
       end
     end

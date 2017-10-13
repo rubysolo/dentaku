@@ -62,7 +62,7 @@ module Dentaku
     end
 
     def expressions
-      @expressions ||= Hash[expression_hash.map { |k,v| [k.to_s, v] }]
+      @expressions ||= Hash[expression_hash.map { |k, v| [k.to_s, v] }]
     end
 
     def expression_dependencies

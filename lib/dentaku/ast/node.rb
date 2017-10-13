@@ -12,7 +12,7 @@ module Dentaku
       def self.peek(*)
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         []
       end
     end

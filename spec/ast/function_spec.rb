@@ -29,7 +29,7 @@ describe Dentaku::AST::Function do
       one = described_class.register("one", :numeric, ->(x) { x * 2 })
       expect(one.arity).to eq 1
 
-      two = described_class.register("two", :numeric, ->(x,y) { x + y })
+      two = described_class.register("two", :numeric, ->(x, y) { x + y })
       expect(two.arity).to eq 2
 
       many = described_class.register("many", :numeric, ->(*args) { args.max })

@@ -9,7 +9,7 @@ module Dentaku
           @string, @length = *@args
         end
 
-        def value(context={})
+        def value(context = {})
           string = @string.value(context).to_s
           length = @length.value(context)
           string[0, length]
@@ -22,7 +22,7 @@ module Dentaku
           @string, @length = *@args
         end
 
-        def value(context={})
+        def value(context = {})
           string = @string.value(context).to_s
           length = @length.value(context)
           string[length * -1, length] || string
@@ -35,7 +35,7 @@ module Dentaku
           @string, @offset, @length = *@args
         end
 
-        def value(context={})
+        def value(context = {})
           string = @string.value(context).to_s
           offset = @offset.value(context)
           length = @length.value(context)
@@ -49,7 +49,7 @@ module Dentaku
           @string = @args[0]
         end
 
-        def value(context={})
+        def value(context = {})
           string = @string.value(context).to_s
           string.length
         end
@@ -61,7 +61,7 @@ module Dentaku
           @needle, @haystack = *@args
         end
 
-        def value(context={})
+        def value(context = {})
           needle = @needle.value(context)
           needle = needle.to_s unless needle.is_a?(Regexp)
           haystack = @haystack.value(context).to_s
@@ -76,7 +76,7 @@ module Dentaku
           @original, @search, @replacement = *@args
         end
 
-        def value(context={})
+        def value(context = {})
           original = @original.value(context).to_s
           search = @search.value(context)
           search = search.to_s unless search.is_a?(Regexp)
@@ -90,7 +90,7 @@ module Dentaku
           super
         end
 
-        def value(context={})
+        def value(context = {})
           @args.map { |arg| arg.value(context).to_s }.join
         end
       end
@@ -101,7 +101,7 @@ module Dentaku
           @needle, @haystack = *args
         end
 
-        def value(context={})
+        def value(context = {})
           @haystack.value(context).to_s.include? @needle.value(context).to_s
         end
       end

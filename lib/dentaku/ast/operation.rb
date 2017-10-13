@@ -10,7 +10,7 @@ module Dentaku
         @right = right
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         (left.dependencies(context) + right.dependencies(context)).uniq
       end
 

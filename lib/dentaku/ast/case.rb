@@ -25,7 +25,7 @@ module Dentaku
         end
       end
 
-      def value(context={})
+      def value(context = {})
         switch_value = @switch.value(context)
         @conditions.each do |condition|
           if condition.when.value(context) == switch_value
@@ -40,7 +40,7 @@ module Dentaku
         end
       end
 
-      def dependencies(context={})
+      def dependencies(context = {})
         # TODO: should short-circuit
         switch_dependencies(context) +
         condition_dependencies(context) +
@@ -49,15 +49,15 @@ module Dentaku
 
       private
 
-      def switch_dependencies(context={})
+      def switch_dependencies(context = {})
         @switch.dependencies(context)
       end
 
-      def condition_dependencies(context={})
+      def condition_dependencies(context = {})
         @conditions.flat_map { |condition| condition.dependencies(context) }
       end
 
-      def else_dependencies(context={})
+      def else_dependencies(context = {})
         @else ? @else.dependencies(context) : []
       end
     end
