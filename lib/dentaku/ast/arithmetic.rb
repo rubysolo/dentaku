@@ -77,7 +77,7 @@ module Dentaku
       end
 
       def validate_format(string)
-        unless string =~ /\A-?\d+(\.\d+)?\z/
+        unless string =~ /\A-?\d*(\.\d+)?\z/
           raise Dentaku::ArgumentError.for(:invalid_value, value: string, for: BigDecimal),
                 "String input '#{string}' is not coercible to numeric"
         end
