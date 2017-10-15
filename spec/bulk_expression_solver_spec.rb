@@ -81,10 +81,10 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         a:  "25",
         b: {
           c: "a / 5",
-          d: "4"
+          d: [3, 4, 5]
         },
-        e: "b.c + b.d",
-        f: "e + 1"
+        e: ["b.c + b.d[1]"],
+        f: "e[0] + 1"
       }
       results = described_class.new(expressions, calculator).solve
       expect(results[:f]).to eq 10

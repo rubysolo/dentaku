@@ -46,6 +46,7 @@ module Dentaku
     end
 
     def evaluate!(expression, data={})
+      return expression.map { |e| evaluate!(e, data) } if expression.is_a? Array
       store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)

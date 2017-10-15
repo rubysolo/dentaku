@@ -77,6 +77,10 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('a[x]', x: 1)).to eq 2
       expect(calculator.evaluate!('a[x+1]', x: 1)).to eq 3
     end
+
+    it 'evalutates arrays' do
+      expect(calculator.evaluate([1,2,3])).to eq([1,2,3])
+    end
   end
 
   describe 'dependencies' do
