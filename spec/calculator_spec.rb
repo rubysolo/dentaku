@@ -93,6 +93,10 @@ describe Dentaku::Calculator do
     it "doesn't consider variables in memory as dependencies" do
       expect(with_memory.dependencies("apples + oranges")).to eq(['oranges'])
     end
+
+    it "finds no dependencies in array literals" do
+      expect(calculator.dependencies([1,2,3])).to eq([])
+    end
   end
 
   describe 'solve!' do

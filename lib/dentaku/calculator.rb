@@ -1,8 +1,9 @@
 require 'dentaku/bulk_expression_solver'
-require 'dentaku/exceptions'
-require 'dentaku/token'
 require 'dentaku/dependency_resolver'
+require 'dentaku/exceptions'
+require 'dentaku/flat_hash'
 require 'dentaku/parser'
+require 'dentaku/token'
 
 
 module Dentaku
@@ -66,12 +67,16 @@ module Dentaku
     end
 
     def dependencies(expression)
+      if expression.is_a? Array
+        return expression.flat_map { |e| dependencies(e) }
+      end
       ast(expression).dependencies(memory)
     end
 
     def ast(expression)
       @ast_cache.fetch(expression) {
-        Parser.new(tokenizer.tokenize(expression), function_registry: @function_registry).parse.tap do |node|
+        tokens = tokenizer.tokenize(expression)
+        Parser.new(tokens, function_registry: @function_registry).parse.tap do |node|
           @ast_cache[expression] = node if cache_ast?
         end
       }
@@ -94,7 +99,7 @@ module Dentaku
       restore = Hash[memory]
 
       if value.nil?
-        _flat_hash(key_or_hash).each do |key, val|
+        FlatHash.from_hash(key_or_hash).each do |key, val|
           memory[key.to_s.downcase] = val
         end
       else
@@ -130,17 +135,6 @@ module Dentaku
 
     def cache_ast?
       Dentaku.cache_ast? && !@disable_ast_cache
-    end
-
-    private
-
-    def _flat_hash(hash, k = [])
-      if hash.is_a?(Hash)
-        hash.inject({}) { |h, v| h.merge! _flat_hash(v[-1], k + [v[0]]) }
-      else
-        return { k.join('.') => hash } if k.is_a?(Array)
-        { k => hash }
-      end
     end
   end
 end

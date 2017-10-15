@@ -5,8 +5,8 @@ module Dentaku
     attr_reader :input, :output, :operations, :arities
 
     def initialize(tokens, options={})
-      @input      = tokens.dup
-      @output     = []
+      @input             = tokens.dup
+      @output            = []
       @operations        = options.fetch(:operations, [])
       @arities           = options.fetch(:arities, [])
       @function_registry = options.fetch(:function_registry, nil)

@@ -1,13 +1,14 @@
 require 'dentaku/dependency_resolver'
 require 'dentaku/exceptions'
+require 'dentaku/flat_hash'
 require 'dentaku/parser'
 require 'dentaku/tokenizer'
 
 module Dentaku
   class BulkExpressionSolver
-    def initialize(expression_hash, calculator)
-      self.expression_hash = expression_hash
-      self.calculator = calculator
+    def initialize(expressions, calculator)
+      @expression_hash = FlatHash.from_hash(expressions)
+      @calculator = calculator
     end
 
     def solve!
@@ -29,7 +30,7 @@ module Dentaku
       @dep_cache ||= {}
     end
 
-    attr_accessor :expression_hash, :calculator
+    attr_reader :expression_hash, :calculator
 
     def return_undefined_handler
       ->(*) { :undefined }
@@ -65,8 +66,14 @@ module Dentaku
       @expressions ||= Hash[expression_hash.map { |k,v| [k.to_s, v] }]
     end
 
+    def expression_deps
+      expressions.map do |var, expr|
+        [var, calculator.dependencies(expr)]
+      end
+    end
+
     def expression_dependencies
-      Hash[expressions.map { |var, expr| [var, calculator.dependencies(expr)] }].tap do |d|
+      Hash[expression_deps].tap do |d|
         d.values.each do |deps|
           unresolved = deps.reject { |ud| d.has_key?(ud) }
           unresolved.each { |u| add_dependencies(d, u) }

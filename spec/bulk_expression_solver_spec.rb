@@ -1,5 +1,7 @@
 require 'spec_helper'
+require 'dentaku'
 require 'dentaku/bulk_expression_solver'
+require 'dentaku/calculator'
 
 RSpec.describe Dentaku::BulkExpressionSolver do
   let(:calculator) { Dentaku::Calculator.new }
@@ -72,6 +74,20 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         exception = ex
       end
       expect(exception.recipient_variable).to eq('more_apples')
+    end
+
+    it 'supports nested hashes of expressions using dot notation' do
+      expressions = {
+        a:  "25",
+        b: {
+          c: "a / 5",
+          d: "4"
+        },
+        e: "b.c + b.d",
+        f: "e + 1"
+      }
+      results = described_class.new(expressions, calculator).solve
+      expect(results[:f]).to eq 10
     end
   end
 end
