@@ -76,6 +76,16 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(exception.recipient_variable).to eq('more_apples')
     end
 
+    it 'safely handles argument errors' do
+      expressions = {i: "a / 5 + d", a: "m * 12", d: "a + b"}
+      result = described_class.new(expressions, calculator.store(m: 3)).solve
+      expect(result).to eq(
+        i: :undefined,
+        d: :undefined,
+        a: 36,
+      )
+    end
+
     it 'supports nested hashes of expressions using dot notation' do
       expressions = {
         a:  "25",
@@ -90,14 +100,16 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(results[:f]).to eq 10
     end
 
-    it 'safely handles argument errors' do
-      expressions = {i: "a / 5 + d", a: "m * 12", d: "a + b"}
-      result = described_class.new(expressions, calculator.store(m: 3)).solve
-      expect(result).to eq(
-        i: :undefined,
-        d: :undefined,
-        a: 36,
-      )
+    it 'uses stored values for expressions when they are known' do
+      calculator.store(Force: 50, Mass: 25)
+      expressions = {
+        Force: "Mass * Acceleration",
+        Mass: "Force / Acceleration",
+        Acceleration: "Force / Mass",
+      }
+      solver = described_class.new(expressions, calculator)
+      results = solver.solve
+      expect(results).to eq(Force: 50, Mass: 25, Acceleration: 2)
     end
   end
 end
