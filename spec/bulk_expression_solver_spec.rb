@@ -89,5 +89,15 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       results = described_class.new(expressions, calculator).solve
       expect(results[:f]).to eq 10
     end
+
+    it 'safely handles argument errors' do
+      expressions = {i: "a / 5 + d", a: "m * 12", d: "a + b"}
+      result = described_class.new(expressions, calculator.store(m: 3)).solve
+      expect(result).to eq(
+        i: :undefined,
+        d: :undefined,
+        a: 36,
+      )
+    end
   end
 end
