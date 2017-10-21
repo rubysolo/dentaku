@@ -37,6 +37,45 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       solver = described_class.new(expressions, calculator.store("x" => 3))
       expect(solver.solve!).to eq({ "the value of x, incremented" => 4 })
     end
+
+    it "evaluates expressions in hashes and arrays, and expands the results" do
+      calculator.store(
+        fruit_quantities: {
+          apple: 5,
+          pear: 9
+        },
+        fruit_prices: {
+          apple: 1.66,
+          pear: 2.50
+        }
+      )
+      expressions = {
+        weekly_budget: {
+          fruit:  "weekly_budget.apples + weekly_budget.pears",
+          apples: "fruit_quantities.apple * discounted_fruit_prices.apple",
+          pears:  "fruit_quantities.pear * discounted_fruit_prices.pear",
+        },
+        discounted_fruit_prices: {
+          apple: "round(fruit_prices.apple * discounts[0], 2)",
+          pear: "round(fruit_prices.pear * discounts[1], 2)"
+        },
+        discounts: ["0.4 * 2", "0.3 * 2"],
+      }
+      solver = described_class.new(expressions, calculator)
+
+      expect(solver.solve!).to eq(
+        weekly_budget: {
+          fruit: 20.15,
+          apples: 6.65,
+          pears: 13.50
+        },
+        discounted_fruit_prices: {
+          apple: 1.33,
+          pear: 1.50
+        },
+        discounts: [0.8, 0.6]
+      )
+    end
   end
 
   describe "#solve" do

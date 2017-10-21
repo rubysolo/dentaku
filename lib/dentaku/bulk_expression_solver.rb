@@ -19,9 +19,11 @@ module Dentaku
       error_handler = block || return_undefined_handler
       results = load_results(&error_handler)
 
-      expression_hash.each_with_object({}) do |(k, _), r|
-        r[k] = results[k.to_s]
-      end
+      FlatHash.expand(
+        expression_hash.each_with_object({}) do |(k, _), r|
+          r[k] = results[k.to_s]
+        end
+      )
     end
 
     private
