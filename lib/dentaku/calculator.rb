@@ -59,12 +59,12 @@ module Dentaku
       end
     end
 
-    def solve!(expression_hash)
-      BulkExpressionSolver.new(expression_hash, self).solve!
+    def solve!(expression_hash, options = {})
+      BulkExpressionSolver.new(expression_hash, self).solve!(options)
     end
 
-    def solve(expression_hash, &block)
-      BulkExpressionSolver.new(expression_hash, self).solve(&block)
+    def solve(expression_hash, options = {}, &block)
+      BulkExpressionSolver.new(expression_hash, self).solve(options, &block)
     end
 
     def dependencies(expression)

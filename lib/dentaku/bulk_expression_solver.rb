@@ -11,16 +11,22 @@ module Dentaku
       @calculator = calculator
     end
 
-    def solve!
-      solve(&raise_exception_handler)
+    def solve!(options = {})
+      solve(options, &raise_exception_handler)
     end
 
-    def solve(&block)
+    def solve(options = {}, &block)
       error_handler = block || return_undefined_handler
       results = load_results(&error_handler)
 
       expression_hash.each_with_object({}) do |(k, _), r|
-        r[k] = results[k.to_s]
+        if options[:expand]
+          hash_levels = k.to_s.split('.')
+          child_hash = hash_levels[0...-1].reduce(r) { |h, n| h[n] ||= {} }
+          child_hash[hash_levels.last] = results[k.to_s]
+        else
+          r[k] = results[k.to_s]
+        end
       end
     end
 
