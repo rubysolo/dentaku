@@ -69,11 +69,14 @@ calculator.evaluate!('10 * x')
 Dentaku::UnboundVariableError: Dentaku::UnboundVariableError
 ```
 
-Dentaku has built-in functions (including `if`, `not`, `min`, `max`, and
+Dentaku has built-in functions (including `if`, `not`, `min`, `max`, `sum`, and
 `round`) and the ability to define custom functions (see below). Functions
 generally work like their counterparts in Excel:
 
 ```ruby
+calculator.evaluate('SUM(1, 1, 2, 3, 5, 8)')
+#=> 20
+
 calculator.evaluate('if (pears < 10, 10, 20)', pears: 5)
 #=> 10
 calculator.evaluate('if (pears < 10, 10, 20)', pears: 15)
@@ -132,7 +135,7 @@ Comparison: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`,
 
 Logic: `IF`, `AND`, `OR`, `NOT`, `SWITCH`
 
-Numeric: `MIN`, `MAX`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
+Numeric: `MIN`, `MAX`, `SUM`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
 
 Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/master/spec/calculator_spec.rb#L292))
 
