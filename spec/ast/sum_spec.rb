@@ -18,6 +18,11 @@ describe 'Dentaku::AST::Function::Sum' do
     expect(result).to eq 5.1
   end
 
+  it 'returns the sum even if an array is passed' do
+    result = Dentaku('SUM(1, x, 2.3)', x: [4, 5])
+    expect(result).to eq 12.3
+  end
+
   it 'returns the sum of nested sums' do
     result = Dentaku('SUM(1, x, SUM(4, 5))', x: '2.3')
     expect(result).to eq 12.3
