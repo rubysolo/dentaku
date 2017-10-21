@@ -1,5 +1,11 @@
 # Change Log
 
+## [HEAD] Unreleased
+- allow decimals with no leading zero
+- nested hash and array support in bulk expression solver
+- add a variadic SUM function
+- support array arguments to min, max, sum, and Math functions
+
 ## [v3.0.0] 2017-10-11
 - add && and || as aliases for AND and OR
 - add hexadecimal literal support
