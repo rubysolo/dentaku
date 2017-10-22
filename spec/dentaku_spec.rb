@@ -25,4 +25,10 @@ describe Dentaku do
       Dentaku('true AND')
     }.to raise_error(Dentaku::ParseError)
   end
+
+  it 'evaluates with class-level shortcut functions' do
+    expect(Dentaku.evaluate('2+2')).to eq(4)
+    expect(Dentaku.evaluate!('2+2')).to eq(4)
+    expect { Dentaku.evaluate!('a+1') }.to raise_error(Dentaku::UnboundVariableError)
+  end
 end
