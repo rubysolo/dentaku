@@ -16,10 +16,14 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "dentaku"
 
+  s.add_development_dependency('coveralls')
+  s.add_development_dependency('pry')
+  s.add_development_dependency('pry-byebug')
+  s.add_development_dependency('pry-stack_explorer')
   s.add_development_dependency('rake')
   s.add_development_dependency('rspec')
-  s.add_development_dependency('pry')
-  s.add_development_dependency('coveralls')
+  s.add_development_dependency('rubocop')
+  s.add_development_dependency('simplecov')
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

@@ -79,7 +79,7 @@ describe Dentaku::Calculator do
     end
 
     it 'evalutates arrays' do
-      expect(calculator.evaluate([1,2,3])).to eq([1,2,3])
+      expect(calculator.evaluate([1, 2, 3])).to eq([1, 2, 3])
     end
   end
 
@@ -99,7 +99,7 @@ describe Dentaku::Calculator do
     end
 
     it "finds no dependencies in array literals" do
-      expect(calculator.dependencies([1,2,3])).to eq([])
+      expect(calculator.dependencies([1, 2, 3])).to eq([])
     end
   end
 
