@@ -5,8 +5,8 @@ module Dentaku
     class Identifier < Node
       attr_reader :identifier
 
-      def initialize(token)
-        @identifier = token.value.downcase
+      def initialize(token, options = {})
+        @identifier = options.fetch(:case_sensitive, false) ? token.value : token.value.downcase
       end
 
       def value(context = {})

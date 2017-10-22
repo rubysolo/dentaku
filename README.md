@@ -35,6 +35,16 @@ calculator.evaluate('kiwi + 5', kiwi: 2)
 #=> 7
 ```
 
+To enter a case sensitive mode, just pass an option to the calculator instance:
+
+```ruby
+calculator.evaluate('Kiwi + 5', Kiwi: -2, kiwi: 2)
+#=> 7
+calculator = Dentaku::Calculator.new(case_sensitive: true)
+calculator.evaluate('Kiwi + 5', Kiwi: -2, kiwi: 2)
+#=> 3
+```
+
 You can also store the variable values in the calculator's memory and then
 evaluate expressions against those stored values:
 
