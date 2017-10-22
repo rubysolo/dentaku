@@ -75,8 +75,8 @@ module Dentaku
 
     def ast(expression)
       @ast_cache.fetch(expression) {
-        tokens = tokenizer.tokenize(expression)
-        Parser.new(tokens, function_registry: @function_registry).parse.tap do |node|
+        tokens = tokenizer.tokenize(expression, case_sensitive: @ast_cache[:case_sensitive])
+        Parser.new(tokens, function_registry: @function_registry, case_sensitive: @ast_cache[:case_sensitive]).parse.tap do |node|
           @ast_cache[expression] = node if cache_ast?
         end
       }
@@ -100,10 +100,10 @@ module Dentaku
 
       if value.nil?
         FlatHash.from_hash(key_or_hash).each do |key, val|
-          memory[key.to_s.downcase] = val
+          memory[@ast_cache[:case_sensitive] ? key.to_s : key.to_s.downcase] = val
         end
       else
-        memory[key_or_hash.to_s.downcase] = value
+        memory[@ast_cache[:case_sensitive] ? key_or_hash.to_s : key_or_hash.to_s.downcase] = value
       end
 
       if block_given?

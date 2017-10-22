@@ -65,7 +65,8 @@ module Dentaku
         @scanners.select! { |k, v| scanner_ids.include?(k) }
       end
 
-      def scanners
+      def scanners(options = {})
+        @case_sensitive = options.fetch(:case_sensitive, false)
         @scanners.values
       end
 
@@ -157,7 +158,7 @@ module Dentaku
       end
 
       def identifier
-        new(:identifier, '[\w\.]+\b', lambda { |raw| raw.strip.downcase })
+        new(:identifier, '[\w\.]+\b', lambda { |raw| @case_sensitive ? raw.strip : raw.strip.downcase })
       end
     end
 

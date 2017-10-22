@@ -10,6 +10,7 @@ module Dentaku
       @operations        = options.fetch(:operations, [])
       @arities           = options.fetch(:arities, [])
       @function_registry = options.fetch(:function_registry, nil)
+      @case_sensitive    = options.fetch(:case_sensitive, false)
     end
 
     def consume(count = 2)
@@ -45,7 +46,7 @@ module Dentaku
           output.push AST::String.new(token)
 
         when :identifier
-          output.push AST::Identifier.new(token)
+          output.push AST::Identifier.new(token, case_sensitive: @case_sensitive)
 
         when :operator, :comparator, :combinator
           op_class = operation(token)

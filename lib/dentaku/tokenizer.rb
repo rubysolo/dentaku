@@ -7,13 +7,13 @@ module Dentaku
     LPAREN = TokenMatcher.new(:grouping, :open)
     RPAREN = TokenMatcher.new(:grouping, :close)
 
-    def tokenize(string)
+    def tokenize(string, options = {})
       @nesting = 0
       @tokens  = []
       input    = strip_comments(string.to_s.dup)
 
       until input.empty?
-        scanned = TokenScanner.scanners.any? do |scanner|
+        scanned = TokenScanner.scanners(case_sensitive: options.fetch(:case_sensitive, false)).any? do |scanner|
           scanned, input = scan(input, scanner)
           scanned
         end
