@@ -2,7 +2,7 @@ require_relative './ast'
 
 module Dentaku
   class Parser
-    attr_reader :input, :output, :operations, :arities
+    attr_reader :input, :output, :operations, :arities, :case_sensitive
 
     def initialize(tokens, options = {})
       @input             = tokens.dup
@@ -46,7 +46,7 @@ module Dentaku
           output.push AST::String.new(token)
 
         when :identifier
-          output.push AST::Identifier.new(token, case_sensitive: @case_sensitive)
+          output.push AST::Identifier.new(token, case_sensitive: case_sensitive)
 
         when :operator, :comparator, :combinator
           op_class = operation(token)

@@ -3,16 +3,19 @@ require 'dentaku/dependency_resolver'
 require 'dentaku/exceptions'
 require 'dentaku/flat_hash'
 require 'dentaku/parser'
+require 'dentaku/string_casing'
 require 'dentaku/token'
 
 module Dentaku
   class Calculator
-    attr_reader :result, :memory, :tokenizer
+    include StringCasing
+    attr_reader :result, :memory, :tokenizer, :case_sensitive
 
-    def initialize(ast_cache = {})
+    def initialize(options = {})
       clear
       @tokenizer = Tokenizer.new
-      @ast_cache = ast_cache
+      @case_sensitive = options.delete(:case_sensitive)
+      @ast_cache = options
       @disable_ast_cache = false
       @function_registry = Dentaku::AST::FunctionRegistry.new
     end
@@ -75,8 +78,13 @@ module Dentaku
 
     def ast(expression)
       @ast_cache.fetch(expression) {
-        tokens = tokenizer.tokenize(expression, case_sensitive: @ast_cache[:case_sensitive])
-        Parser.new(tokens, function_registry: @function_registry, case_sensitive: @ast_cache[:case_sensitive]).parse.tap do |node|
+        options = {
+          case_sensitive: case_sensitive,
+          function_registry: @function_registry
+        }
+
+        tokens = tokenizer.tokenize(expression, options)
+        Parser.new(tokens, options).parse.tap do |node|
           @ast_cache[expression] = node if cache_ast?
         end
       }
@@ -100,10 +108,10 @@ module Dentaku
 
       if value.nil?
         FlatHash.from_hash(key_or_hash).each do |key, val|
-          memory[@ast_cache[:case_sensitive] ? key.to_s : key.to_s.downcase] = val
+          memory[standardize_case(key.to_s)] = val
         end
       else
-        memory[@ast_cache[:case_sensitive] ? key_or_hash.to_s : key_or_hash.to_s.downcase] = value
+        memory[standardize_case(key_or_hash.to_s)] = value
       end
 
       if block_given?

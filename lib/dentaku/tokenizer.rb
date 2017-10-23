@@ -4,6 +4,8 @@ require 'dentaku/token_scanner'
 
 module Dentaku
   class Tokenizer
+    attr_reader :case_sensitive
+
     LPAREN = TokenMatcher.new(:grouping, :open)
     RPAREN = TokenMatcher.new(:grouping, :close)
 
@@ -11,9 +13,10 @@ module Dentaku
       @nesting = 0
       @tokens  = []
       input    = strip_comments(string.to_s.dup)
+      @case_sensitive = options.fetch(:case_sensitive, false)
 
       until input.empty?
-        scanned = TokenScanner.scanners(case_sensitive: options.fetch(:case_sensitive, false)).any? do |scanner|
+        scanned = TokenScanner.scanners(case_sensitive: case_sensitive).any? do |scanner|
           scanned, input = scan(input, scanner)
           scanned
         end

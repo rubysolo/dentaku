@@ -1,9 +1,12 @@
 require 'bigdecimal'
 require 'time'
+require 'dentaku/string_casing'
 require 'dentaku/token'
 
 module Dentaku
   class TokenScanner
+    extend StringCasing
+
     def initialize(category, regexp, converter = nil, condition = nil)
       @category  = category
       @regexp    = %r{\A(#{ regexp })}i
@@ -25,6 +28,8 @@ module Dentaku
     end
 
     class << self
+      attr_reader :case_sensitive
+
       def available_scanners
         [
           :null,
@@ -113,7 +118,9 @@ module Dentaku
       end
 
       def operator
-        names = { pow: '^', add: '+', subtract: '-', multiply: '*', divide: '/', mod: '%', bitor: '|', bitand: '&' }.invert
+        names = {
+          pow: '^', add: '+', subtract: '-', multiply: '*', divide: '/', mod: '%', bitor: '|', bitand: '&'
+        }.invert
         new(:operator, '\^|\+|-|\*|\/|%|\||&', lambda { |raw| names[raw] })
       end
 
@@ -153,12 +160,15 @@ module Dentaku
       def function
         new(:function, '\w+!?\s*\(', lambda do |raw|
           function_name = raw.gsub('(', '')
-          [Token.new(:function, function_name.strip.downcase.to_sym, function_name), Token.new(:grouping, :open, '(')]
+          [
+            Token.new(:function, function_name.strip.downcase.to_sym, function_name),
+            Token.new(:grouping, :open, '(')
+          ]
         end)
       end
 
       def identifier
-        new(:identifier, '[\w\.]+\b', lambda { |raw| @case_sensitive ? raw.strip : raw.strip.downcase })
+        new(:identifier, '[\w\.]+\b', lambda { |raw| standardize_case(raw.strip) })
       end
     end
 

@@ -1,12 +1,15 @@
 require_relative '../exceptions'
+require 'dentaku/string_casing'
 
 module Dentaku
   module AST
     class Identifier < Node
-      attr_reader :identifier
+      include StringCasing
+      attr_reader :identifier, :case_sensitive
 
       def initialize(token, options = {})
-        @identifier = options.fetch(:case_sensitive, false) ? token.value : token.value.downcase
+        @case_sensitive = options.fetch(:case_sensitive, false)
+        @identifier = standardize_case(token.value)
       end
 
       def value(context = {})
