@@ -5,6 +5,7 @@
 - nested hash and array support in bulk expression solver
 - add a variadic SUM function
 - support array arguments to min, max, sum, and Math functions
+- add case-sensitive variable support
 
 ## [v3.0.0] 2017-10-11
 - add && and || as aliases for AND and OR
