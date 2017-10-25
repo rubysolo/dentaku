@@ -26,6 +26,15 @@ module Dentaku
       )
     end
 
+    def dependencies
+      Hash[expression_deps].tap do |d|
+        d.values.each do |deps|
+          unresolved = deps.reject { |ud| d.has_key?(ud) }
+          unresolved.each { |u| add_dependencies(d, u) }
+        end
+      end
+    end
+
     private
 
     def self.dependency_cache
@@ -42,6 +51,10 @@ module Dentaku
       ->(ex) { raise ex }
     end
 
+    def expression_with_exception_handler(&block)
+      ->(expr, ex) { block.call(ex) }
+    end
+
     def load_results(&block)
       variables_in_resolve_order.each_with_object({}) do |var_name, r|
         begin
@@ -54,8 +67,11 @@ module Dentaku
             next
           end
 
-          value = value_from_memory ||
-            evaluate!(expressions[var_name], expressions.merge(r).merge(solved))
+          value = value_from_memory || evaluate!(
+            expressions[var_name],
+            expressions.merge(r).merge(solved),
+            &expression_with_exception_handler(&block)
+          )
 
           r[var_name] = value
         rescue UnboundVariableError, Dentaku::ZeroDivisionError => ex
@@ -77,15 +93,6 @@ module Dentaku
       end
     end
 
-    def expression_dependencies
-      Hash[expression_deps].tap do |d|
-        d.values.each do |deps|
-          unresolved = deps.reject { |ud| d.has_key?(ud) }
-          unresolved.each { |u| add_dependencies(d, u) }
-        end
-      end
-    end
-
     def add_dependencies(current_dependencies, variable)
       node = calculator.memory[variable]
       if node.respond_to?(:dependencies)
@@ -97,14 +104,14 @@ module Dentaku
     def variables_in_resolve_order
       cache_key = expressions.keys.map(&:to_s).sort.join("|")
       @ordered_deps ||= self.class.dependency_cache.fetch(cache_key) {
-        DependencyResolver.find_resolve_order(expression_dependencies).tap do |d|
+        DependencyResolver.find_resolve_order(dependencies).tap do |d|
           self.class.dependency_cache[cache_key] = d if Dentaku.cache_dependency_order?
         end
       }
     end
 
-    def evaluate!(expression, results)
-      calculator.evaluate!(expression, results)
+    def evaluate!(expression, results, &block)
+      calculator.evaluate!(expression, results, &block)
     end
   end
 end

@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'dentaku'
 require 'dentaku/bulk_expression_solver'
 require 'dentaku/calculator'
+require 'dentaku/exceptions'
 
 RSpec.describe Dentaku::BulkExpressionSolver do
   let(:calculator) { Dentaku::Calculator.new }
@@ -149,6 +150,16 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       solver = described_class.new(expressions, calculator)
       results = solver.solve
       expect(results).to eq(Force: 50, Mass: 25, Acceleration: 2)
+    end
+
+    it 'solves all array expressions for which context exists, returning :undefined for the rest' do
+      calculator.store(first: 1, equation: 3)
+      system = {'key' => ['first * equation', 'second * equation'] }
+      solver = described_class.new(system, calculator)
+      expect(solver.dependencies).to eq('key' => ['second'])
+      results = solver.solve
+      expect(results).to eq('key' => [3, :undefined])
+      expect { solver.solve! }.to raise_error(Dentaku::UnboundVariableError)
     end
   end
 end

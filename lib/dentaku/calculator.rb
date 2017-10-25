@@ -41,14 +41,17 @@ module Dentaku
       @disable_ast_cache = false
     end
 
-    def evaluate(expression, data = {})
+    def evaluate(expression, data = {}, &block)
       evaluate!(expression, data)
-    rescue UnboundVariableError, Dentaku::ArgumentError
-      yield expression if block_given?
+    rescue UnboundVariableError, Dentaku::ArgumentError => ex
+      block.call(expression, ex) if block_given?
     end
 
-    def evaluate!(expression, data = {})
-      return expression.map { |e| evaluate!(e, data) } if expression.is_a? Array
+    def evaluate!(expression, data = {}, &block)
+      return expression.map { |e|
+        evaluate(e, data, &block)
+      } if expression.is_a? Array
+
       store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
