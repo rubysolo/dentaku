@@ -9,12 +9,13 @@ require 'dentaku/token'
 module Dentaku
   class Calculator
     include StringCasing
-    attr_reader :result, :memory, :tokenizer, :case_sensitive
+    attr_reader :result, :memory, :tokenizer, :case_sensitive, :aliases
 
     def initialize(options = {})
       clear
       @tokenizer = Tokenizer.new
       @case_sensitive = options.delete(:case_sensitive)
+      @aliases = options.delete(:aliases) || Dentaku.aliases
       @ast_cache = options
       @disable_ast_cache = false
       @function_registry = Dentaku::AST::FunctionRegistry.new
@@ -83,7 +84,8 @@ module Dentaku
       @ast_cache.fetch(expression) {
         options = {
           case_sensitive: case_sensitive,
-          function_registry: @function_registry
+          function_registry: @function_registry,
+          aliases: aliases
         }
 
         tokens = tokenizer.tokenize(expression, options)

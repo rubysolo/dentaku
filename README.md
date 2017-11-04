@@ -280,6 +280,33 @@ function)
 Functions can be added individually using Calculator#add_function, or en masse
 using Calculator#add_functions.
 
+FUNCTION ALIASES
+----------------
+
+Every function can be aliased by synonyms. For example, it can be useful if 
+your application is multilingual.
+
+```ruby
+Dentaku.aliases = {
+  round: ['rrrrround!', 'округлить']
+}
+
+Dentaku('rrrrround!(8.2) + округлить(8.4)') # the same as round(8.2) + round(8.4)
+# 16
+```
+
+Also, if you need thread-safe aliases you can pass them to `Dentaku::Calculator`
+initializer:
+
+```ruby
+aliases = {
+  round: ['rrrrround!', 'округлить']
+}
+c = Dentaku::Calculator.new(aliases: aliases)
+c.evaluate('rrrrround!(8.2) + округлить(8.4)')
+# 16
+```
+
 THANKS
 ------
 

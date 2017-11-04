@@ -2,8 +2,9 @@ require 'spec_helper'
 require 'dentaku'
 
 describe Dentaku::Calculator do
-  let(:calculator)  { described_class.new }
-  let(:with_memory) { described_class.new.store(apples: 3) }
+  let(:calculator)   { described_class.new }
+  let(:with_memory)  { described_class.new.store(apples: 3) }
+  let(:with_aliases) { described_class.new(aliases: { round: ['rrround'] }) }
 
   it 'evaluates an expression' do
     expect(calculator.evaluate('7+3')).to eq(10)
@@ -546,6 +547,12 @@ describe Dentaku::Calculator do
       calculator.add_function(:two, :numeric, -> { 2 })
       expect(calculator.evaluate("max(two(), 1)")).to eq 2
       expect(calculator.evaluate("max(1, two())")).to eq 2
+    end
+  end
+
+  describe 'aliases' do
+    it 'accepts aliases as instance option' do
+      expect(with_aliases.evaluate('rrround(5.1)')).to eq 5
     end
   end
 end
