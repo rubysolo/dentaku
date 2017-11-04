@@ -5,6 +5,7 @@ require "dentaku/version"
 module Dentaku
   @enable_ast_caching = false
   @enable_dependency_order_caching = false
+  @aliases = {}
 
   def self.evaluate(expression, data = {})
     calculator.evaluate(expression, data)
@@ -33,6 +34,14 @@ module Dentaku
 
   def self.cache_dependency_order?
     @enable_dependency_order_caching
+  end
+
+  def self.aliases
+    @aliases
+  end
+
+  def self.aliases=(hash)
+    @aliases = hash
   end
 
   private
