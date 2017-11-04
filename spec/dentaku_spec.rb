@@ -31,4 +31,9 @@ describe Dentaku do
     expect(Dentaku.evaluate!('2+2')).to eq(4)
     expect { Dentaku.evaluate!('a+1') }.to raise_error(Dentaku::UnboundVariableError)
   end
+
+  it 'evaluates with class-level aliases' do
+    Dentaku.aliases = { roundup: ['roundupup'] }
+    expect(Dentaku.evaluate('roundupup(6.1)')).to eq(7)
+  end
 end

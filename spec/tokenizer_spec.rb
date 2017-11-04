@@ -276,4 +276,41 @@ describe Dentaku::Tokenizer do
       expect(tokens.map(&:value)).to eq([:exp!, :open, 5, :multiply, 3, :close])
     end
   end
+
+  describe 'aliases' do
+    let(:aliases) {
+      {
+        round: ['rrrrround!', 'redond'],
+        roundup: ['округлвверх'],
+        rounddown: ['округлвниз'],
+        if: ['если', 'cuando', '如果'],
+        max: ['макс', 'maximo'],
+        min: ['мин', 'minimo']
+      }
+    }
+
+    it 'replaced with function name' do
+      input = 'rrrrround!(8.2) + minimo(4,6,2)'
+      tokenizer.tokenize(input, aliases: aliases)
+      expect(tokenizer.replace_aliases(input)).to eq 'round(8.2) + min(4,6,2)'
+    end
+
+    it 'case insensitive' do
+      input = 'MinImO(4,6,2)'
+      tokenizer.tokenize(input, aliases: aliases)
+      expect(tokenizer.replace_aliases(input)).to eq 'min(4,6,2)'
+    end
+
+    it 'replace only whole aliases without word parts' do
+      input = 'maximo(2,minimoooo())' # `minimoooo` doesn't match `minimo`
+      tokenizer.tokenize(input, aliases: aliases)
+      expect(tokenizer.replace_aliases(input)).to eq 'max(2,minimoooo())'
+    end
+
+    it 'work with non-latin symbols' do
+      input = '如果(1,2,3)'
+      tokenizer.tokenize(input, aliases: aliases)
+      expect(tokenizer.replace_aliases(input)).to eq 'if(1,2,3)'
+    end
+  end
 end

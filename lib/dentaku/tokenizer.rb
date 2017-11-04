@@ -4,7 +4,7 @@ require 'dentaku/token_scanner'
 
 module Dentaku
   class Tokenizer
-    attr_reader :case_sensitive
+    attr_reader :case_sensitive, :aliases
 
     LPAREN = TokenMatcher.new(:grouping, :open)
     RPAREN = TokenMatcher.new(:grouping, :close)
@@ -12,7 +12,9 @@ module Dentaku
     def tokenize(string, options = {})
       @nesting = 0
       @tokens  = []
+      @aliases = options.fetch(:aliases, Dentaku.aliases)
       input    = strip_comments(string.to_s.dup)
+      input    = replace_aliases(input)
       @case_sensitive = options.fetch(:case_sensitive, false)
 
       until input.empty?
@@ -59,6 +61,25 @@ module Dentaku
 
     def strip_comments(input)
       input.gsub(/\/\*[^*]*\*+(?:[^*\/][^*]*\*+)*\//, '')
+    end
+
+    def replace_aliases(string)
+      return string unless @aliases.present?
+
+      string.gsub!(alias_regex) do |match|
+        match_regex = /^#{Regexp.escape(match)}$/i
+
+        @aliases.detect do |(_key, aliases)|
+          !aliases.grep(match_regex).empty?
+        end.first
+      end
+
+      string
+    end
+
+    def alias_regex
+      values = @aliases.values.flatten.join('|')
+      /(?<=\p{Punct}|[[:space:]]|\A)(#{values})(?=\()/i
     end
 
     private

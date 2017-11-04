@@ -16,6 +16,14 @@ SimpleCov.start do
   add_filter "spec/"
 end
 
+RSpec.configure do |c|
+  c.before(:all) {
+    # add example for alias because we can set aliases just once
+    # before `calculator` method called
+    Dentaku.aliases = { roundup: ['roundupup'] }
+  }
+end
+
 # automatically create a token stream from bare values
 def token_stream(*args)
   args.map do |value|
