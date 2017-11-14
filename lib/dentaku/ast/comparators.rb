@@ -10,11 +10,19 @@ module Dentaku
       def type
         :logical
       end
+
+      def operator
+        raise NotImplementedError
+      end
     end
 
     class LessThan < Comparator
       def value(context = {})
         left.value(context) < right.value(context)
+      end
+
+      def operator
+        return :<
       end
     end
 
@@ -22,11 +30,19 @@ module Dentaku
       def value(context = {})
         left.value(context) <= right.value(context)
       end
+
+      def operator
+        return :<=
+      end
     end
 
     class GreaterThan < Comparator
       def value(context = {})
         left.value(context) > right.value(context)
+      end
+
+      def operator
+        return :>
       end
     end
 
@@ -34,17 +50,29 @@ module Dentaku
       def value(context = {})
         left.value(context) >= right.value(context)
       end
+
+      def operator
+        return :>=
+      end
     end
 
     class NotEqual < Comparator
       def value(context = {})
         left.value(context) != right.value(context)
       end
+
+      def operator
+        return :!=
+      end
     end
 
     class Equal < Comparator
       def value(context = {})
         left.value(context) == right.value(context)
+      end
+
+      def operator
+        return :==
       end
     end
   end
