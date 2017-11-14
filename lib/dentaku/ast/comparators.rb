@@ -34,11 +34,19 @@ module Dentaku
       def operator
         return :<
       end
+
+      def operator
+        return :<
+      end
     end
 
     class LessThanOrEqual < Comparator
       def value(context = {})
         super() { left.value(context) <= right.value(context) }
+      end
+
+      def operator
+        return :<=
       end
 
       def operator
@@ -54,11 +62,19 @@ module Dentaku
       def operator
         return :>
       end
+
+      def operator
+        return :>
+      end
     end
 
     class GreaterThanOrEqual < Comparator
       def value(context = {})
         super() { left.value(context) >= right.value(context) }
+      end
+
+      def operator
+        return :>=
       end
 
       def operator
@@ -74,11 +90,19 @@ module Dentaku
       def operator
         return :!=
       end
+
+      def operator
+        return :!=
+      end
     end
 
     class Equal < Comparator
       def value(context = {})
         super() { left.value(context) == right.value(context) }
+      end
+
+      def operator
+        return :==
       end
 
       def operator
