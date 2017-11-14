@@ -15,6 +15,10 @@ module Dentaku
         predicate.value(context) ? left.value(context) : right.value(context)
       end
 
+      def node_type
+        :condition
+      end
+
       def type
         left.type
       end
