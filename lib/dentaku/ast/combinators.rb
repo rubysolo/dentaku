@@ -28,12 +28,20 @@ module Dentaku
     end
 
     class And < Combinator
+      def operator
+        :and
+      end
+
       def value(context = {})
         left.value(context) && right.value(context)
       end
     end
 
     class Or < Combinator
+      def operator
+        :or
+      end
+
       def value(context = {})
         left.value(context) || right.value(context)
       end

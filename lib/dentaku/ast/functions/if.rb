@@ -16,7 +16,7 @@ module Dentaku
       end
 
       def type
-        left.type
+        :condition
       end
 
       def dependencies(context = {})
