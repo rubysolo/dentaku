@@ -64,7 +64,7 @@ module Dentaku
     end
 
     def replace_aliases(string)
-      return string unless @aliases.present?
+      return string unless @aliases.any?
 
       string.gsub!(alias_regex) do |match|
         match_regex = /^#{Regexp.escape(match)}$/i
