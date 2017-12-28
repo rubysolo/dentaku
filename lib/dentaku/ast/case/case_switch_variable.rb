@@ -1,6 +1,8 @@
 module Dentaku
   module AST
     class CaseSwitchVariable < Node
+      attr_reader :node
+
       def initialize(node)
         @node = node
       end
@@ -23,6 +25,10 @@ module Dentaku
 
       def self.max_param_count
         1
+      end
+
+      def accept(visitor)
+        visitor.visit_switch(self)
       end
     end
   end

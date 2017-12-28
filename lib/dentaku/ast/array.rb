@@ -32,6 +32,10 @@ module Dentaku
       def type
         nil
       end
+      
+      def accept(visitor)
+        visitor.visit_array(self)
+      end
     end
   end
 end

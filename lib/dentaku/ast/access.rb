@@ -3,6 +3,8 @@ require_relative "./node"
 module Dentaku
   module AST
     class Access < Node
+      attr_reader :structure, :index
+
       def self.arity
         2
       end
@@ -35,6 +37,10 @@ module Dentaku
 
       def type
         nil
+      end
+
+      def accept(visitor)
+        visitor.visit_access(self)
       end
     end
   end

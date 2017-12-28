@@ -6,11 +6,19 @@ module Dentaku
       def value(context = {})
         left.value(context) | right.value(context)
       end
+
+      def operator
+        :|
+      end
     end
 
     class BitwiseAnd < Operation
       def value(context = {})
         left.value(context) & right.value(context)
+      end
+
+      def operator
+        :&
       end
     end
   end

@@ -13,6 +13,10 @@ module Dentaku
         @args = args
       end
 
+      def accept(visitor)
+        visitor.visit_function(self)
+      end
+
       def dependencies(context = {})
         @args.each_with_index
              .flat_map { |a, _| a.dependencies(context) }

@@ -40,6 +40,10 @@ module Dentaku
         @node.dependencies(context)
       end
 
+      def accept(visitor)
+        visitor.visit_negation(self)
+      end
+
       private
 
       def valid_node?(node)

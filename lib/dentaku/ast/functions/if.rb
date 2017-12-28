@@ -19,6 +19,10 @@ module Dentaku
         @right     = right
       end
 
+      def args
+        [predicate, left, right]
+      end
+
       def value(context = {})
         predicate.value(context) ? left.value(context) : right.value(context)
       end

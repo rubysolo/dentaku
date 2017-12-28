@@ -21,7 +21,7 @@ module Dentaku
       end
 
       def name
-        self.class.name.split("::").last.upcase
+        self.class.name.to_s.split("::").last.upcase
       end
     end
   end
