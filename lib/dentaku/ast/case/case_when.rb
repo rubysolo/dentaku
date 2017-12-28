@@ -1,6 +1,8 @@
 module Dentaku
   module AST
     class CaseWhen < Operation
+      attr_reader :node
+
       def self.arity
         1
       end
@@ -15,6 +17,10 @@ module Dentaku
 
       def dependencies(context = {})
         @node.dependencies(context)
+      end
+
+      def accept(visitor)
+        visitor.visit_when(self)
       end
     end
   end

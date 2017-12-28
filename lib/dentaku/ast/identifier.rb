@@ -30,6 +30,10 @@ module Dentaku
         context.key?(identifier) ? dependencies_of(context[identifier]) : [identifier]
       end
 
+      def accept(visitor)
+        visitor.visit_identifier(self)
+      end
+
       private
 
       def dependencies_of(node)

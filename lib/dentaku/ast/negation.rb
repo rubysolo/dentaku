@@ -1,6 +1,8 @@
 module Dentaku
   module AST
     class Negation < Arithmetic
+      attr_reader :node
+
       def initialize(node)
         @node = node
 
@@ -36,6 +38,10 @@ module Dentaku
 
       def dependencies(context = {})
         @node.dependencies(context)
+      end
+
+      def accept(visitor)
+        visitor.visit_negation(self)
       end
 
       private

@@ -18,6 +18,10 @@ module Dentaku
       def dependencies(context = {})
         @when.dependencies(context) + @then.dependencies(context)
       end
+
+      def accept(visitor)
+        visitor.visit_case_conditional(self)
+      end
     end
   end
 end

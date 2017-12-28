@@ -17,6 +17,14 @@ module Dentaku
       def self.right_associative?
         false
       end
+
+      def accept(visitor)
+        visitor.visit_operation(self)
+      end
+
+      def display_operator
+        operator.to_s
+      end
     end
   end
 end

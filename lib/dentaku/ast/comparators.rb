@@ -84,6 +84,10 @@ module Dentaku
       def operator
         return :==
       end
+
+      def display_operator
+        "="
+      end
     end
   end
 end
