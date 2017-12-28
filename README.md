@@ -6,7 +6,8 @@ Dentaku
 [![Build Status](https://travis-ci.org/rubysolo/dentaku.png?branch=master)](https://travis-ci.org/rubysolo/dentaku)
 [![Code Climate](https://codeclimate.com/github/rubysolo/dentaku.png)](https://codeclimate.com/github/rubysolo/dentaku)
 [![Hakiri](https://hakiri.io/github/rubysolo/dentaku/master.svg)](https://hakiri.io/github/rubysolo/dentaku)
-[![Coverage Status](https://coveralls.io/repos/github/rubysolo/dentaku/badge.svg)](https://coveralls.io/github/rubysolo/dentaku)
+[![Coverage](https://codecov.io/gh/rubysolo/dentaku/branch/master/graph/badge.svg)](https://codecov.io/gh/rubysolo/dentaku)
+
 
 DESCRIPTION
 -----------

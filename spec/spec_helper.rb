@@ -1,13 +1,11 @@
 require 'pry'
 require 'simplecov'
-require 'coveralls'
+require 'codecov'
 
 SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
+  SimpleCov::Formatter::Codecov,
 ])
-
-Coveralls.wear!
 
 SimpleCov.minimum_coverage 90
 SimpleCov.minimum_coverage_by_file 80

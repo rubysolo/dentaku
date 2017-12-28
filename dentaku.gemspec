@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "dentaku"
 
-  s.add_development_dependency('coveralls')
+  s.add_development_dependency('codecov')
   s.add_development_dependency('pry')
   s.add_development_dependency('pry-byebug')
   s.add_development_dependency('pry-stack_explorer')
