@@ -6,6 +6,7 @@
 - add a variadic SUM function
 - support array arguments to min, max, sum, and Math functions
 - add case-sensitive variable support
+- allow opt-out of nested data for performance boost
 
 ## [v3.0.0] 2017-10-11
 - add && and || as aliases for AND and OR

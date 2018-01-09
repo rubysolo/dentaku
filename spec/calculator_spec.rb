@@ -5,6 +5,7 @@ describe Dentaku::Calculator do
   let(:calculator)   { described_class.new }
   let(:with_memory)  { described_class.new.store(apples: 3) }
   let(:with_aliases) { described_class.new(aliases: { round: ['rrround'] }) }
+  let(:without_nested_data) { described_class.new(nested_data_support: false) }
 
   it 'evaluates an expression' do
     expect(calculator.evaluate('7+3')).to eq(10)
@@ -553,6 +554,22 @@ describe Dentaku::Calculator do
   describe 'aliases' do
     it 'accepts aliases as instance option' do
       expect(with_aliases.evaluate('rrround(5.1)')).to eq 5
+    end
+  end
+
+  describe 'nested_data' do
+    it 'default to nested data enabled' do
+      expect(calculator.nested_data_support).to be_truthy
+    end
+
+    it 'allow opt out of nested data support' do
+      expect(without_nested_data.nested_data_support).to be_falsy
+    end
+
+    it 'should allow optout of nested hash' do
+      expect do
+        without_nested_data.solve!('a.b.c')
+      end.to raise_error(Dentaku::UnboundVariableError)
     end
   end
 end
