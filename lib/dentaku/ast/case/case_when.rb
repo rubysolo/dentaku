@@ -22,6 +22,10 @@ module Dentaku
       def accept(visitor)
         visitor.visit_when(self)
       end
+
+      def to_s
+        'WHEN'
+      end
     end
   end
 end

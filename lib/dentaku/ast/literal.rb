@@ -24,6 +24,7 @@ module Dentaku
       def quoted
         @token.raw_value || value.to_s
       end
+      alias_method :to_s, :quoted
     end
   end
 end
