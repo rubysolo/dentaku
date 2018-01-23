@@ -1,5 +1,8 @@
 # Change Log
 
+## [HEAD] Unreleased
+- Add `COUNT` and `AVG` functions
+
 ## [v3.1.0] 2017-01-10
 - allow decimals with no leading zero
 - nested hash and array support in bulk expression solver
@@ -151,6 +154,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.1.0...HEAD
 [v3.1.0]:  https://github.com/rubysolo/dentaku/compare/v3.0.0...v3.1.0
 [v3.0.0]:  https://github.com/rubysolo/dentaku/compare/v2.0.11...v3.0.0
 [v2.0.11]:  https://github.com/rubysolo/dentaku/compare/v2.0.10...v2.0.11
