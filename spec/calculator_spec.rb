@@ -41,6 +41,10 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate("2 & 3 * 9")).to eq (2)
   end
 
+  it 'supports unicode characters in identifiers' do
+    expect(calculator.evaluate("ρ * 2", ρ: 2)).to eq (4)
+  end
+
   describe 'memory' do
     it { expect(calculator).to be_empty }
     it { expect(with_memory).not_to be_empty   }

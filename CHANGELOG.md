@@ -1,7 +1,8 @@
 # Change Log
 
 ## [HEAD] Unreleased
-- Add `COUNT` and `AVG` functions
+- add `COUNT` and `AVG` functions
+- add unicode support 😎
 
 ## [v3.1.0] 2017-01-10
 - allow decimals with no leading zero

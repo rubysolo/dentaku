@@ -168,7 +168,7 @@ module Dentaku
       end
 
       def identifier
-        new(:identifier, '[\w\.]+\b', lambda { |raw| standardize_case(raw.strip) })
+        new(:identifier, '[[[:word:]]\.]+\b', lambda { |raw| standardize_case(raw.strip) })
       end
     end
 
