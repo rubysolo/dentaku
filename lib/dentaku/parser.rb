@@ -64,96 +64,122 @@ module Dentaku
       }
     end
 
+    def case_open_parser(token, output)
+      # special handling for case nesting: strip out inner case
+      # statements and parse their AST segments recursively
+      if operations.include?(AST::Case)
+        open_cases = 0
+        case_end_index = nil
+
+        input.each_with_index do |token, index|
+          if token.category == :case && token.value == :open
+            open_cases += 1
+          end
+
+          if token.category == :case && token.value == :close
+            if open_cases > 0
+              open_cases -= 1
+            else
+              case_end_index = index
+              break
+            end
+          end
+        end
+
+        inner_case_inputs = input.slice!(0..case_end_index)
+
+        subparser = Parser.new(
+          inner_case_inputs,
+          operations: [AST::Case],
+          arities: [0]
+        )
+
+        subparser.parse
+        output.concat(subparser.output)
+      else
+        operations.push AST::Case
+        arities.push(0)
+      end
+    end
+
+    def case_close_parser(token, output)
+      if operations[1] == AST::CaseThen
+        while operations.last != AST::Case
+          consume
+        end
+
+        operations.push(AST::CaseConditional)
+        consume(2)
+        arities[-1] += 1
+      elsif operations[1] == AST::CaseElse
+        while operations.last != AST::Case
+          consume
+        end
+
+        arities[-1] += 1
+      end
+
+      unless operations.count == 1 && operations.last == AST::Case
+        fail! :unprocessed_token, token_name: token.value
+      end
+
+      consume(arities.pop.succ)
+    end
+
+    def case_when_parser(token, output)
+      if operations[1] == AST::CaseThen
+        while ![AST::CaseWhen, AST::Case].include?(operations.last)
+          consume
+        end
+
+        operations.push(AST::CaseConditional)
+        consume(2)
+        arities[-1] += 1
+      elsif operations.last == AST::Case
+        operations.push(AST::CaseSwitchVariable)
+        consume
+      end
+
+      operations.push(AST::CaseWhen)
+    end
+
+    def case_then_parser(token, output)
+      if operations[1] == AST::CaseWhen
+        while ![AST::CaseThen, AST::Case].include?(operations.last)
+          consume
+        end
+      end
+
+      operations.push(AST::CaseThen)
+    end
+
+    def case_else_parser(token, output)
+      if operations[1] == AST::CaseThen
+        while operations.last != AST::Case
+          consume
+        end
+
+        operations.push(AST::CaseConditional)
+        consume(2)
+        arities[-1] += 1
+      end
+
+      operations.push(AST::CaseElse)
+    end
+
     def case_parser
       ->(token, output) {
         case token.value
         when :open
-          # special handling for case nesting: strip out inner case
-          # statements and parse their AST segments recursively
-          if operations.include?(AST::Case)
-            open_cases = 0
-            case_end_index = nil
-
-            input.each_with_index do |token, index|
-              if token.category == :case && token.value == :open
-                open_cases += 1
-              end
-
-              if token.category == :case && token.value == :close
-                if open_cases > 0
-                  open_cases -= 1
-                else
-                  case_end_index = index
-                  break
-                end
-              end
-            end
-            inner_case_inputs = input.slice!(0..case_end_index)
-            subparser = Parser.new(
-              inner_case_inputs,
-              operations: [AST::Case],
-              arities: [0]
-            )
-            subparser.parse
-            output.concat(subparser.output)
-          else
-            operations.push AST::Case
-            arities.push(0)
-          end
+          case_open_parser(token, output)
         when :close
-          if operations[1] == AST::CaseThen
-            while operations.last != AST::Case
-              consume
-            end
-
-            operations.push(AST::CaseConditional)
-            consume(2)
-            arities[-1] += 1
-          elsif operations[1] == AST::CaseElse
-            while operations.last != AST::Case
-              consume
-            end
-
-            arities[-1] += 1
-          end
-
-          unless operations.count == 1 && operations.last == AST::Case
-            fail! :unprocessed_token, token_name: token.value
-          end
-          consume(arities.pop.succ)
+          case_close_parser(token, output)
         when :when
-          if operations[1] == AST::CaseThen
-            while ![AST::CaseWhen, AST::Case].include?(operations.last)
-              consume
-            end
-            operations.push(AST::CaseConditional)
-            consume(2)
-            arities[-1] += 1
-          elsif operations.last == AST::Case
-            operations.push(AST::CaseSwitchVariable)
-            consume
-          end
-
-          operations.push(AST::CaseWhen)
+          case_when_parser(token, output)
         when :then
-          if operations[1] == AST::CaseWhen
-            while ![AST::CaseThen, AST::Case].include?(operations.last)
-              consume
-            end
-          end
-          operations.push(AST::CaseThen)
+          case_then_parser(token, output)
         when :else
-          if operations[1] == AST::CaseThen
-            while operations.last != AST::Case
-              consume
-            end
-
-            operations.push(AST::CaseConditional)
-            consume(2)
-            arities[-1] += 1
-          end
-
-          operations.push(AST::CaseElse)
+          case_else_parser(token, output)
         else
           fail! :unknown_case_token, token_name: token.value
         end
