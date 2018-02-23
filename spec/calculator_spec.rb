@@ -94,6 +94,10 @@ describe Dentaku::Calculator do
       expect(calculator.dependencies("bob + dole / 3")).to eq(['bob', 'dole'])
     end
 
+    it "ignores dependencies passed in context" do
+      expect(calculator.dependencies("a + b", a: 1)).to eq(['b'])
+    end
+
     it "finds dependencies in formula arguments" do
       allow(Dentaku).to receive(:cache_ast?) { true }
 

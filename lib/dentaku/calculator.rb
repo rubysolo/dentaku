@@ -75,11 +75,11 @@ module Dentaku
       BulkExpressionSolver.new(expression_hash, self).solve(&block)
     end
 
-    def dependencies(expression)
+    def dependencies(expression, context={})
       if expression.is_a? Array
-        return expression.flat_map { |e| dependencies(e) }
+        return expression.flat_map { |e| dependencies(e, context) }
       end
-      ast(expression).dependencies(memory)
+      store(context) { ast(expression).dependencies(memory) }
     end
 
     def ast(expression)
