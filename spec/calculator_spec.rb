@@ -375,17 +375,31 @@ describe Dentaku::Calculator do
   end
 
   describe 'case statements' do
-    it 'handles complex then statements' do
-      formula = <<-FORMULA
+    let(:formula) {
+      <<-FORMULA
       CASE fruit
       WHEN 'apple'
-        THEN (1 * quantity)
+        THEN 1 * quantity
       WHEN 'banana'
-        THEN (2 * quantity)
+        THEN 2 * quantity
+      ELSE
+        3 * quantity
       END
       FORMULA
+    }
+
+    it 'handles complex then statements' do
       expect(calculator.evaluate(formula, quantity: 3, fruit: 'apple')).to eq(3)
       expect(calculator.evaluate(formula, quantity: 3, fruit: 'banana')).to eq(6)
+    end
+
+    it 'evaluates case statement as part of a larger expression' do
+      expect(calculator.evaluate("2 + #{formula}", quantity: 3, fruit: 'apple')).to eq(5)
+      expect(calculator.evaluate("2 + #{formula}", quantity: 3, fruit: 'banana')).to eq(8)
+      expect(calculator.evaluate("2 + #{formula}", quantity: 3, fruit: 'kiwi')).to eq(11)
+      expect(calculator.evaluate("#{formula} + 2", quantity: 3, fruit: 'apple')).to eq(5)
+      expect(calculator.evaluate("#{formula} + 2", quantity: 3, fruit: 'banana')).to eq(8)
+      expect(calculator.evaluate("#{formula} + 2", quantity: 3, fruit: 'kiwi')).to eq(11)
     end
 
     it 'handles complex when statements' do
@@ -413,16 +427,6 @@ describe Dentaku::Calculator do
     end
 
     it 'handles a default else statement' do
-      formula = <<-FORMULA
-      CASE fruit
-      WHEN 'apple'
-        THEN 1 * quantity
-      WHEN 'banana'
-        THEN 2 * quantity
-      ELSE
-        3 * quantity
-      END
-      FORMULA
       expect(calculator.evaluate(formula, quantity: 1, fruit: 'banana')).to eq(2)
       expect(calculator.evaluate(formula, quantity: 1, fruit: 'orange')).to eq(3)
     end

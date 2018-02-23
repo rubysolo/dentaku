@@ -78,6 +78,9 @@ module Dentaku
           operations.push func
 
         when :case
+          case_index = operations.index { |o| o == AST::Case } || -1
+          token_index = case_index + 1
+
           case token.value
           when :open
             # special handling for case nesting: strip out inner case
@@ -113,7 +116,7 @@ module Dentaku
               arities.push(0)
             end
           when :close
-            if operations[1] == AST::CaseThen
+            if operations[token_index] == AST::CaseThen
               while operations.last != AST::Case
                 consume
               end
@@ -121,7 +124,7 @@ module Dentaku
               operations.push(AST::CaseConditional)
               consume(2)
               arities[-1] += 1
-            elsif operations[1] == AST::CaseElse
+            elsif operations[token_index] == AST::CaseElse
               while operations.last != AST::Case
                 consume
               end
@@ -129,12 +132,12 @@ module Dentaku
               arities[-1] += 1
             end
 
-            unless operations.count == 1 && operations.last == AST::Case
+            unless operations.count >= 1 && operations.last == AST::Case
               fail! :unprocessed_token, token_name: token.value
             end
             consume(arities.pop.succ)
           when :when
-            if operations[1] == AST::CaseThen
+            if operations[token_index] == AST::CaseThen
               while ![AST::CaseWhen, AST::Case].include?(operations.last)
                 consume
               end
@@ -148,14 +151,14 @@ module Dentaku
 
             operations.push(AST::CaseWhen)
           when :then
-            if operations[1] == AST::CaseWhen
+            if operations[token_index] == AST::CaseWhen
               while ![AST::CaseThen, AST::Case].include?(operations.last)
                 consume
               end
             end
             operations.push(AST::CaseThen)
           when :else
-            if operations[1] == AST::CaseThen
+            if operations[token_index] == AST::CaseThen
               while operations.last != AST::Case
                 consume
               end
