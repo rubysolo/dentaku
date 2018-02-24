@@ -2,6 +2,28 @@ require_relative './ast'
 
 module Dentaku
   class Parser
+    AST_OPERATIONS = {
+      add:      AST::Addition,
+      subtract: AST::Subtraction,
+      multiply: AST::Multiplication,
+      divide:   AST::Division,
+      pow:      AST::Exponentiation,
+      negate:   AST::Negation,
+      mod:      AST::Modulo,
+      bitor:    AST::BitwiseOr,
+      bitand:   AST::BitwiseAnd,
+
+      lt:       AST::LessThan,
+      gt:       AST::GreaterThan,
+      le:       AST::LessThanOrEqual,
+      ge:       AST::GreaterThanOrEqual,
+      ne:       AST::NotEqual,
+      eq:       AST::Equal,
+
+      and:      AST::And,
+      or:       AST::Or,
+    }.freeze
+
     attr_reader :input, :output, :operations, :arities, :case_sensitive
 
     def initialize(tokens, options = {})
@@ -240,27 +262,7 @@ module Dentaku
     end
 
     def operation(token)
-      {
-        add:      AST::Addition,
-        subtract: AST::Subtraction,
-        multiply: AST::Multiplication,
-        divide:   AST::Division,
-        pow:      AST::Exponentiation,
-        negate:   AST::Negation,
-        mod:      AST::Modulo,
-        bitor:    AST::BitwiseOr,
-        bitand:   AST::BitwiseAnd,
-
-        lt:       AST::LessThan,
-        gt:       AST::GreaterThan,
-        le:       AST::LessThanOrEqual,
-        ge:       AST::GreaterThanOrEqual,
-        ne:       AST::NotEqual,
-        eq:       AST::Equal,
-
-        and:      AST::And,
-        or:       AST::Or,
-      }.fetch(token.value)
+      AST_OPERATIONS.fetch(token.value)
     end
 
     def function(token)
