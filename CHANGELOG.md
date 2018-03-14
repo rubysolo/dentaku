@@ -8,7 +8,7 @@
 - add variadic MUL function
 - performance optimization
 
-## [v3.1.0] 2017-01-10
+## [v3.1.0] 2018-01-10
 - allow decimals with no leading zero
 - nested hash and array support in bulk expression solver
 - add a variadic SUM function
