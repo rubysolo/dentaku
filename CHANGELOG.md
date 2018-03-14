@@ -1,6 +1,6 @@
 # Change Log
 
-## [v3.2.0] Unreleased
+## [v3.2.0] 2018-03-14
 - add `COUNT` and `AVG` functions
 - add unicode support 😎
 - fix CASE parsing bug
