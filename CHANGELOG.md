@@ -3,6 +3,10 @@
 ## [HEAD] Unreleased
 - add `COUNT` and `AVG` functions
 - add unicode support 😎
+- fix CASE parsing bug
+- allow dependency filtering based on context
+- add variadic MUL function
+- performance optimization
 
 ## [v3.1.0] 2017-01-10
 - allow decimals with no leading zero
