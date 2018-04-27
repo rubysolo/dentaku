@@ -69,7 +69,9 @@ describe Dentaku::Calculator do
       expect(calculator1.evaluate("1 + my_function(2)")). to eq (1 + 2 * 2 + 1)
       expect(calculator2.evaluate("1 + my_function(2)")). to eq (1 + 4 * 2 + 3)
 
-      expect { Dentaku::Calculator.new.evaluate("1 + my_function(2)") }.to raise_error(Dentaku::ParseError)
+      expect {
+        Dentaku::Calculator.new.evaluate!("1 + my_function(2)")
+      }.to raise_error(Dentaku::ParseError)
     end
 
     it 'self.add_function adds to default/global function registry' do

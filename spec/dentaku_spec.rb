@@ -22,7 +22,7 @@ describe Dentaku do
 
   it 'raises a parse error for bad logic expressions' do
     expect {
-      Dentaku('true AND')
+      Dentaku!('true AND')
     }.to raise_error(Dentaku::ParseError)
   end
 

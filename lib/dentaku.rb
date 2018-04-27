@@ -54,3 +54,7 @@ end
 def Dentaku(expression, data = {})
   Dentaku.evaluate(expression, data)
 end
+
+def Dentaku!(expression, data = {})
+  Dentaku.evaluate!(expression, data)
+end

@@ -41,6 +41,18 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate("2 & 3 * 9")).to eq (2)
   end
 
+  describe 'evaluate' do
+    it 'returns nil when formula has error' do
+      expect(calculator.evaluate('1 + + 1')).to be_nil
+    end
+  end
+
+  describe 'evaluate!' do
+    it 'raises exception when formula has error' do
+      expect { calculator.evaluate!('1 + + 1') }.to raise_error(Dentaku::ParseError)
+    end
+  end
+
   it 'supports unicode characters in identifiers' do
     expect(calculator.evaluate("ρ * 2", ρ: 2)).to eq (4)
   end
@@ -84,7 +96,7 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('a[x+1]', x: 1)).to eq 3
     end
 
-    it 'evalutates arrays' do
+    it 'evaluates arrays' do
       expect(calculator.evaluate([1, 2, 3])).to eq([1, 2, 3])
     end
   end

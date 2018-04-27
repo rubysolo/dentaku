@@ -1,5 +1,8 @@
 module Dentaku
-  class UnboundVariableError < StandardError
+  class Error < StandardError
+  end
+
+  class UnboundVariableError < Error
     attr_accessor :recipient_variable
 
     attr_reader :unbound_variables
@@ -9,7 +12,7 @@ module Dentaku
     end
   end
 
-  class NodeError < StandardError
+  class NodeError < Error
     attr_reader :child, :expect, :actual
 
     def initialize(expect, actual, child)
@@ -19,7 +22,7 @@ module Dentaku
     end
   end
 
-  class ParseError < StandardError
+  class ParseError < Error
     attr_reader :reason, :meta
 
     def initialize(reason, **meta)
@@ -45,7 +48,7 @@ module Dentaku
     end
   end
 
-  class TokenizerError < StandardError
+  class TokenizerError < Error
     attr_reader :reason, :meta
 
     def initialize(reason, **meta)

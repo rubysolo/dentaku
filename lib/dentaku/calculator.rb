@@ -46,7 +46,7 @@ module Dentaku
 
     def evaluate(expression, data = {}, &block)
       evaluate!(expression, data)
-    rescue UnboundVariableError, Dentaku::ArgumentError => ex
+    rescue Dentaku::Error, Dentaku::ArgumentError, Dentaku::ZeroDivisionError => ex
       block.call(expression, ex) if block_given?
     end
 

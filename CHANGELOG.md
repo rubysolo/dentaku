@@ -1,5 +1,8 @@
 # Change Log
 
+## [HEAD] Unreleased
+- make `evaluate` rescue more exceptions
+
 ## [v3.2.0] 2018-03-14
 - add `COUNT` and `AVG` functions
 - add unicode support 😎
@@ -159,6 +162,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.2.0...HEAD
 [v3.2.0]:  https://github.com/rubysolo/dentaku/compare/v3.1.0...v3.2.0
 [v3.1.0]:  https://github.com/rubysolo/dentaku/compare/v3.0.0...v3.1.0
 [v3.0.0]:  https://github.com/rubysolo/dentaku/compare/v2.0.11...v3.0.0
