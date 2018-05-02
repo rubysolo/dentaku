@@ -11,9 +11,9 @@ Dentaku::AST::Function.register(:and, :logical, lambda { |*args|
 
   args.all? do |arg|
     case arg
-    when TrueClass, nil
+    when TrueClass
       true
-    when FalseClass
+    when FalseClass, nil
       false
     else
       raise Dentaku::ArgumentError.for(

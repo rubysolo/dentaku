@@ -54,11 +54,11 @@ describe Dentaku::AST::Function do
   end
 
   it 'raises an error if the value could not be cast to a Numeric' do
-    expect { described_class.numeric('flarble') }.to raise_error TypeError
-    expect { described_class.numeric('-') }.to raise_error TypeError
-    expect { described_class.numeric('') }.to raise_error TypeError
-    expect { described_class.numeric(nil) }.to raise_error TypeError
-    expect { described_class.numeric('7.') }.to raise_error TypeError
-    expect { described_class.numeric(true) }.to raise_error TypeError
+    expect { described_class.numeric('flarble') }.to raise_error Dentaku::ArgumentError
+    expect { described_class.numeric('-') }.to raise_error Dentaku::ArgumentError
+    expect { described_class.numeric('') }.to raise_error Dentaku::ArgumentError
+    expect { described_class.numeric(nil) }.to raise_error Dentaku::ArgumentError
+    expect { described_class.numeric('7.') }.to raise_error Dentaku::ArgumentError
+    expect { described_class.numeric(true) }.to raise_error Dentaku::ArgumentError
   end
 end

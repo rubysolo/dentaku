@@ -41,7 +41,8 @@ module Dentaku
           return number.include?('.') ? ::BigDecimal.new(number, DIG) : number.to_i if number
         end
 
-        raise TypeError, "#{value || value.class} could not be cast to a number."
+        raise Dentaku::ArgumentError.for(:incompatible_type, value: value, for: Numeric),
+          "'#{value || value.class}' is not coercible to numeric"
       end
     end
   end

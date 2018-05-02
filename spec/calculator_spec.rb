@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'dentaku'
-
 describe Dentaku::Calculator do
   let(:calculator)   { described_class.new }
   let(:with_memory)  { described_class.new.store(apples: 3) }
@@ -45,11 +44,62 @@ describe Dentaku::Calculator do
     it 'returns nil when formula has error' do
       expect(calculator.evaluate('1 + + 1')).to be_nil
     end
+
+    it 'suppresses unbound variable errors' do
+      expect(calculator.evaluate('AND(a,b)')).to be_nil
+      expect(calculator.evaluate('IF(a, 1, 0)')).to be_nil
+      expect(calculator.evaluate('MAX(a,b)')).to be_nil
+      expect(calculator.evaluate('MIN(a,b)')).to be_nil
+      expect(calculator.evaluate('NOT(a)')).to be_nil
+      expect(calculator.evaluate('OR(a,b)')).to be_nil
+      expect(calculator.evaluate('ROUND(a)')).to be_nil
+      expect(calculator.evaluate('ROUNDDOWN(a)')).to be_nil
+      expect(calculator.evaluate('ROUNDUP(a)')).to be_nil
+      expect(calculator.evaluate('SUM(a,b)')).to be_nil
+    end
+
+    it 'suppresses numeric coercion errors' do
+      expect(calculator.evaluate('MAX(a,b)', a: nil, b: nil)).to be_nil
+      expect(calculator.evaluate('MIN(a,b)', a: nil, b: nil)).to be_nil
+      expect(calculator.evaluate('ROUND(a)', a: nil)).to be_nil
+      expect(calculator.evaluate('ROUNDDOWN(a)', a: nil)).to be_nil
+      expect(calculator.evaluate('ROUNDUP(a)', a: nil)).to be_nil
+      expect(calculator.evaluate('SUM(a,b)', a: nil, b: nil)).to be_nil
+    end
+
+    it 'treats explicit nil as logical false' do
+      expect(calculator.evaluate('AND(a,b)', a: nil, b: nil)).to be_falsy
+      expect(calculator.evaluate('IF(a,1,0)', a: nil, b: nil)).to eq(0)
+      expect(calculator.evaluate('NOT(a)', a: nil, b: nil)).to be_truthy
+      expect(calculator.evaluate('OR(a,b)', a: nil, b: nil)).to be_falsy
+    end
   end
 
   describe 'evaluate!' do
     it 'raises exception when formula has error' do
       expect { calculator.evaluate!('1 + + 1') }.to raise_error(Dentaku::ParseError)
+    end
+
+    it 'raises unbound variable errors' do
+      expect { calculator.evaluate!('AND(a,b)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('IF(a, 1, 0)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('MAX(a,b)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('MIN(a,b)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('NOT(a)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('OR(a,b)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('ROUND(a)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('ROUNDDOWN(a)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('ROUNDUP(a)') }.to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('SUM(a,b)') }.to raise_error(Dentaku::UnboundVariableError)
+    end
+
+    it 'raises numeric coersion errors' do
+      expect { calculator.evaluate!('MAX(a,b)', a: nil, b: nil) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('MIN(a,b)', a: nil, b: nil) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('ROUND(a)', a: nil) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('ROUNDDOWN(a)', a: nil) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('ROUNDUP(a)', a: nil) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('SUM(a,b)', a: nil, b: nil) }.to raise_error(Dentaku::ArgumentError)
     end
   end
 
