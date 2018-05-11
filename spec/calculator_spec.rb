@@ -222,6 +222,15 @@ describe Dentaku::Calculator do
 
       expect(result[:weight]).to eq 130.368
     end
+
+    it 'raises an exception if there are cyclic dependencies' do
+      expect {
+        calculator.solve!(
+          make_money: "have_money",
+          have_money: "make_money"
+        )
+      }.to raise_error(TSort::Cyclic)
+    end
   end
 
   describe 'solve' do
@@ -259,6 +268,19 @@ describe Dentaku::Calculator do
         ratio:       :undefined,
         d:           0,
       )
+    end
+
+    it 'returns undefined if there are cyclic dependencies' do
+      expect {
+        result = calculator.solve(
+          make_money: "have_money",
+          have_money: "make_money"
+        )
+        expect(result).to eq(
+          make_money: :undefined,
+          have_money: :undefined
+        )
+      }.not_to raise_error
     end
   end
 

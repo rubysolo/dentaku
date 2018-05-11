@@ -20,8 +20,9 @@ module Dentaku
       results = load_results(&error_handler)
 
       FlatHash.expand(
-        expression_hash.each_with_object({}) do |(k, _), r|
-          r[k] = results[k.to_s]
+        expression_hash.each_with_object({}) do |(k, v), r|
+          default = v.nil? ? v : :undefined
+          r[k] = results.fetch(k.to_s, default)
         end
       )
     end
@@ -81,6 +82,9 @@ module Dentaku
           r[var_name] = block.call(ex)
         end
       end
+    rescue TSort::Cyclic => ex
+      block.call(ex)
+      {}
     end
 
     def expressions
