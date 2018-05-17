@@ -8,7 +8,10 @@ describe Dentaku::AST::Comparator do
   let(:two) { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 2) }
   let(:x) { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'x') }
   let(:y) { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'y') }
-  let(:ctx) { { 'x' => 'hello', 'y' => 'world' } }
+  let(:nilly) do
+    Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'nilly')
+  end
+  let(:ctx) { { 'x' => 'hello', 'y' => 'world', 'nilly' => nil } }
 
   it 'performs comparison with numeric operands' do
     expect(less_than(one, two).value(ctx)).to be_truthy
@@ -16,6 +19,24 @@ describe Dentaku::AST::Comparator do
     expect(greater_than(two, one).value(ctx)).to be_truthy
     expect(not_equal(x, y).value(ctx)).to be_truthy
     expect(equal(x, y).value(ctx)).to be_falsey
+  end
+
+  it 'raises a dentaku argument error when incorrect arguments are passed in' do
+    expect { less_than(one, nilly).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { less_than_or_equal(one, nilly).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { greater_than(one, nilly).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { greater_than_or_equal(one, nilly).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { not_equal(one, nilly).value(ctx) }.to_not raise_error
+    expect { equal(one, nilly).value(ctx) }.to_not raise_error
+  end
+
+  it 'raises a dentaku error when nil is passed in as first argument' do
+    expect { less_than(nilly, one).value(ctx) }.to raise_error Dentaku::Error
+    expect { less_than_or_equal(nilly, one).value(ctx) }.to raise_error Dentaku::Error
+    expect { greater_than(nilly, one).value(ctx) }.to raise_error Dentaku::Error
+    expect { greater_than_or_equal(nilly, one).value(ctx) }.to raise_error Dentaku::Error
+    expect { not_equal(nilly, one).value(ctx) }.to_not raise_error
+    expect { equal(nilly, one).value(ctx) }.to_not raise_error
   end
 
   it 'returns correct operator symbols' do
@@ -27,6 +48,10 @@ describe Dentaku::AST::Comparator do
     expect(equal(x, y).operator).to eq(:==)
     expect { Dentaku::AST::Comparator.new(one, two).operator }
       .to raise_error(NotImplementedError)
+  end
+
+  it 'relies on inheriting classes to expose value method' do
+    expect { described_class.new(one, two).value(ctx) }.to raise_error NoMethodError
   end
 
   private
