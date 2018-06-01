@@ -159,6 +159,14 @@ module Dentaku
         end
       end
 
+      def dependencies(context = {})
+        if percent?
+          @right.dependencies(context)
+        else
+          super
+        end
+      end
+
       def percent?
         left.nil?
       end

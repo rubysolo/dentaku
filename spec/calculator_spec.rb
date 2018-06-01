@@ -38,6 +38,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('t + 1*24*60*60', t: Time.local(2017, 1, 1))).to eq(Time.local(2017, 1, 2))
     expect(calculator.evaluate("2 | 3 * 9")).to eq (27)
     expect(calculator.evaluate("2 & 3 * 9")).to eq (2)
+    expect(calculator.evaluate("5%")).to eq (0.05)
   end
 
   describe 'evaluate' do
