@@ -7,7 +7,8 @@ require 'dentaku/tokenizer'
 module Dentaku
   class BulkExpressionSolver
     def initialize(expressions, calculator)
-      @expression_hash = FlatHash.from_hash(expressions)
+      @expression_hash = FlatHash.from_hash(expressions,
+                                            calculator.ignore_nested_hashes)
       @calculator = calculator
     end
 
