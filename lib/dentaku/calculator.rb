@@ -119,8 +119,7 @@ module Dentaku
       restore = Hash[memory]
 
       if value.nil?
-        key_or_hash = FlatHash.from_hash(key_or_hash) if nested_data_support
-        key_or_hash.each do |key, val|
+        FlatHash.from_hash_no_key(key_or_hash).each do |key, val|
           memory[standardize_case(key.to_s)] = val
         end
       else
