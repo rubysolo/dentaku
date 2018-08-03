@@ -6,9 +6,16 @@ module Dentaku
       flatten_keys(acc)
     end
 
-    def self.from_hash_no_key(h, acc = {})
-      return acc.update(key => h)  unless h.is_a? Hash
-      return h
+    def self.from_hash_no_key(h)
+      dup_hash = h.deep_dup
+      h.each do |k, v|
+        if v.is_a?(Hash)
+          new_hash = from_hash({ k => v })
+          dup_hash.delete(k)
+          dup_hash.merge!(new_hash)
+        end
+      end
+      return dup_hash
     end
 
     def self.flatten_keys(hash)
