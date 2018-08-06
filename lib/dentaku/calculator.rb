@@ -17,6 +17,8 @@ module Dentaku
       @tokenizer = Tokenizer.new
       @case_sensitive = options.delete(:case_sensitive)
       @aliases = options.delete(:aliases) || Dentaku.aliases
+      # If true, assume that the bind hash passed to the store method can
+      # only have numeric values and no hashes.
       @ignore_nested_hashes = options.delete(:ignore_nested_hashes)
       @ast_cache = options
       @disable_ast_cache = false
