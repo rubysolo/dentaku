@@ -120,9 +120,16 @@ module Dentaku
       restore = Hash[memory]
 
       if value.nil?
-        FlatHash.from_hash(key_or_hash,
-                           @ignore_nested_hashes).each do |key, val|
-          memory[standardize_case(key.to_s)] = val
+        flattened_hash = FlatHash.from_hash(key_or_hash,
+                                            @ignore_nested_hashes)
+        if case_sensitive
+          flattened_hash.each do |key, val|
+            memory[key.to_s] = val
+          end
+        else
+          flattened_hash.each do |key, val|
+            memory[standardize_case(key.to_s)] = val
+          end
         end
       else
         memory[standardize_case(key_or_hash.to_s)] = value
