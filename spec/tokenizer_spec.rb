@@ -179,6 +179,12 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['size', :lt, 3, :or, 'admin', :eq, 1])
   end
 
+  it 'tokenizes curly brackets for array literals' do
+    tokens = tokenizer.tokenize('{}')
+    expect(tokens.map(&:category)).to eq(%i(array array))
+    expect(tokens.map(&:value)).to eq(%i(array_start array_end))
+  end
+
   it 'tokenizes square brackets for data structure access' do
     tokens = tokenizer.tokenize('a[1]')
     expect(tokens.map(&:category)).to eq(%i(identifier access numeric access))

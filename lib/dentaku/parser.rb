@@ -205,9 +205,26 @@ module Dentaku
             end
 
             unless operations.last == AST::Access
-              fail! :unbalanced_bracket, token
+              fail! :unbalanced_bracket, token: token
             end
             consume
+          end
+
+        when :array
+          case token.value
+          when :array_start
+            operations.push AST::Array
+            arities.push 0
+          when :array_end
+            while operations.any? && operations.last != AST::Array
+              consume
+            end
+
+            unless operations.last == AST::Array
+              fail! :unbalanced_bracket, token: token
+            end
+
+            consume(arities.pop.succ)
           end
 
         when :grouping
@@ -237,7 +254,7 @@ module Dentaku
 
           when :comma
             arities[-1] += 1
-            while operations.any? && operations.last != AST::Grouping
+            while operations.any? && operations.last != AST::Grouping && operations.last != AST::Array
               consume
             end
 

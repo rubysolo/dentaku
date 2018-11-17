@@ -149,6 +149,7 @@ describe Dentaku::Calculator do
 
     it 'evaluates arrays' do
       expect(calculator.evaluate([1, 2, 3])).to eq([1, 2, 3])
+      expect(calculator.evaluate!('{1,2,3}')).to eq([1, 2, 3])
     end
   end
 
