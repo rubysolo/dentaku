@@ -29,6 +29,12 @@ describe Dentaku::AST::StringFunctions::Left do
   it 'has the proper type' do
     expect(subject.type).to eq(:string)
   end
+
+  it 'raises an error if given invalid length' do
+    expect {
+      subject.value('string' => 'abcdefg', 'length' => -2)
+    }.to raise_error(Dentaku::ArgumentError, /LEFT\(\) requires length to be positive/)
+  end
 end
 
 describe Dentaku::AST::StringFunctions::Right do
