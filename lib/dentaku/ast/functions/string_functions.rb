@@ -3,7 +3,13 @@ require_relative '../function'
 module Dentaku
   module AST
     module StringFunctions
-      class Left < Function
+      class Base < Function
+        def type
+          :string
+        end
+      end
+
+      class Left < Base
         def initialize(*args)
           super
           @string, @length = *@args
@@ -16,7 +22,7 @@ module Dentaku
         end
       end
 
-      class Right < Function
+      class Right < Base
         def initialize(*args)
           super
           @string, @length = *@args
@@ -29,7 +35,7 @@ module Dentaku
         end
       end
 
-      class Mid < Function
+      class Mid < Base
         def initialize(*args)
           super
           @string, @offset, @length = *@args
@@ -43,7 +49,7 @@ module Dentaku
         end
       end
 
-      class Len < Function
+      class Len < Base
         def initialize(*args)
           super
           @string = @args[0]
@@ -55,7 +61,7 @@ module Dentaku
         end
       end
 
-      class Find < Function
+      class Find < Base
         def initialize(*args)
           super
           @needle, @haystack = *@args
@@ -70,7 +76,7 @@ module Dentaku
         end
       end
 
-      class Substitute < Function
+      class Substitute < Base
         def initialize(*args)
           super
           @original, @search, @replacement = *@args
@@ -85,7 +91,7 @@ module Dentaku
         end
       end
 
-      class Concat < Function
+      class Concat < Base
         def initialize(*args)
           super
         end
@@ -95,7 +101,7 @@ module Dentaku
         end
       end
 
-      class Contains < Function
+      class Contains < Base
         def initialize(*args)
           super
           @needle, @haystack = *args

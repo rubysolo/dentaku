@@ -79,6 +79,7 @@ describe Dentaku::Calculator do
   describe 'evaluate!' do
     it 'raises exception when formula has error' do
       expect { calculator.evaluate!('1 + + 1') }.to raise_error(Dentaku::ParseError)
+      expect { calculator.evaluate!('(1 > 5) OR LEFT("abc", 1)') }.to raise_error(Dentaku::ParseError)
     end
 
     it 'raises unbound variable errors' do

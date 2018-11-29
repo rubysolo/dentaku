@@ -25,6 +25,10 @@ describe Dentaku::AST::StringFunctions::Left do
   it 'handles size greater than input string length correctly' do
     expect(subject.value('string' => 'abcdefg', 'length' => 40)).to eq 'abcdefg'
   end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:string)
+  end
 end
 
 describe Dentaku::AST::StringFunctions::Right do
