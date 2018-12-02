@@ -70,6 +70,10 @@ module Dentaku
           string = @string.value(context).to_s
           string.length
         end
+
+        def type
+          :numeric
+        end
       end
 
       class Find < Base
@@ -84,6 +88,10 @@ module Dentaku
           haystack = @haystack.value(context).to_s
           pos = haystack.index(needle)
           pos && pos + 1
+        end
+
+        def type
+          :numeric
         end
       end
 
@@ -120,6 +128,10 @@ module Dentaku
 
         def value(context = {})
           @haystack.value(context).to_s.include? @needle.value(context).to_s
+        end
+
+        def type
+          :logical
         end
       end
     end

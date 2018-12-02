@@ -52,6 +52,10 @@ describe Dentaku::AST::StringFunctions::Right do
     subject = described_class.new(literal('abcdefg'), literal(40))
     expect(subject.value).to eq 'abcdefg'
   end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:string)
+  end
 end
 
 describe Dentaku::AST::StringFunctions::Mid do
@@ -74,6 +78,10 @@ describe Dentaku::AST::StringFunctions::Mid do
     subject = described_class.new(literal('abcdefg'), literal(4), literal(40))
     expect(subject.value).to eq 'defg'
   end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:string)
+  end
 end
 
 describe Dentaku::AST::StringFunctions::Len do
@@ -85,6 +93,10 @@ describe Dentaku::AST::StringFunctions::Len do
   it 'handles an empty string correctly' do
     subject = described_class.new(literal(''))
     expect(subject.value).to eq 0
+  end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:numeric)
   end
 end
 
@@ -103,6 +115,10 @@ describe Dentaku::AST::StringFunctions::Find do
     subject = described_class.new(literal('DE'), literal(''))
     expect(subject.value).to be_nil
   end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:numeric)
+  end
 end
 
 describe Dentaku::AST::StringFunctions::Substitute do
@@ -119,6 +135,10 @@ describe Dentaku::AST::StringFunctions::Substitute do
   it 'handles an empty replacement string correctly' do
     subject = described_class.new(literal('ABCDEFG'), literal('DE'), literal(''))
     expect(subject.value).to eq 'ABCFG'
+  end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:string)
   end
 end
 
@@ -142,6 +162,10 @@ describe Dentaku::AST::StringFunctions::Concat do
     subject = described_class.new(literal(''), literal(''))
     expect(subject.value).to eq ''
   end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:string)
+  end
 end
 
 describe Dentaku::AST::StringFunctions::Contains do
@@ -150,5 +174,9 @@ describe Dentaku::AST::StringFunctions::Contains do
     expect(subject.value).to be_truthy
     subject = described_class.new(literal('app'), literal('orange'))
     expect(subject.value).to be_falsy
+  end
+
+  it 'has the proper type' do
+    expect(subject.type).to eq(:logical)
   end
 end
