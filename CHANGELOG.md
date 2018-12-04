@@ -1,5 +1,9 @@
 # Change Log
 
+## [v3.3.0] 2018-12-04
+- add array literal syntax
+- return correct type from string function AST nodes
+
 ## [v3.2.1] 2018-10-24
 - make `evaluate` rescue more exceptions
 
@@ -162,7 +166,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.2.1...HEAD
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.3.0...HEAD
+[v3.3.0]:  https://github.com/rubysolo/dentaku/compare/v3.2.1...v3.3.0
 [v3.2.1]:  https://github.com/rubysolo/dentaku/compare/v3.2.0...v3.2.1
 [v3.2.0]:  https://github.com/rubysolo/dentaku/compare/v3.1.0...v3.2.0
 [v3.1.0]:  https://github.com/rubysolo/dentaku/compare/v3.0.0...v3.1.0
