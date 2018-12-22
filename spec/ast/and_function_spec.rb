@@ -26,10 +26,10 @@ describe 'Dentaku::AST::And' do
   end
 
   it 'raises an error if no arguments are passed' do
-    expect { calculator.evaluate!('AND()') }.to raise_error(ArgumentError)
+    expect { calculator.evaluate!('AND()') }.to raise_error(Dentaku::ArgumentError)
   end
 
   it 'raises an error if a non logical argument is passed' do
-    expect { calculator.evaluate!('AND("r")') }.to raise_error(ArgumentError)
+    expect { calculator.evaluate!('AND("r")') }.to raise_error(Dentaku::ArgumentError)
   end
 end

@@ -46,6 +46,8 @@ module Dentaku
       args = Array.new(args_size) { output.pop }.reverse
 
       output.push operator.new(*args)
+    rescue ::ArgumentError => e
+      raise Dentaku::ArgumentError, e.message
     rescue NodeError => e
       fail! :node_invalid, operator: operator, child: e.child, expect: e.expect, actual: e.actual
     end

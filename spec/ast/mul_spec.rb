@@ -32,7 +32,7 @@ describe 'Dentaku::AST::Function::Mul' do
     let(:calculator) { Dentaku::Calculator.new }
 
     it 'raises an error if no arguments are passed' do
-      expect { calculator.evaluate!('MUL()') }.to raise_error(ArgumentError)
+      expect { calculator.evaluate!('MUL()') }.to raise_error(Dentaku::ArgumentError)
     end
   end
 end

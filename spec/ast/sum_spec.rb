@@ -32,7 +32,7 @@ describe 'Dentaku::AST::Function::Sum' do
     let(:calculator) { Dentaku::Calculator.new }
 
     it 'raises an error if no arguments are passed' do
-      expect { calculator.evaluate!('SUM()') }.to raise_error(ArgumentError)
+      expect { calculator.evaluate!('SUM()') }.to raise_error(Dentaku::ArgumentError)
     end
   end
 end

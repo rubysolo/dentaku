@@ -27,7 +27,7 @@ describe 'Dentaku::AST::Function::Avg' do
     let(:calculator) { Dentaku::Calculator.new }
 
     it 'raises an error if no arguments are passed' do
-      expect { calculator.evaluate!('AVG()') }.to raise_error(ArgumentError)
+      expect { calculator.evaluate!('AVG()') }.to raise_error(Dentaku::ArgumentError)
     end
   end
 end

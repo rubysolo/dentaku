@@ -26,10 +26,10 @@ describe 'Dentaku::AST::Or' do
   end
 
   it 'raises an error if no arguments are passed' do
-    expect { calculator.evaluate!('OR()') }.to raise_error(ArgumentError)
+    expect { calculator.evaluate!('OR()') }.to raise_error(Dentaku::ArgumentError)
   end
 
   it 'raises an error if a non logical argument is passed' do
-    expect { calculator.evaluate!('OR("r")') }.to raise_error(ArgumentError)
+    expect { calculator.evaluate!('OR("r")') }.to raise_error(Dentaku::ArgumentError)
   end
 end
