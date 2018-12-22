@@ -253,6 +253,7 @@ module Dentaku
             end
 
           when :comma
+            fail! :invalid_statement if arities.empty?
             arities[-1] += 1
             while operations.any? && operations.last != AST::Grouping && operations.last != AST::Array
               consume

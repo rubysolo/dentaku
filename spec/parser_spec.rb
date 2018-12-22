@@ -172,6 +172,25 @@ describe Dentaku::Parser do
       }.to raise_error(Dentaku::ParseError)
     end
 
+    it 'raises a parse error for bad grouping structure' do
+      comma = Dentaku::Token.new(:grouping, :comma)
+      five  = Dentaku::Token.new(:numeric, 5)
+      plus  = Dentaku::Token.new(:operator, :add)
+      x     = Dentaku::Token.new(:identifier, :x)
+
+      expect {
+        described_class.new([comma]).parse
+      }.to raise_error(Dentaku::ParseError)
+
+      expect {
+        described_class.new([five, comma, x]).parse
+      }.to raise_error(Dentaku::ParseError)
+
+      expect {
+        described_class.new([five, plus, five, comma, x]).parse
+      }.to raise_error(Dentaku::ParseError)
+    end
+
     it 'raises an exception when trying to access an undefined function' do
       fn = Dentaku::Token.new(:function, 'non_exists_func')
 
