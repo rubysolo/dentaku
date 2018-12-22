@@ -16,9 +16,11 @@ end
 
 RSpec.configure do |c|
   c.before(:all) {
-    # add example for alias because we can set aliases just once
-    # before `calculator` method called
-    Dentaku.aliases = { roundup: ['roundupup'] }
+    if Dentaku.respond_to?(:aliases=)
+      # add example for alias because we can set aliases just once
+      # before `calculator` method called
+      Dentaku.aliases = { roundup: ['roundupup'] }
+    end
   }
 end
 
