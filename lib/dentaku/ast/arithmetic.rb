@@ -40,7 +40,7 @@ module Dentaku
       end
 
       def numeric(val, prefer_integer)
-        v = BigDecimal.new(val, Float::DIG + 1)
+        v = BigDecimal(val, Float::DIG + 1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
       rescue ::TypeError
