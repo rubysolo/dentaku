@@ -131,7 +131,8 @@ module Dentaku
               subparser = Parser.new(
                 inner_case_inputs,
                 operations: [AST::Case],
-                arities: [0]
+                arities: [0],
+                function_registry: @function_registry
               )
               subparser.parse
               output.concat(subparser.output)
