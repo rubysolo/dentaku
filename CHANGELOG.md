@@ -1,5 +1,10 @@
 # Change Log
 
+## [HEAD] Unreleased
+- better errors for parse failures and exceptions in internal functions
+- fix Ruby 2.6.0 deprecation warnings
+- fix issue with functions in nested case statements
+
 ## [v3.3.0] 2018-12-04
 - add array literal syntax
 - return correct type from string function AST nodes
