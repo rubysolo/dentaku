@@ -510,14 +510,14 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate(formula, number: 6)).to eq(2)
     end
 
-    it 'throws an exception when no match and there is no default value' do
+    it 'raises an exception when no match and there is no default value' do
       formula = <<-FORMULA
       CASE number
       WHEN 42
         THEN 1
       END
       FORMULA
-      expect { calculator.evaluate(formula, number: 2) }
+      expect { calculator.evaluate!(formula, number: 2) }
         .to raise_error("No block matched the switch value '2'")
     end
 

@@ -1,3 +1,4 @@
+require 'dentaku'
 require 'dentaku/token'
 require 'dentaku/token_matcher'
 require 'dentaku/token_scanner'
