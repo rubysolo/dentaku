@@ -11,7 +11,7 @@ describe Dentaku::AST::Addition do
 
   it 'performs addition' do
     node = described_class.new(five, six)
-    expect(node.value).to eq 11
+    expect(node.value).to eq(11)
   end
 
   it 'requires numeric operands' do

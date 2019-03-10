@@ -82,8 +82,8 @@ describe Dentaku::TokenMatcher do
       it 'matches zero or more occurrences in a token stream' do
         matched, substream = standard.match(stream)
         expect(matched).to be_truthy
-        expect(substream.length).to eq 1
-        expect(substream.map(&:value)).to eq [5]
+        expect(substream.length).to eq(1)
+        expect(substream.map(&:value)).to eq([5])
 
         matched, substream = standard.match(stream, 4)
         expect(substream).to be_empty
@@ -97,8 +97,8 @@ describe Dentaku::TokenMatcher do
       it 'matches zero or more occurrences in a token stream' do
         matched, substream = star.match(stream)
         expect(matched).to be_truthy
-        expect(substream.length).to eq 4
-        expect(substream.map(&:value)).to eq [5, 11, 9, 24]
+        expect(substream.length).to eq(4)
+        expect(substream.map(&:value)).to eq([5, 11, 9, 24])
 
         matched, substream = star.match(stream, 4)
         expect(substream).to be_empty
@@ -112,8 +112,8 @@ describe Dentaku::TokenMatcher do
       it 'matches one or more occurrences in a token stream' do
         matched, substream = plus.match(stream)
         expect(matched).to be_truthy
-        expect(substream.length).to eq 4
-        expect(substream.map(&:value)).to eq [5, 11, 9, 24]
+        expect(substream.length).to eq(4)
+        expect(substream.map(&:value)).to eq([5, 11, 9, 24])
 
         matched, substream = plus.match(stream, 4)
         expect(substream).to be_empty
@@ -126,8 +126,8 @@ describe Dentaku::TokenMatcher do
         stream = token_stream(1, :comma, 2, :comma, true, :comma, 'olive', :comma, :'(')
         matched, substream = described_class.arguments.match(stream)
         expect(matched).to be_truthy
-        expect(substream.length).to eq 8
-        expect(substream.map(&:value)).to eq [1, :comma, 2, :comma, true, :comma, 'olive', :comma]
+        expect(substream.length).to eq(8)
+        expect(substream.map(&:value)).to eq([1, :comma, 2, :comma, true, :comma, 'olive', :comma])
       end
     end
   end

@@ -6,64 +6,64 @@ require 'dentaku/parser'
 describe Dentaku::Parser do
   it 'parses an integer literal' do
     node = parse('5')
-    expect(node.value).to eq 5
+    expect(node.value).to eq(5)
   end
 
   it 'performs simple addition' do
     node = parse('5 + 4')
-    expect(node.value).to eq 9
+    expect(node.value).to eq(9)
   end
 
   it 'compares two numbers' do
     node = parse('5 < 4')
-    expect(node.value).to eq false
+    expect(node.value).to eq(false)
   end
 
   it 'calculates unary percentage' do
     node = parse('5%')
-    expect(node.value).to eq 0.05
+    expect(node.value).to eq(0.05)
   end
 
   it 'calculates bitwise OR' do
     node = parse('2|3')
-    expect(node.value).to eq 3
+    expect(node.value).to eq(3)
   end
 
   it 'performs multiple operations in one stream' do
     node = parse('5 * 4 + 3')
-    expect(node.value).to eq 23
+    expect(node.value).to eq(23)
   end
 
   it 'respects order of operations' do
     node = parse('5 + 4*3')
-    expect(node.value).to eq 17
+    expect(node.value).to eq(17)
   end
 
   it 'respects grouping by parenthesis' do
     node = parse('(5 + 4) * 3')
-    expect(node.value).to eq 27
+    expect(node.value).to eq(27)
   end
 
   it 'evaluates functions' do
     node = parse('IF(5 < 4, 3, 2)')
-    expect(node.value).to eq 2
+    expect(node.value).to eq(2)
   end
 
   it 'represents formulas with variables' do
     node = parse('5 * x')
     expect { node.value }.to raise_error(Dentaku::UnboundVariableError)
-    expect(node.value("x" => 3)).to eq 15
+    expect(node.value("x" => 3)).to eq(15)
   end
 
   it 'evaluates access into data structures' do
     node = parse('a[1]')
     expect { node.value }.to raise_error(Dentaku::UnboundVariableError)
-    expect(node.value("a" => [1, 2, 3])).to eq 2
+    expect(node.value("a" => [1, 2, 3])).to eq(2)
   end
 
   it 'evaluates boolean expressions' do
     node = parse('true AND false')
-    expect(node.value).to eq false
+    expect(node.value).to eq(false)
   end
 
   it 'evaluates a case statement' do
