@@ -125,31 +125,31 @@ describe Dentaku::Calculator do
 
     it 'can store the value `false`' do
       calculator.store('i_am_false', false)
-      expect(calculator.evaluate!('i_am_false')).to eq false
+      expect(calculator.evaluate!('i_am_false')).to eq(false)
     end
 
     it 'can store multiple values' do
       calculator.store(first: 1, second: 2)
-      expect(calculator.evaluate!('first')).to eq 1
-      expect(calculator.evaluate!('second')).to eq 2
+      expect(calculator.evaluate!('first')).to eq(1)
+      expect(calculator.evaluate!('second')).to eq(2)
     end
 
     it 'stores formulas' do
       calculator.store_formula('area', 'length * width')
-      expect(calculator.evaluate!('area', length: 5, width: 5)).to eq 25
+      expect(calculator.evaluate!('area', length: 5, width: 5)).to eq(25)
     end
 
     it 'stores nested hashes' do
       calculator.store(a: {basket: {of: 'apples'}}, b: 2)
-      expect(calculator.evaluate!('a.basket.of')).to eq 'apples'
-      expect(calculator.evaluate!('b')).to eq 2
+      expect(calculator.evaluate!('a.basket.of')).to eq('apples')
+      expect(calculator.evaluate!('b')).to eq(2)
     end
 
     it 'stores arrays' do
       calculator.store(a: [1, 2, 3])
-      expect(calculator.evaluate!('a[0]')).to eq 1
-      expect(calculator.evaluate!('a[x]', x: 1)).to eq 2
-      expect(calculator.evaluate!('a[x+1]', x: 1)).to eq 3
+      expect(calculator.evaluate!('a[0]')).to eq(1)
+      expect(calculator.evaluate!('a[x]', x: 1)).to eq(2)
+      expect(calculator.evaluate!('a[x+1]', x: 1)).to eq(3)
     end
 
     it 'evaluates arrays' do
@@ -207,7 +207,7 @@ describe Dentaku::Calculator do
 
     it 'is case-insensitive' do
       result = with_memory.solve!(total_fruit: "Apples + pears", pears: 10)
-      expect(result[:total_fruit]).to eq 13
+      expect(result[:total_fruit]).to eq(13)
     end
 
     it "lets you know if a variable is unbound" do
@@ -227,7 +227,7 @@ describe Dentaku::Calculator do
         width:  "length * 2",
       )
 
-      expect(result[:weight]).to eq 130.368
+      expect(result[:weight]).to eq(130.368)
     end
 
     it 'raises an exception if there are cyclic dependencies' do
@@ -308,14 +308,14 @@ describe Dentaku::Calculator do
     unbound = 'foo * 1.5'
     expect { calculator.evaluate!(unbound) }.to raise_error(Dentaku::UnboundVariableError)
     expect { calculator.evaluate!(unbound) }.to raise_error do |error|
-      expect(error.unbound_variables).to eq ['foo']
+      expect(error.unbound_variables).to eq(['foo'])
     end
     expect { calculator.evaluate!('a + b') }.to raise_error do |error|
-      expect(error.unbound_variables).to eq ['a', 'b']
+      expect(error.unbound_variables).to eq(['a', 'b'])
     end
     expect(calculator.evaluate(unbound)).to be_nil
-    expect(calculator.evaluate(unbound) { :bar }).to eq :bar
-    expect(calculator.evaluate(unbound) { |e| e }).to eq unbound
+    expect(calculator.evaluate(unbound) { :bar }).to eq(:bar)
+    expect(calculator.evaluate(unbound) { |e| e }).to eq(unbound)
   end
 
   it 'fails to evaluate incomplete statements' do
@@ -583,9 +583,9 @@ describe Dentaku::Calculator do
     Math.methods(false).each do |method|
       it method do
         if Math.method(method).arity == 2
-          expect(calculator.evaluate("#{method}(x,y)", x: 1, y: '2')).to eq Math.send(method, 1, 2)
+          expect(calculator.evaluate("#{method}(x,y)", x: 1, y: '2')).to eq(Math.send(method, 1, 2))
         else
-          expect(calculator.evaluate("#{method}(1)")).to eq Math.send(method, 1)
+          expect(calculator.evaluate("#{method}(1)")).to eq(Math.send(method, 1))
         end
       end
     end
@@ -619,7 +619,7 @@ describe Dentaku::Calculator do
     end
 
     it 'clears all items from cache' do
-      expect(calculator.ast_cache.length).to eq 3
+      expect(calculator.ast_cache.length).to eq(3)
       calculator.clear_cache
       expect(calculator.ast_cache.keys).to be_empty
     end
@@ -642,21 +642,21 @@ describe Dentaku::Calculator do
     it 'concatenates strings' do
       expect(
         calculator.evaluate('CONCAT(s1, s2, s3)', 's1' => 'ab', 's2' => 'cd', 's3' => 'ef')
-      ).to eq 'abcdef'
+      ).to eq('abcdef')
     end
   end
 
   describe 'zero-arity functions' do
     it 'can be used in formulas' do
       calculator.add_function(:two, :numeric, -> { 2 })
-      expect(calculator.evaluate("max(two(), 1)")).to eq 2
-      expect(calculator.evaluate("max(1, two())")).to eq 2
+      expect(calculator.evaluate("max(two(), 1)")).to eq(2)
+      expect(calculator.evaluate("max(1, two())")).to eq(2)
     end
   end
 
   describe 'aliases' do
     it 'accepts aliases as instance option' do
-      expect(with_aliases.evaluate('rrround(5.1)')).to eq 5
+      expect(with_aliases.evaluate('rrround(5.1)')).to eq(5)
     end
   end
 

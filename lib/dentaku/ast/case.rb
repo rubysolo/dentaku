@@ -17,6 +17,7 @@ module Dentaku
 
         @conditions = nodes
 
+        @else = nil
         @else = @conditions.pop if @conditions.last.is_a?(AST::CaseElse)
 
         @conditions.each do |condition|

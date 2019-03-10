@@ -16,7 +16,7 @@ module Dentaku
       @range = (@min..@max)
     end
 
-    def | (other_matcher)
+    def |(other_matcher)
       self.class.new(:nomatch, :nomatch, leaf_matchers + other_matcher.leaf_matchers)
     end
 

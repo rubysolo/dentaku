@@ -47,7 +47,7 @@ def type_for(value)
     :grouping
   when :lbracket, :rbracket
     :access
-  when :le, :ge, :ne, :ne, :lt, :gt, :eq
+  when :le, :ge, :ne, :lt, :gt, :eq
     :comparator
   when :and, :or
     :combinator

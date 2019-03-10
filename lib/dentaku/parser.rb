@@ -113,17 +113,19 @@ module Dentaku
               open_cases = 0
               case_end_index = nil
 
-              input.each_with_index do |token, index|
-                if token.category == :case && token.value == :open
-                  open_cases += 1
-                end
+              input.each_with_index do |input_token, index|
+                if input_token.category == :case
+                  if input_token.value == :open
+                    open_cases += 1
+                  end
 
-                if token.category == :case && token.value == :close
-                  if open_cases > 0
-                    open_cases -= 1
-                  else
-                    case_end_index = index
-                    break
+                  if input_token.value == :close
+                    if open_cases > 0
+                      open_cases -= 1
+                    else
+                      case_end_index = index
+                      break
+                    end
                   end
                 end
               end

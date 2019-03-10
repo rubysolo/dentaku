@@ -19,8 +19,8 @@ module Dentaku
       key
     end
 
-    def self.expand(h)
-      h.each_with_object({}) do |(k, v), r|
+    def self.expand(hash)
+      hash.each_with_object({}) do |(k, v), r|
         hash_levels = k.to_s.split('.')
         hash_levels = hash_levels.map(&:to_sym) if k.is_a?(Symbol)
         child_hash = hash_levels[0...-1].reduce(r) { |h, n| h[n] ||= {} }

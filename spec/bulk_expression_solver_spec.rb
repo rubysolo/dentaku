@@ -137,7 +137,7 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         f: "e[0] + 1"
       }
       results = described_class.new(expressions, calculator).solve
-      expect(results[:f]).to eq 10
+      expect(results[:f]).to eq(10)
     end
 
     it 'uses stored values for expressions when they are known' do

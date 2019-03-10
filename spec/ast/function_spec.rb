@@ -14,7 +14,7 @@ describe Dentaku::AST::Function do
     described_class.register("flarble", :string, -> { "flarble" })
     expect { described_class.get("flarble") }.not_to raise_error
     function = described_class.get("flarble").new
-    expect(function.value).to eq "flarble"
+    expect(function.value).to eq("flarble")
   end
 
   it 'does not throw an error when registering a function with a name that matches a currently defined constant' do
@@ -24,13 +24,13 @@ describe Dentaku::AST::Function do
   describe "#arity" do
     it "gives the correct arity for custom functions" do
       zero = described_class.register("zero", :numeric, ->() { 0 })
-      expect(zero.arity).to eq 0
+      expect(zero.arity).to eq(0)
 
       one = described_class.register("one", :numeric, ->(x) { x * 2 })
-      expect(one.arity).to eq 1
+      expect(one.arity).to eq(1)
 
       two = described_class.register("two", :numeric, ->(x, y) { x + y })
-      expect(two.arity).to eq 2
+      expect(two.arity).to eq(2)
 
       many = described_class.register("many", :numeric, ->(*args) { args.max })
       expect(many.arity).to be_nil
@@ -38,19 +38,19 @@ describe Dentaku::AST::Function do
   end
 
   it 'casts a String to an Integer if possible' do
-    expect(described_class.numeric('3')).to eq 3
+    expect(described_class.numeric('3')).to eq(3)
   end
 
   it 'casts a String to a BigDecimal if possible and if Integer would loose information' do
-    expect(described_class.numeric('3.2')).to eq 3.2
+    expect(described_class.numeric('3.2')).to eq(3.2)
   end
 
   it 'casts a String to a BigDecimal with a negative number' do
-    expect(described_class.numeric('-3.2')).to eq -3.2
+    expect(described_class.numeric('-3.2')).to eq(-3.2)
   end
 
   it 'casts a String to a BigDecimal without a leading zero' do
-    expect(described_class.numeric('-.2')).to eq -0.2
+    expect(described_class.numeric('-.2')).to eq(-0.2)
   end
 
   it 'raises an error if the value could not be cast to a Numeric' do

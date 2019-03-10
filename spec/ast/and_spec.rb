@@ -11,7 +11,7 @@ describe Dentaku::AST::And do
 
   it 'performs logical AND' do
     node = described_class.new(t, f)
-    expect(node.value).to eq false
+    expect(node.value).to eq(false)
   end
 
   it 'requires logical operands' do
