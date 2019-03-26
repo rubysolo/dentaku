@@ -1,6 +1,6 @@
 # Change Log
 
-## [HEAD] Unreleased
+## [v3.3.1] 2019-03-26
 - better errors for parse failures and exceptions in internal functions
 - fix Ruby 2.6.0 deprecation warnings
 - fix issue with functions in nested case statements
@@ -171,7 +171,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.3.0...HEAD
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.3.1...HEAD
+[v3.3.1]:  https://github.com/rubysolo/dentaku/compare/v3.3.0...v3.3.1
 [v3.3.0]:  https://github.com/rubysolo/dentaku/compare/v3.2.1...v3.3.0
 [v3.2.1]:  https://github.com/rubysolo/dentaku/compare/v3.2.0...v3.2.1
 [v3.2.0]:  https://github.com/rubysolo/dentaku/compare/v3.1.0...v3.2.0
