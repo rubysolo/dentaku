@@ -1,5 +1,10 @@
 # Change Log
 
+## [v2.1.0] 2019-
+- fix bug with detecting unbound nodes
+- silence warnings
+- allow registration of custom token scanners
+
 ## [v2.0.5] 2015-09-03
 - fix bug with detecting unbound nodes
 - silence warnings

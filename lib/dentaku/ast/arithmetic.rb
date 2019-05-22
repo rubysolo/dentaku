@@ -23,7 +23,7 @@ module Dentaku
       private
 
       def cast(value, prefer_integer=true)
-        v = BigDecimal.new(value, Float::DIG+1)
+        v = BigDecimal(value, Float::DIG+1)
         v = v.to_i if prefer_integer && v.frac.zero?
         v
       end

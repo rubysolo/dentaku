@@ -3,7 +3,7 @@ require 'dentaku/token_scanner'
 describe Dentaku::TokenScanner do
   let(:whitespace) { described_class.new(:whitespace, '\s') }
   let(:numeric)    { described_class.new(:numeric,    '(\d+(\.\d+)?|\.\d+)',
-    ->(raw) { raw =~ /\./ ? BigDecimal.new(raw) : raw.to_i })
+    ->(raw) { raw =~ /\./ ? BigDecimal(raw) : raw.to_i })
   }
   let(:custom)     { described_class.new(:identifier, '#\w+\b',
     ->(raw) { raw.gsub('#', '').to_sym })
