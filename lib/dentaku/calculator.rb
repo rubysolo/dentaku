@@ -9,7 +9,8 @@ require 'dentaku/token'
 module Dentaku
   class Calculator
     include StringCasing
-    attr_reader :result, :memory, :tokenizer, :case_sensitive, :aliases, :nested_data_support
+    attr_reader :result, :memory, :tokenizer, :case_sensitive, :aliases,
+                :nested_data_support, :ast_cache
 
     def initialize(options = {})
       clear
@@ -95,6 +96,10 @@ module Dentaku
           @ast_cache[expression] = node if cache_ast?
         end
       }
+    end
+
+    def load_cache(ast_cache)
+      @ast_cache = ast_cache
     end
 
     def clear_cache(pattern = :all)

@@ -44,8 +44,6 @@ module Dentaku
     @aliases = hash
   end
 
-  private
-
   def self.calculator
     @calculator ||= Dentaku::Calculator.new
   end
