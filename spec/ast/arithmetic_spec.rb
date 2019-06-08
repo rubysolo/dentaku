@@ -15,6 +15,7 @@ describe Dentaku::AST::Arithmetic do
     expect(sub(one, two)).to eq(-1)
     expect(mul(one, two)).to eq(2)
     expect(div(one, two)).to eq(0.5)
+    expect(neg(one)).to eq(-1)
   end
 
   it 'performs an arithmetic operation with one numeric operand and one string operand' do
@@ -34,6 +35,7 @@ describe Dentaku::AST::Arithmetic do
     expect(sub(x, y)).to eq(-1)
     expect(mul(x, y)).to eq(2)
     expect(div(x, y)).to eq(0.5)
+    expect(neg(x)).to eq(-1)
   end
 
   private
@@ -52,5 +54,9 @@ describe Dentaku::AST::Arithmetic do
 
   def div(left, right)
     Dentaku::AST::Division.new(left, right).value(ctx)
+  end
+
+  def neg(node)
+    Dentaku::AST::Negation.new(node).value(ctx)
   end
 end

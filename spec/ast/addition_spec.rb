@@ -9,6 +9,12 @@ describe Dentaku::AST::Addition do
 
   let(:t)    { Dentaku::AST::Numeric.new Dentaku::Token.new(:logical, true) }
 
+  it 'allows access to its sub-trees' do
+    node = described_class.new(five, six)
+    expect(node.left).to eq(five)
+    expect(node.right).to eq(six)
+  end
+
   it 'performs addition' do
     node = described_class.new(five, six)
     expect(node.value).to eq(11)
