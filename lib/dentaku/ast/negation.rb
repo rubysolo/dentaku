@@ -1,6 +1,8 @@
 module Dentaku
   module AST
     class Negation < Arithmetic
+      attr_reader :node
+
       def initialize(node)
         @node = node
 
