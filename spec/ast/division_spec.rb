@@ -9,6 +9,12 @@ describe Dentaku::AST::Division do
 
   let(:t)    { Dentaku::AST::Numeric.new Dentaku::Token.new(:logical, true) }
 
+  it 'allows access to its sub-trees' do
+    node = described_class.new(five, six)
+    expect(node.left).to eq(five)
+    expect(node.right).to eq(six)
+  end
+
   it 'performs division' do
     node = described_class.new(five, six)
     expect(node.value.round(4)).to eq(0.8333)
