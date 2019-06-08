@@ -5,7 +5,7 @@ module Dentaku
         @node = node
 
         unless valid_node?(node)
-          raise NodeError.new(:numeric, left.type, :left),
+          raise NodeError.new(:numeric, node.type, :node),
                 "#{self.class} requires numeric operands"
         end
       end
