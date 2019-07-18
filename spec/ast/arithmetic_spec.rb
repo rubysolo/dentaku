@@ -38,25 +38,33 @@ describe Dentaku::AST::Arithmetic do
     expect(neg(x)).to eq(-1)
   end
 
+  it 'correctly parses string operands to numeric values' do
+    expect(add(x, one, 'x' => '1')).to eq(2)
+    expect(add(x, one, 'x' => '1.1')).to eq(2.1)
+    expect(add(x, one, 'x' => '.1')).to eq(1.1)
+    expect { add(x, one, 'x' => 'invalid') }.to raise_error(Dentaku::ArgumentError)
+    expect { add(x, one, 'x' => '') }.to raise_error(Dentaku::ArgumentError)
+  end
+
   private
 
-  def add(left, right)
-    Dentaku::AST::Addition.new(left, right).value(ctx)
+  def add(left, right, context = ctx)
+    Dentaku::AST::Addition.new(left, right).value(context)
   end
 
-  def sub(left, right)
-    Dentaku::AST::Subtraction.new(left, right).value(ctx)
+  def sub(left, right, context = ctx)
+    Dentaku::AST::Subtraction.new(left, right).value(context)
   end
 
-  def mul(left, right)
-    Dentaku::AST::Multiplication.new(left, right).value(ctx)
+  def mul(left, right, context = ctx)
+    Dentaku::AST::Multiplication.new(left, right).value(context)
   end
 
-  def div(left, right)
-    Dentaku::AST::Division.new(left, right).value(ctx)
+  def div(left, right, context = ctx)
+    Dentaku::AST::Division.new(left, right).value(context)
   end
 
-  def neg(node)
-    Dentaku::AST::Negation.new(node).value(ctx)
+  def neg(node, context = ctx)
+    Dentaku::AST::Negation.new(node).value(context)
   end
 end
