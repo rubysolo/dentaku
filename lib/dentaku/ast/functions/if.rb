@@ -24,8 +24,13 @@ module Dentaku
       end
 
       def dependencies(context = {})
-        # TODO : short-circuit?
-        (predicate.dependencies(context) + left.dependencies(context) + right.dependencies(context)).uniq
+        deps = predicate.dependencies(context)
+
+        if deps.empty?
+          predicate.value(context) ? left.dependencies(context) : right.dependencies(context)
+        else
+          (deps + left.dependencies(context) + right.dependencies(context)).uniq
+        end
       end
     end
   end
