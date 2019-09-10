@@ -659,20 +659,4 @@ describe Dentaku::Calculator do
       expect(with_aliases.evaluate('rrround(5.1)')).to eq(5)
     end
   end
-
-  describe 'nested_data' do
-    it 'default to nested data enabled' do
-      expect(calculator.nested_data_support).to be_truthy
-    end
-
-    it 'allow opt out of nested data support' do
-      expect(without_nested_data.nested_data_support).to be_falsy
-    end
-
-    it 'should allow optout of nested hash' do
-      expect do
-        without_nested_data.solve!('a.b.c')
-      end.to raise_error(Dentaku::UnboundVariableError)
-    end
-  end
 end
