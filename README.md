@@ -1,7 +1,7 @@
 Dentaku
 =======
 
-[![Join the chat at https://gitter.im/rubysolo/dentaku](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rubysolo/dentaku?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Financial Contributors on Open Collective](https://opencollective.com/dentaku/all/badge.svg?label=financial+contributors)](https://opencollective.com/dentaku) [![Join the chat at https://gitter.im/rubysolo/dentaku](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rubysolo/dentaku?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Gem Version](https://badge.fury.io/rb/dentaku.png)](http://badge.fury.io/rb/dentaku)
 [![Build Status](https://travis-ci.org/rubysolo/dentaku.png?branch=master)](https://travis-ci.org/rubysolo/dentaku)
 [![Code Climate](https://codeclimate.com/github/rubysolo/dentaku.png)](https://codeclimate.com/github/rubysolo/dentaku)
@@ -339,3 +339,33 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/rubysolo/dentaku/graphs/contributors"><img src="https://opencollective.com/dentaku/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/dentaku/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/dentaku"><img src="https://opencollective.com/dentaku/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/dentaku/contribute)]
+
+<a href="https://opencollective.com/dentaku/organization/0/website"><img src="https://opencollective.com/dentaku/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/1/website"><img src="https://opencollective.com/dentaku/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/2/website"><img src="https://opencollective.com/dentaku/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/3/website"><img src="https://opencollective.com/dentaku/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/4/website"><img src="https://opencollective.com/dentaku/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/5/website"><img src="https://opencollective.com/dentaku/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/6/website"><img src="https://opencollective.com/dentaku/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/7/website"><img src="https://opencollective.com/dentaku/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/8/website"><img src="https://opencollective.com/dentaku/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/dentaku/organization/9/website"><img src="https://opencollective.com/dentaku/organization/9/avatar.svg"></a>
