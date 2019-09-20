@@ -21,6 +21,8 @@ module Dentaku
         case v
         when Node
           v.value(context)
+        when Proc
+          v.call
         else
           v
         end

@@ -1,5 +1,10 @@
 # Change Log
 
+## [Unreleased]
+- support lazy evaluation for expensive values
+- short-circuit IF function
+- better error when empty string is used in arithmetic operation
+
 ## [v3.3.2] 2019-06-10
 - add ability to pre-load AST cache
 - fix negation node bug

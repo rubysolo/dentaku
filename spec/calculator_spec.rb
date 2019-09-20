@@ -74,6 +74,11 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('NOT(a)', a: nil, b: nil)).to be_truthy
       expect(calculator.evaluate('OR(a,b)', a: nil, b: nil)).to be_falsy
     end
+
+    it 'supports lazy evaluation of variables' do
+      expect(calculator.evaluate('x + 1', x: -> { 1 })).to eq(2)
+      expect { calculator.evaluate('2', x: -> { raise 'boom' }) }.not_to raise_error
+    end
   end
 
   describe 'evaluate!' do
