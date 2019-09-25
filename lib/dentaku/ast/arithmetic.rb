@@ -50,7 +50,7 @@ module Dentaku
       end
 
       def valid_node?(node)
-        node && (node.dependencies.any? || node.type == :numeric)
+        node && (node.type == :numeric || node.dependencies.any?)
       end
 
       def valid_left?
