@@ -18,6 +18,10 @@ module Dentaku
       def dependencies(context = {})
         @elements.flat_map { |el| el.dependencies(context) }
       end
+
+      def type
+        nil
+      end
     end
   end
 end

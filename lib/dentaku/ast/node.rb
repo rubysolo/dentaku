@@ -15,6 +15,10 @@ module Dentaku
       def dependencies(context = {})
         []
       end
+
+      def type
+        nil
+      end
     end
   end
 end
