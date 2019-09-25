@@ -8,6 +8,8 @@ require 'dentaku/exceptions'
 module Dentaku
   module AST
     class Case < Node
+      attr_reader :switch, :conditions, :else
+
       def initialize(*nodes)
         @switch = nodes.shift
 
@@ -47,6 +49,10 @@ module Dentaku
         switch_dependencies(context) +
         condition_dependencies(context) +
         else_dependencies(context)
+      end
+
+      def accept(visitor)
+        visitor.visit_case(self)
       end
 
       private

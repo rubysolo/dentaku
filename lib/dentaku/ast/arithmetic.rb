@@ -197,6 +197,10 @@ module Dentaku
         :**
       end
 
+      def display_operator
+        "^"
+      end
+
       def self.precedence
         30
       end

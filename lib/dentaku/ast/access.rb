@@ -1,6 +1,8 @@
 module Dentaku
   module AST
     class Access
+      attr_reader :structure, :index
+
       def self.arity
         2
       end
@@ -21,6 +23,10 @@ module Dentaku
 
       def dependencies(context = {})
         @structure.dependencies(context) + @index.dependencies(context)
+      end
+
+      def accept(visitor)
+        visitor.visit_access(self)
       end
     end
   end
