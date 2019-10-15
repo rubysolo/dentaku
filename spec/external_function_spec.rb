@@ -59,6 +59,20 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate("hey!()")).to eq("hey!")
     end
 
+    it 'defines for a given function a properly named class that represents it' do
+      calculator = described_class.new
+      calculator.add_function(:ho, :string, -> {})
+      expect(Dentaku::AST.const_defined?("Ho")).to eq(true)
+    end
+
+    it 'does not define class if it already exists for a given function' do
+      calculator = described_class.new
+      expect(Dentaku::AST.const_defined?("And")).to eq(true)
+      expect {
+        calculator.add_function(:and, :logical, -> {})
+      }.not_to change { Dentaku::AST::And.object_id }
+    end
+
     it 'does not store functions across all calculators' do
       calculator1 = Dentaku::Calculator.new
       calculator1.add_function(:my_function, :numeric, ->(x) { 2 * x + 1 })

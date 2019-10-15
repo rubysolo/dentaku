@@ -1,6 +1,10 @@
 module Dentaku
   module AST
     class FunctionRegistry < Hash
+      CLASS_NAME_REGEXP = /\A[a-zA-Z0-9]*\z/.freeze
+
+      private_constant :CLASS_NAME_REGEXP
+
       def get(name)
         name = function_name(name)
         return self[name] if has_key?(name)
@@ -8,7 +12,13 @@ module Dentaku
         nil
       end
 
+      # @note Notice we define for every function a properly named class that represents it.
+      #   The only exceptions are when there is already defined class for a given function
+      #   (e.g. :and) or there is an uncommon function's name given, e.g. "bang!" function.
+      #   In that case, we cannot create a class with such a name,
+      #   so there is an anonymous class created like it has been done so far.
       def register(name, type, implementation)
+        class_name = class_name(name)
         function = Class.new(Function) do
           def self.name=(name)
             @name = name
@@ -48,6 +58,10 @@ module Dentaku
           end
         end
 
+        if correct_class_name?(class_name) && !Dentaku::AST.const_defined?(class_name)
+          define_class(class_name, function)
+        end
+
         function.name = name
         function.type = type
         function.implementation = implementation
@@ -71,6 +85,18 @@ module Dentaku
 
       def function_name(name)
         name.to_s.downcase
+      end
+
+      def class_name(name)
+        name.to_s.capitalize
+      end
+
+      def correct_class_name?(class_name)
+        class_name.match(CLASS_NAME_REGEXP)
+      end
+
+      def define_class(class_name, function)
+        Dentaku::AST.const_set(class_name, function)
       end
     end
   end
