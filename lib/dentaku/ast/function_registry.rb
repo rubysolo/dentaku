@@ -48,6 +48,8 @@ module Dentaku
           end
         end
 
+        define_class(name, function)
+
         function.name = name
         function.type = type
         function.implementation = implementation
@@ -71,6 +73,17 @@ module Dentaku
 
       def function_name(name)
         name.to_s.downcase
+      end
+
+      def normalize_name(function_name)
+        function_name.to_s.capitalize.gsub(/\W/, '_')
+      end
+
+      def define_class(function_name, function)
+        class_name = normalize_name(function_name)
+        return if Dentaku::AST::Function.const_defined?(class_name)
+
+        Dentaku::AST::Function.const_set(class_name, function)
       end
     end
   end

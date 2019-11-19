@@ -59,6 +59,20 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate("hey!()")).to eq("hey!")
     end
 
+    it 'defines for a given function a properly named class that represents it to support AST marshaling' do
+      calculator = described_class.new
+      expect {
+        calculator.add_function(:ho, :string, -> {})
+      }.to change {
+        Dentaku::AST::Function.const_defined?("Ho")
+      }.from(false).to(true)
+
+      expect {
+        Marshal.dump(calculator.ast('MAX(1, 2)'))
+      }.not_to raise_error
+    end
+
+
     it 'does not store functions across all calculators' do
       calculator1 = Dentaku::Calculator.new
       calculator1.add_function(:my_function, :numeric, ->(x) { 2 * x + 1 })
