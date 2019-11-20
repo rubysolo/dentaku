@@ -36,4 +36,11 @@ describe Dentaku do
     Dentaku.aliases = { roundup: ['roundupup'] }
     expect(Dentaku.evaluate('roundupup(6.1)')).to eq(7)
   end
+
+  it 'sets caching opt-in flags' do
+    expect {
+      Dentaku.enable_caching!
+    }.to change { Dentaku.cache_ast? }.from(false).to(true)
+    .and change { Dentaku.cache_dependency_order? }.from(false).to(true)
+  end
 end
