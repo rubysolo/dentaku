@@ -81,7 +81,6 @@ describe Dentaku::Calculator do
       }.not_to raise_error
     end
 
-
     it 'does not store functions across all calculators' do
       calculator1 = Dentaku::Calculator.new
       calculator1.add_function(:my_function, :numeric, ->(x) { 2 * x + 1 })

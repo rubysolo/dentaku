@@ -1,4 +1,5 @@
 require_relative './operation'
+require_relative '../date_arithmetic'
 require 'bigdecimal'
 require 'bigdecimal/util'
 
@@ -12,6 +13,7 @@ module Dentaku
           raise NodeError.new(:numeric, left.type, :left),
                 "#{self.class} requires numeric operands"
         end
+
         unless valid_right?
           raise NodeError.new(:numeric, right.type, :right),
                 "#{self.class} requires numeric operands"
@@ -54,11 +56,11 @@ module Dentaku
       end
 
       def valid_left?
-        valid_node?(left)
+        valid_node?(left) || left.type == :datetime
       end
 
       def valid_right?
-        valid_node?(right)
+        valid_node?(right) || right.type == :duration
       end
 
       def validate_value(val)
@@ -92,6 +94,14 @@ module Dentaku
       def self.precedence
         10
       end
+
+      def value(context = {})
+        if left.type == :datetime
+          Dentaku::DateArithmetic.new(left.value(context)).add(right.value(context))
+        else
+          super
+        end
+      end
     end
 
     class Subtraction < Arithmetic
@@ -101,6 +111,14 @@ module Dentaku
 
       def self.precedence
         10
+      end
+
+      def value(context = {})
+        if left.type == :datetime
+          Dentaku::DateArithmetic.new(left.value(context)).sub(right.value(context))
+        else
+          super
+        end
       end
     end
 

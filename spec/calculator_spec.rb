@@ -374,18 +374,30 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('some_boolean OR 7 < 5', some_boolean: false)).to be_falsey
   end
 
-  it 'compares Time variables' do
+  it 'compares time variables' do
     expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 1).to_datetime, t2: Time.local(2017, 1, 2).to_datetime)).to be_truthy
     expect(calculator.evaluate('t1 < t2', t1: Time.local(2017, 1, 2).to_datetime, t2: Time.local(2017, 1, 1).to_datetime)).to be_falsy
     expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 1).to_datetime, t2: Time.local(2017, 1, 2).to_datetime)).to be_falsy
     expect(calculator.evaluate('t1 > t2', t1: Time.local(2017, 1, 2).to_datetime, t2: Time.local(2017, 1, 1).to_datetime)).to be_truthy
   end
 
-  it 'compares Time literals with Time variables' do
+  it 'compares time literals with time variables' do
     expect(calculator.evaluate('t1 < 2017-01-02', t1: Time.local(2017, 1, 1).to_datetime)).to be_truthy
     expect(calculator.evaluate('t1 < 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_falsy
     expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 1).to_datetime)).to be_falsy
     expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_truthy
+  end
+
+  it 'supports date arithmetic' do
+    expect(calculator.evaluate!('2020-01-01 + 30').to_date).to eq(Time.local(2020, 1, 31).to_date)
+    expect(calculator.evaluate!('2020-01-01 - 1').to_date).to eq(Time.local(2019, 12, 31).to_date)
+    expect(calculator.evaluate!('2020-01-01 + duration(1, day)').to_date).to eq(Time.local(2020, 1, 2).to_date)
+    expect(calculator.evaluate!('2020-01-01 - duration(1, day)').to_date).to eq(Time.local(2019, 12, 31).to_date)
+    expect(calculator.evaluate!('2020-01-01 + duration(30, days)').to_date).to eq(Time.local(2020, 1, 31).to_date)
+    expect(calculator.evaluate!('2020-01-01 + duration(1, month)').to_date).to eq(Time.local(2020, 2, 1).to_date)
+    expect(calculator.evaluate!('2020-01-01 + duration(30, months)').to_date).to eq(Time.local(2022, 7, 1).to_date)
+    expect(calculator.evaluate!('2020-01-01 + duration(1, year)').to_date).to eq(Time.local(2021, 1, 1).to_date)
+    expect(calculator.evaluate!('2020-01-01 + duration(30, years)').to_date).to eq(Time.local(2050, 1, 1).to_date)
   end
 
   describe 'functions' do
