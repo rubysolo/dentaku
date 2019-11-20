@@ -284,7 +284,7 @@ using Calculator#add_functions.
 FUNCTION ALIASES
 ----------------
 
-Every function can be aliased by synonyms. For example, it can be useful if 
+Every function can be aliased by synonyms. For example, it can be useful if
 your application is multilingual.
 
 ```ruby
@@ -321,7 +321,7 @@ LICENSE
 
 (The MIT License)
 
-Copyright © 2012-2018 Solomon White
+Copyright © 2012-2019 Solomon White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the ‘Software’), to deal in
