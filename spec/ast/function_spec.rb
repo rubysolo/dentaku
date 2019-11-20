@@ -22,7 +22,7 @@ describe Dentaku::AST::Function do
   end
 
   describe "#arity" do
-    it "gives the correct arity for custom functions" do
+    it "returns the correct arity for custom functions" do
       zero = described_class.register("zero", :numeric, ->() { 0 })
       expect(zero.arity).to eq(0)
 

@@ -17,6 +17,14 @@ module Dentaku
       end
 
       class Left < Base
+        def self.min_param_count
+          2
+        end
+
+        def self.max_param_count
+          2
+        end
+
         def initialize(*args)
           super
           @string, @length = *@args
@@ -111,6 +119,14 @@ module Dentaku
       end
 
       class Concat < Base
+        def self.min_param_count
+          1
+        end
+
+        def self.max_param_count
+          Float::INFINITY
+        end
+
         def initialize(*args)
           super
         end

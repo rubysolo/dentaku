@@ -6,6 +6,14 @@ module Dentaku
       attr_reader :when,
                   :then
 
+      def self.min_param_count
+        2
+      end
+
+      def self.max_param_count
+        2
+      end
+
       def initialize(when_statement, then_statement)
         @when = when_statement
         unless @when.is_a?(AST::CaseWhen)

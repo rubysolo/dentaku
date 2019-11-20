@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'dentaku'
 require 'dentaku/calculator'
 
 describe Dentaku::Calculator do
@@ -14,6 +15,7 @@ describe Dentaku::Calculator do
           [:pow,      :numeric, ->(mantissa, exponent) { mantissa**exponent }],
           [:biggest,  :numeric, ->(*args) { args.max }],
           [:smallest, :numeric, ->(*args) { args.min }],
+          [:optional, :numeric, ->(x, y, z = 0) { x + y + z }],
         ]
 
         c.add_functions(fns)
@@ -37,6 +39,13 @@ describe Dentaku::Calculator do
 
       it 'includes SMALLEST' do
         expect(with_external_funcs.evaluate('SMALLEST(8,6,7,5,3,0,9)')).to eq(0)
+      end
+
+      it 'includes OPTIONAL' do
+        expect(with_external_funcs.evaluate('OPTIONAL(1,2)')).to eq(3)
+        expect(with_external_funcs.evaluate('OPTIONAL(1,2,3)')).to eq(6)
+        expect { with_external_funcs.dependencies('OPTIONAL()') }.to raise_error(Dentaku::ParseError)
+        expect { with_external_funcs.dependencies('OPTIONAL(1,2,3,4)') }.to raise_error(Dentaku::ParseError)
       end
 
       it 'supports array parameters' do
@@ -80,17 +89,19 @@ describe Dentaku::Calculator do
       calculator2 = Dentaku::Calculator.new
       calculator2.add_function(:my_function, :numeric, ->(x) { 4 * x + 3 })
 
-      expect(calculator1.evaluate("1 + my_function(2)")). to eq(1 + 2 * 2 + 1)
-      expect(calculator2.evaluate("1 + my_function(2)")). to eq(1 + 4 * 2 + 3)
+      expect(calculator1.evaluate!("1 + my_function(2)")). to eq(1 + 2 * 2 + 1)
+      expect(calculator2.evaluate!("1 + my_function(2)")). to eq(1 + 4 * 2 + 3)
 
       expect {
         Dentaku::Calculator.new.evaluate!("1 + my_function(2)")
       }.to raise_error(Dentaku::ParseError)
     end
 
-    it 'self.add_function adds to default/global function registry' do
-      Dentaku::Calculator.add_function(:global_function, :numeric, ->(x) { 10 + x**2 })
-      expect(Dentaku::Calculator.new.evaluate("global_function(3) + 5")).to eq(10 + 3**2 + 5)
+    describe 'Dentaku::Calculator.add_function' do
+      it 'adds to default/global function registry' do
+        Dentaku::Calculator.add_function(:global_function, :numeric, ->(x) { 10 + x**2 })
+        expect(Dentaku::Calculator.new.evaluate("global_function(3) + 5")).to eq(10 + 3**2 + 5)
+      end
     end
   end
 end

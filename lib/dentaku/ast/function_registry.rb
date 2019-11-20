@@ -38,6 +38,14 @@ module Dentaku
             @implementation.arity < 0 ? nil : @implementation.arity
           end
 
+          def self.min_param_count
+            @implementation.parameters.select { |type, _name| type == :req }.count
+          end
+
+          def self.max_param_count
+            @implementation.parameters.select { |type, _name| type == :rest }.any? ? Float::INFINITY : @implementation.parameters.count
+          end
+
           def value(context = {})
             args = @args.map { |a| a.value(context) }
             self.class.implementation.call(*args)

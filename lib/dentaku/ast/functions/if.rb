@@ -5,6 +5,14 @@ module Dentaku
     class If < Function
       attr_reader :predicate, :left, :right
 
+      def self.min_param_count
+        3
+      end
+
+      def self.max_param_count
+        3
+      end
+
       def initialize(predicate, left, right)
         @predicate = predicate
         @left      = left

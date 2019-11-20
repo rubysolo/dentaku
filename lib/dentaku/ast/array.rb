@@ -4,6 +4,14 @@ module Dentaku
       def self.arity
       end
 
+      def self.min_param_count
+        0
+      end
+
+      def self.max_param_count
+        Float::INFINITY
+      end
+
       def self.peek(*)
       end
 

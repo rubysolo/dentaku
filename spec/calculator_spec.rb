@@ -110,7 +110,7 @@ describe Dentaku::Calculator do
     end
 
     it 'raises argument error if a function is called with incorrect arity' do
-      expect { calculator.evaluate!('IF(a,b)', a: 1, b: 1) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('IF(a,b)', a: 1, b: 1) }.to raise_error(Dentaku::ParseError)
     end
   end
 

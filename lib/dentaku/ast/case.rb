@@ -8,6 +8,14 @@ require 'dentaku/exceptions'
 module Dentaku
   module AST
     class Case < Node
+      def self.min_param_count
+        2
+      end
+
+      def self.max_param_count
+        Float::INFINITY
+      end
+
       def initialize(*nodes)
         @switch = nodes.shift
 

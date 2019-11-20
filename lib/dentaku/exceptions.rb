@@ -33,7 +33,7 @@ module Dentaku
     private_class_method :new
 
     VALID_REASONS = %i[
-      node_invalid too_few_operands undefined_function
+      node_invalid too_few_operands too_many_operands undefined_function
       unprocessed_token unknown_case_token unbalanced_bracket
       unbalanced_parenthesis unknown_grouping_token not_implemented_token_category
       invalid_statement

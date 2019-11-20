@@ -5,6 +5,14 @@ module Dentaku
         2
       end
 
+      def self.min_param_count
+        arity
+      end
+
+      def self.max_param_count
+        arity
+      end
+
       def self.peek(*)
       end
 

@@ -5,6 +5,14 @@ module Dentaku
     class Operation < Node
       attr_reader :left, :right
 
+      def self.min_param_count
+        arity
+      end
+
+      def self.max_param_count
+        arity
+      end
+
       def initialize(left, right)
         @left  = left
         @right = right
