@@ -1,5 +1,8 @@
 # Change Log
 
+## [v3.3.4] 2019-11-21
+- bugfix release
+
 ## [v3.3.3] 2019-11-20
 - date / duration addition and subtraction
 - validate arity for custom functions with variable arity
@@ -184,6 +187,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[v3.3.4]:  https://github.com/rubysolo/dentaku/compare/v3.3.3...v3.3.4
 [v3.3.3]:  https://github.com/rubysolo/dentaku/compare/v3.3.2...v3.3.3
 [v3.3.2]:  https://github.com/rubysolo/dentaku/compare/v3.3.1...v3.3.2
 [v3.3.1]:  https://github.com/rubysolo/dentaku/compare/v3.3.0...v3.3.1
