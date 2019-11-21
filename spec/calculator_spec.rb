@@ -663,6 +663,16 @@ describe Dentaku::Calculator do
         calculator.evaluate('CONCAT(s1, s2, s3)', 's1' => 'ab', 's2' => 'cd', 's3' => 'ef')
       ).to eq('abcdef')
     end
+
+    it 'manipulates string arguments' do
+      expect(calculator.evaluate("left('ABCD', 2)")).to eq('AB')
+      expect(calculator.evaluate("right('ABCD', 2)")).to eq('CD')
+      expect(calculator.evaluate("mid('ABCD', 2, 2)")).to eq('BC')
+      expect(calculator.evaluate("len('ABCD')")).to eq(4)
+      expect(calculator.evaluate("find('BC', 'ABCD')")).to eq(2)
+      expect(calculator.evaluate("substitute('ABCD', 'BC', 'XY')")).to eq('AXYD')
+      expect(calculator.evaluate("contains('BC', 'ABCD')")).to be_truthy
+    end
   end
 
   describe 'zero-arity functions' do

@@ -39,6 +39,14 @@ module Dentaku
       end
 
       class Right < Base
+        def self.min_param_count
+          2
+        end
+
+        def self.max_param_count
+          2
+        end
+
         def initialize(*args)
           super
           @string, @length = *@args
@@ -53,6 +61,14 @@ module Dentaku
       end
 
       class Mid < Base
+        def self.min_param_count
+          3
+        end
+
+        def self.max_param_count
+          3
+        end
+
         def initialize(*args)
           super
           @string, @offset, @length = *@args
@@ -69,6 +85,14 @@ module Dentaku
       end
 
       class Len < Base
+        def self.min_param_count
+          1
+        end
+
+        def self.max_param_count
+          1
+        end
+
         def initialize(*args)
           super
           @string = @args[0]
@@ -85,6 +109,14 @@ module Dentaku
       end
 
       class Find < Base
+        def self.min_param_count
+          2
+        end
+
+        def self.max_param_count
+          2
+        end
+
         def initialize(*args)
           super
           @needle, @haystack = *@args
@@ -104,6 +136,14 @@ module Dentaku
       end
 
       class Substitute < Base
+        def self.min_param_count
+          3
+        end
+
+        def self.max_param_count
+          3
+        end
+
         def initialize(*args)
           super
           @original, @search, @replacement = *@args
@@ -137,6 +177,14 @@ module Dentaku
       end
 
       class Contains < Base
+        def self.min_param_count
+          2
+        end
+
+        def self.max_param_count
+          2
+        end
+
         def initialize(*args)
           super
           @needle, @haystack = *args
