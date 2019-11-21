@@ -16,6 +16,14 @@ module Dentaku
       def self.arity
         1
       end
+
+      def self.min_param_count
+        1
+      end
+
+      def self.max_param_count
+        1
+      end
     end
   end
 end

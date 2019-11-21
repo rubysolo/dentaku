@@ -1,10 +1,6 @@
 module Dentaku
   module AST
     class CaseElse < Node
-      def self.arity
-        1
-      end
-
       def initialize(node)
         @node = node
       end
@@ -15,6 +11,18 @@ module Dentaku
 
       def dependencies(context = {})
         @node.dependencies(context)
+      end
+
+      def self.arity
+        1
+      end
+
+      def self.min_param_count
+        1
+      end
+
+      def self.max_param_count
+        1
       end
     end
   end
