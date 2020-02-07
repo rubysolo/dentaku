@@ -147,6 +147,7 @@ describe Dentaku::Calculator do
     it 'stores nested hashes' do
       calculator.store(a: {basket: {of: 'apples'}}, b: 2)
       expect(calculator.evaluate!('a.basket.of')).to eq('apples')
+      expect(calculator.evaluate!('a.basket')).to eq(of: 'apples')
       expect(calculator.evaluate!('b')).to eq(2)
     end
 
