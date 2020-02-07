@@ -6,6 +6,13 @@ module Dentaku
       flatten_keys(acc)
     end
 
+    def self.from_hash_with_intermediates(h, key = [], acc = {})
+      acc.update(key => h) unless key.empty?
+      return unless h.is_a? Hash
+      h.each { |k, v| from_hash_with_intermediates(v, key + [k], acc) }
+      flatten_keys(acc)
+    end
+
     def self.flatten_keys(hash)
       hash.each_with_object({}) do |(k, v), h|
         h[flatten_key(k)] = v
