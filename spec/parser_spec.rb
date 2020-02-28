@@ -71,6 +71,11 @@ describe Dentaku::Parser do
     expect(node.value("x" => 3)).to eq(4)
   end
 
+  it 'evaluates arrays' do
+    node = parse('{1, 2, 3}')
+    expect(node.value).to eq([1, 2, 3])
+  end
+
   context 'invalid expression' do
     it 'raises a parse error for bad math' do
       expect {
@@ -96,6 +101,14 @@ describe Dentaku::Parser do
 
       expect {
         parse("5 + 5, x")
+      }.to raise_error(Dentaku::ParseError)
+
+      expect {
+        parse("{1, 2, }")
+      }.to raise_error(Dentaku::ParseError)
+
+      expect {
+        parse("CONCAT('1', '2', )")
       }.to raise_error(Dentaku::ParseError)
     end
 
