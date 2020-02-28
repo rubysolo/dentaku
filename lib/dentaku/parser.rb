@@ -51,6 +51,7 @@ module Dentaku
         fail! :too_many_operands, operator: operator, expect: max_size, actual: output.length
       end
 
+      fail! :invalid_statement if output.size < args_size
       args = Array.new(args_size) { output.pop }.reverse
 
       output.push operator.new(*args)
