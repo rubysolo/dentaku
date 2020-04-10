@@ -14,8 +14,6 @@ Gem::Specification.new do |s|
     Dentaku is a parser and evaluator for mathematical formulas
   DESC
 
-  s.rubyforge_project = "dentaku"
-
   s.add_development_dependency('codecov')
   s.add_development_dependency('pry')
   s.add_development_dependency('pry-byebug')

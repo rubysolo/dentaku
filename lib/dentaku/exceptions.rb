@@ -44,7 +44,7 @@ module Dentaku
         raise ::ArgumentError, "Unhandled #{reason}"
       end
 
-      new reason, meta
+      new(reason, **meta)
     end
   end
 
@@ -68,7 +68,7 @@ module Dentaku
         raise ::ArgumentError, "Unhandled #{reason}"
       end
 
-      new reason, meta
+      new(reason, **meta)
     end
   end
 
@@ -92,7 +92,7 @@ module Dentaku
         raise ::ArgumentError, "Unhandled #{reason}"
       end
 
-      new reason, meta
+      new(reason, **meta)
     end
   end
 

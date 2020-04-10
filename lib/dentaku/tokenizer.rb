@@ -104,7 +104,7 @@ module Dentaku
           raise ::ArgumentError, "Unhandled #{reason}"
         end
 
-      raise TokenizerError.for(reason, meta), message
+      raise TokenizerError.for(reason, **meta), message
     end
   end
 end
