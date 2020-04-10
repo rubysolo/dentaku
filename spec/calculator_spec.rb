@@ -392,6 +392,7 @@ describe Dentaku::Calculator do
   it 'supports date arithmetic' do
     expect(calculator.evaluate!('2020-01-01 + 30').to_date).to eq(Time.local(2020, 1, 31).to_date)
     expect(calculator.evaluate!('2020-01-01 - 1').to_date).to eq(Time.local(2019, 12, 31).to_date)
+    expect(calculator.evaluate!('2020-01-01 - 2019-12-31')).to eq(1)
     expect(calculator.evaluate!('2020-01-01 + duration(1, day)').to_date).to eq(Time.local(2020, 1, 2).to_date)
     expect(calculator.evaluate!('2020-01-01 - duration(1, day)').to_date).to eq(Time.local(2019, 12, 31).to_date)
     expect(calculator.evaluate!('2020-01-01 + duration(30, days)').to_date).to eq(Time.local(2020, 1, 31).to_date)

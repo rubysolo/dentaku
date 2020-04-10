@@ -25,7 +25,7 @@ module Dentaku
 
     def sub(duration)
       case duration
-      when Numeric
+      when DateTime, Numeric
         @base - duration
       when Dentaku::AST::Duration::Value
         case duration.unit

@@ -60,7 +60,7 @@ module Dentaku
       end
 
       def valid_right?
-        valid_node?(right) || right.type == :duration
+        valid_node?(right) || right.type == :duration || right.type == :datetime
       end
 
       def validate_value(val)
