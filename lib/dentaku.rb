@@ -3,8 +3,9 @@ require "dentaku/calculator"
 require "dentaku/version"
 
 module Dentaku
-  @enable_ast_caching = false
-  @enable_dependency_order_caching = false
+  @cache_ast = false
+  @cache_dependency_order = false
+  @short_circuit_evaluation = true
   @aliases = {}
 
   def self.evaluate(expression, data = {})
@@ -21,19 +22,27 @@ module Dentaku
   end
 
   def self.enable_ast_cache!
-    @enable_ast_caching = true
+    @cache_ast = true
   end
 
   def self.cache_ast?
-    @enable_ast_caching
+    @cache_ast
   end
 
   def self.enable_dependency_order_cache!
-    @enable_dependency_order_caching = true
+    @cache_dependency_order = true
   end
 
   def self.cache_dependency_order?
-    @enable_dependency_order_caching
+    @cache_dependency_order
+  end
+
+  def self.disable_short_circuit_evaluation!
+    @short_circuit_evaluation = false
+  end
+
+  def self.short_circuit_evaluation?
+    @short_circuit_evaluation
   end
 
   def self.aliases

@@ -34,7 +34,7 @@ module Dentaku
       def dependencies(context = {})
         deps = predicate.dependencies(context)
 
-        if deps.empty?
+        if deps.empty? && Dentaku.short_circuit_evaluation?
           predicate.value(context) ? left.dependencies(context) : right.dependencies(context)
         else
           (deps + left.dependencies(context) + right.dependencies(context)).uniq
