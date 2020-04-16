@@ -26,6 +26,10 @@ describe Dentaku::AST::StringFunctions::Left do
     expect(subject.value('string' => 'abcdefg', 'length' => 40)).to eq 'abcdefg'
   end
 
+  it 'accepts strings as length if they can be parsed to a number' do
+    expect(subject.value('string' => 'ABCDEFG', 'length' => '4')).to eq 'ABCD'
+  end
+
   it 'has the proper type' do
     expect(subject.type).to eq(:string)
   end
@@ -34,6 +38,12 @@ describe Dentaku::AST::StringFunctions::Left do
     expect {
       subject.value('string' => 'abcdefg', 'length' => -2)
     }.to raise_error(Dentaku::ArgumentError, /LEFT\(\) requires length to be positive/)
+  end
+
+  it 'raises an error when given a junk length' do
+    expect {
+      subject.value('string' => 'abcdefg', 'length' => 'junk')
+    }.to raise_error(Dentaku::ArgumentError, "'junk' is not coercible to numeric")
   end
 end
 
@@ -53,8 +63,18 @@ describe Dentaku::AST::StringFunctions::Right do
     expect(subject.value).to eq 'abcdefg'
   end
 
+  it 'accepts strings as length if they can be parsed to a number' do
+    subject = described_class.new(literal('ABCDEFG'), literal('4'))
+    expect(subject.value).to eq 'DEFG'
+  end
+
   it 'has the proper type' do
     expect(subject.type).to eq(:string)
+  end
+
+  it 'raises an error when given a junk length' do
+    subject = described_class.new(literal('abcdefg'), literal('junk'))
+    expect { subject.value }.to raise_error(Dentaku::ArgumentError, "'junk' is not coercible to numeric")
   end
 end
 
@@ -79,8 +99,23 @@ describe Dentaku::AST::StringFunctions::Mid do
     expect(subject.value).to eq 'defg'
   end
 
+  it 'accepts strings as offset and length if they can be parsed to a number' do
+    subject = described_class.new(literal('ABCDEFG'), literal('4'), literal('2'))
+    expect(subject.value).to eq 'DE'
+  end
+
   it 'has the proper type' do
     expect(subject.type).to eq(:string)
+  end
+
+  it 'raises an error when given a junk offset' do
+    subject = described_class.new(literal('abcdefg'), literal('junk offset'), literal(2))
+    expect { subject.value }.to raise_error(Dentaku::ArgumentError, "'junk offset' is not coercible to numeric")
+  end
+
+  it 'raises an error when given a junk length' do
+    subject = described_class.new(literal('abcdefg'), literal(4), literal('junk'))
+    expect { subject.value }.to raise_error(Dentaku::ArgumentError, "'junk' is not coercible to numeric")
   end
 end
 

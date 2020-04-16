@@ -31,7 +31,12 @@ module Dentaku
       def value(context = {})
         l = cast(left.value(context))
         r = cast(right.value(context))
-        l.public_send(operator, r)
+        begin
+          l.public_send(operator, r)
+        rescue ::TypeError => e
+          # Right cannot be converted to a suitable type for left. e.g. [] + 1
+          raise Dentaku::ArgumentError.for(:incompatible_type, value: r, for: l.class), e.message
+        end
       end
 
       private

@@ -34,5 +34,9 @@ describe 'Dentaku::AST::Function::Mul' do
     it 'raises an error if no arguments are passed' do
       expect { calculator.evaluate!('MUL()') }.to raise_error(Dentaku::ArgumentError)
     end
+
+    it 'raises an error if an empty array is passed' do
+      expect { calculator.evaluate!('MUL(x)', x: []) }.to raise_error(Dentaku::ArgumentError)
+    end
   end
 end

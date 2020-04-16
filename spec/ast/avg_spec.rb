@@ -29,5 +29,9 @@ describe 'Dentaku::AST::Function::Avg' do
     it 'raises an error if no arguments are passed' do
       expect { calculator.evaluate!('AVG()') }.to raise_error(Dentaku::ArgumentError)
     end
+
+    it 'raises an error if an empty array is passed' do
+      expect { calculator.evaluate!('AVG(x)', x: []) }.to raise_error(Dentaku::ArgumentError)
+    end
   end
 end
