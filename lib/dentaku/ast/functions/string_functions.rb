@@ -32,7 +32,7 @@ module Dentaku
 
         def value(context = {})
           string = @string.value(context).to_s
-          length = @length.value(context)
+          length = Dentaku::AST::Function.numeric(@length.value(context)).to_i
           negative_argument_failure('LEFT') if length < 0
           string[0, length]
         end
@@ -54,7 +54,7 @@ module Dentaku
 
         def value(context = {})
           string = @string.value(context).to_s
-          length = @length.value(context)
+          length = Dentaku::AST::Function.numeric(@length.value(context)).to_i
           negative_argument_failure('RIGHT') if length < 0
           string[length * -1, length] || string
         end
@@ -76,9 +76,9 @@ module Dentaku
 
         def value(context = {})
           string = @string.value(context).to_s
-          offset = @offset.value(context)
+          offset = Dentaku::AST::Function.numeric(@offset.value(context)).to_i
           negative_argument_failure('MID', 'offset') if offset < 0
-          length = @length.value(context)
+          length = Dentaku::AST::Function.numeric(@length.value(context)).to_i
           negative_argument_failure('MID') if length < 0
           string[offset - 1, length].to_s
         end
