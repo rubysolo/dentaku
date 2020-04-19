@@ -22,4 +22,14 @@ describe 'Dentaku::AST::Function::Round' do
     result = Dentaku('ROUNDDOWN(x, y)', x: '1.8453', y: nil)
     expect(result).to eq(1)
   end
+
+  context 'checking errors' do
+    it 'raises an error if first argument is not numeric' do
+      expect { Dentaku!("ROUND(2020-1-1, 0)") }.to raise_error(Dentaku::ArgumentError)
+    end
+
+    it 'raises an error if places is not numeric' do
+      expect { Dentaku!("ROUND(1.8, 2020-1-1)") }.to raise_error(Dentaku::ArgumentError)
+    end
+  end
 end

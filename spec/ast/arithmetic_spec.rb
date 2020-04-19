@@ -4,11 +4,12 @@ require 'dentaku/ast/arithmetic'
 require 'dentaku/token'
 
 describe Dentaku::AST::Arithmetic do
-  let(:one) { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 1) }
-  let(:two) { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 2) }
-  let(:x)   { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'x') }
-  let(:y)   { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'y') }
-  let(:ctx) { {'x' => 1, 'y' => 2} }
+  let(:one)  { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 1) }
+  let(:two)  { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 2) }
+  let(:x)    { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'x') }
+  let(:y)    { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'y') }
+  let(:ctx)  { {'x' => 1, 'y' => 2} }
+  let(:date) { Dentaku::AST::DateTime.new Dentaku::Token.new(:datetime, DateTime.new(2020, 4, 16)) }
 
   it 'performs an arithmetic operation with numeric operands' do
     expect(add(one, two)).to eq(3)
@@ -44,6 +45,19 @@ describe Dentaku::AST::Arithmetic do
     expect(add(x, one, 'x' => '.1')).to eq(1.1)
     expect { add(x, one, 'x' => 'invalid') }.to raise_error(Dentaku::ArgumentError)
     expect { add(x, one, 'x' => '') }.to raise_error(Dentaku::ArgumentError)
+  end
+
+  it 'performs arithmetic on arrays' do
+    expect(add(x, y, 'x' => [1], 'y' => [2])).to eq([1, 2])
+  end
+
+  it 'performs date arithmetic' do
+    expect(add(date, one)).to eq(DateTime.new(2020, 4, 17))
+  end
+
+  it 'raises ArgumentError if given individually valid but incompatible arguments' do
+    expect { add(one, date) }.to raise_error(Dentaku::ArgumentError)
+    expect { add(x, one, 'x' => [1]) }.to raise_error(Dentaku::ArgumentError)
   end
 
   private
