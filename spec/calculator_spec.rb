@@ -707,4 +707,20 @@ describe Dentaku::Calculator do
       end.to raise_error(Dentaku::UnboundVariableError)
     end
   end
+
+  describe 'identifier cache' do
+    it 'reduces call count by caching results of resolved identifiers' do
+      called = 0
+      calculator.store_formula("A1", "B1+B1+B1")
+      calculator.store_formula("B1", "C1+C1+C1+C1")
+      calculator.store_formula("C1", "D1")
+      calculator.store("D1", proc { called += 1; 1 })
+
+      expect {
+        Dentaku.enable_identifier_cache!
+      }.to change {
+        called=0; calculator.evaluate("A1"); called
+      }.from(12).to(1)
+    end
+  end
 end
