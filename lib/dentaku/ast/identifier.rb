@@ -20,7 +20,9 @@ module Dentaku
 
         case v
         when Node
-          v.value(context)
+          value = v.value(context)
+          context[identifier] = value if Dentaku.cache_identifier?
+          value
         when Proc
           v.call
         else
