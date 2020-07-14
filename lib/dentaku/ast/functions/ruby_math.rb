@@ -43,7 +43,6 @@ module Dentaku
       def type
         nil
       end
-
     end
   end
 end

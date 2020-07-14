@@ -719,7 +719,9 @@ describe Dentaku::Calculator do
       expect {
         Dentaku.enable_identifier_cache!
       }.to change {
-        called=0; calculator.evaluate("A1"); called
+        called = 0
+        calculator.evaluate("A1")
+        called
       }.from(12).to(1)
     end
   end
