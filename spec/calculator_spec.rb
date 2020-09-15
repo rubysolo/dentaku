@@ -320,6 +320,10 @@ describe Dentaku::Calculator do
       expect(error.unbound_variables).to eq(['a', 'b'])
     end
     expect(calculator.evaluate(unbound)).to be_nil
+  end
+
+  it 'accepts a block for custom handling of unbound variables' do
+    unbound = 'foo * 1.5'
     expect(calculator.evaluate(unbound) { :bar }).to eq(:bar)
     expect(calculator.evaluate(unbound) { |e| e }).to eq(unbound)
   end

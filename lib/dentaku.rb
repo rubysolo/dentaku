@@ -8,12 +8,12 @@ module Dentaku
   @enable_identifier_caching = false
   @aliases = {}
 
-  def self.evaluate(expression, data = {})
-    calculator.evaluate(expression, data)
+  def self.evaluate(expression, data = {}, &block)
+    calculator.evaluate(expression, data, &block)
   end
 
-  def self.evaluate!(expression, data = {})
-    calculator.evaluate!(expression, data)
+  def self.evaluate!(expression, data = {}, &block)
+    calculator.evaluate!(expression, data, &block)
   end
 
   def self.enable_caching!
