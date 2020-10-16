@@ -62,7 +62,7 @@ module Dentaku
         unbound = node.dependencies - memory.keys
         unless unbound.empty?
           raise UnboundVariableError.new(unbound),
-                "no value provided for variables: #{unbound.join(', ')}"
+                "no value provided for variables: #{unbound.uniq.join(', ')}"
         end
         node.value(memory)
       end
