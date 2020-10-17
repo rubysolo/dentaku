@@ -21,7 +21,6 @@ module Dentaku
         item_identifier = @args[1].identifier
         expression      = @args[2]
 
-
         collection.any? do |item_value|
           expression.value(
             context.update(
