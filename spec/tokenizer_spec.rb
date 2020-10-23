@@ -231,15 +231,15 @@ describe Dentaku::Tokenizer do
     ])
   end
 
-  describe 'functions' do
-    it 'include IF' do
+  describe 'tokenizing function calls' do
+    it 'handles IF' do
       tokens = tokenizer.tokenize('if(x < 10, y, z)')
       expect(tokens.length).to eq(10)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :identifier, :comparator, :numeric, :grouping, :identifier, :grouping, :identifier, :grouping])
       expect(tokens.map(&:value)).to eq([:if, :open, 'x', :lt, 10, :comma, 'y', :comma, 'z', :close])
     end
 
-    it 'include ROUND/UP/DOWN' do
+    it 'handles ROUND/UP/DOWN' do
       tokens = tokenizer.tokenize('round(8.2)')
       expect(tokens.length).to eq(4)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :grouping])
@@ -261,11 +261,30 @@ describe Dentaku::Tokenizer do
       expect(tokens.map(&:value)).to eq([:rounddown, :open, BigDecimal('8.2'), :close])
     end
 
-    it 'include NOT' do
+    it 'handles NOT' do
       tokens = tokenizer.tokenize('not(8 < 5)')
       expect(tokens.length).to eq(6)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :comparator, :numeric, :grouping])
       expect(tokens.map(&:value)).to eq([:not, :open, 8, :lt, 5, :close])
+    end
+
+    it 'handles ANY/ALL' do
+      %i( any all ).each do |fn|
+        tokens = tokenizer.tokenize("#{fn}(users, u, u.age > 18)")
+        expect(tokens.length).to eq(10)
+        expect(tokens.map { |t| [t.category, t.value] }).to eq([
+          [:function,   fn     ], # function call (any/all)
+          [:grouping,   :open  ], # (
+          [:identifier, "users"], # users
+          [:grouping,   :comma ], # ,
+          [:identifier, "u"    ], # u
+          [:grouping,   :comma ], # ,
+          [:identifier, "u.age"], # u.age
+          [:comparator, :gt    ], # >
+          [:numeric,    18     ], # 18
+          [:grouping,   :close ]  # )
+        ])
+      end
     end
 
     it 'handles whitespace after function name' do
@@ -275,7 +294,7 @@ describe Dentaku::Tokenizer do
       expect(tokens.map(&:value)).to eq([:not, :open, 8, :lt, 5, :close])
     end
 
-    it 'can end with a bang' do
+    it 'handles when function ends with a bang' do
       tokens = tokenizer.tokenize('exp!(5 * 3)')
       expect(tokens.length).to eq(6)
       expect(tokens.map(&:category)).to eq([:function, :grouping, :numeric, :operator, :numeric, :grouping])

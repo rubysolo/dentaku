@@ -439,6 +439,38 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('NOT(some_boolean) AND -1 > 3', some_boolean: true)).to be_falsey
     end
 
+    describe "any" do
+      it "enumerates values and returns true if any evaluation is truthy" do
+        expect(calculator.evaluate!('any(xs, x, x > 3)', xs: [1, 2, 3, 4])).to be_truthy
+        expect(calculator.evaluate!('any({1,2,3,4}, x, x > 3)')).to be_truthy
+        expect(calculator.evaluate!('any({1,2,3,4}, x, x > 10)')).to be_falsy
+        expect(calculator.evaluate!('any(users, u, u.age > 33)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_truthy
+        expect(calculator.evaluate!('any(users, u, u.age < 18)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_falsy
+      end
+    end
+
+    describe "all" do
+      it "enumerates values and returns true if all evaluations are truthy" do
+        expect(calculator.evaluate!('all(xs, x, x > 3)', xs: [1, 2, 3, 4])).to be_falsy
+        expect(calculator.evaluate!('all({1,2,3,4}, x, x > 0)')).to be_truthy
+        expect(calculator.evaluate!('all({1,2,3,4}, x, x > 10)')).to be_falsy
+        expect(calculator.evaluate!('all(users, u, u.age > 33)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_falsy
+        expect(calculator.evaluate!('all(users, u, u.age < 50)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_truthy
+      end
+    end
+
     it 'evaluates functions with stored variables' do
       calculator.store("multi_color" => true, "number_of_sheets" => 5000, "sheets_per_minute_black" => 2000, "sheets_per_minute_color" => 1000)
       result = calculator.evaluate('number_of_sheets / if(multi_color, sheets_per_minute_color, sheets_per_minute_black)')
