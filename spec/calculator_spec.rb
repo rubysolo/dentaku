@@ -471,6 +471,50 @@ describe Dentaku::Calculator do
       end
     end
 
+    describe "map" do
+      it "maps values" do
+        expect(calculator.evaluate!('map(xs, x, x * 2)', xs: [1, 2, 3, 4])).to eq([2, 4, 6, 8])
+        expect(calculator.evaluate!('map({1,2,3,4}, x, x * 2)')).to eq([2, 4, 6, 8])
+        expect(calculator.evaluate!('map(users, u, u.age)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('map(users, u, u.age)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('map(users, u, u.name)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq(["Bob", "Jane"])
+        expect(calculator.evaluate!('map(users, u, u.name)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq(["Bob", "Jane"])
+      end
+    end
+
+    describe "pluck" do
+      it "plucks values from array of hashes" do
+        expect(calculator.evaluate!('pluck(users, age)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('pluck(users, age)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('pluck(users, name)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq(["Bob", "Jane"])
+        expect(calculator.evaluate!('pluck(users, name)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq(["Bob", "Jane"])
+      end
+    end
+
     it 'evaluates functions with stored variables' do
       calculator.store("multi_color" => true, "number_of_sheets" => 5000, "sheets_per_minute_black" => 2000, "sheets_per_minute_color" => 1000)
       result = calculator.evaluate('number_of_sheets / if(multi_color, sheets_per_minute_color, sheets_per_minute_black)')
