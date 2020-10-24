@@ -17,11 +17,17 @@ module Dentaku
       end
 
       def value(context = {})
-        collection    = @args[0].value(context)
-        property_name = @args[1].identifier
+        collection      = @args[0].value(context)
+        pluck_path      = @args[1].identifier
+        item_identifier = 'i'
+        expression      = Dentaku::AST::Identifier.new(Dentaku::Token.new(:identifier, "i.#{pluck_path}"))
 
-        collection.map do |item|
-          item[property_name.to_sym] || item[property_name]
+        collection.map do |item_value|
+          expression.value(
+            context.update(
+              FlatHash.from_hash(item_identifier => item_value)
+            )
+          )
         end
       end
     end
