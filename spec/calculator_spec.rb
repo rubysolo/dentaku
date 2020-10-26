@@ -442,6 +442,7 @@ describe Dentaku::Calculator do
     describe "any" do
       it "enumerates values and returns true if any evaluation is truthy" do
         expect(calculator.evaluate!('any(xs, x, x > 3)', xs: [1, 2, 3, 4])).to be_truthy
+        expect(calculator.evaluate!('any(xs, x, x > 3)', xs: 3)).to be_falsy
         expect(calculator.evaluate!('any({1,2,3,4}, x, x > 3)')).to be_truthy
         expect(calculator.evaluate!('any({1,2,3,4}, x, x > 10)')).to be_falsy
         expect(calculator.evaluate!('any(users, u, u.age > 33)', users: [
@@ -458,6 +459,7 @@ describe Dentaku::Calculator do
     describe "all" do
       it "enumerates values and returns true if all evaluations are truthy" do
         expect(calculator.evaluate!('all(xs, x, x > 3)', xs: [1, 2, 3, 4])).to be_falsy
+        expect(calculator.evaluate!('any(xs, x, x > 2)', xs: 3)).to be_truthy
         expect(calculator.evaluate!('all({1,2,3,4}, x, x > 0)')).to be_truthy
         expect(calculator.evaluate!('all({1,2,3,4}, x, x > 10)')).to be_falsy
         expect(calculator.evaluate!('all(users, u, u.age > 33)', users: [

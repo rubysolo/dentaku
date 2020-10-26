@@ -21,7 +21,7 @@ module Dentaku
         item_identifier = @args[1].identifier
         expression      = @args[2]
 
-        collection.all? do |item_value|
+        Array(collection).all? do |item_value|
           expression.value(
             context.update(
               FlatHash.from_hash(item_identifier => item_value)
