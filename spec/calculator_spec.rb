@@ -197,6 +197,17 @@ describe Dentaku::Calculator do
       )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
     end
 
+    it "allows preferring variables over existing values in memory" do
+      expect(
+        with_memory.solve!({
+          weekly_fruit_budget: "weekly_apple_budget + pear * 4",
+          weekly_apple_budget: "apples * 7",
+          pear:                "1",
+          apples:              "4"
+        }, :variables)
+      ).to eq(apples: 4, pear: 1, weekly_apple_budget: 28, weekly_fruit_budget: 32)
+    end
+
     it "preserves hash keys" do
       expect(calculator.solve!(
         'meaning_of_life' => 'age + kids',

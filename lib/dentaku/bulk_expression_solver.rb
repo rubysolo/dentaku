@@ -6,9 +6,10 @@ require 'dentaku/tokenizer'
 
 module Dentaku
   class BulkExpressionSolver
-    def initialize(expressions, calculator)
+    def initialize(expressions, calculator, precedence = :memory)
       @expression_hash = FlatHash.from_hash(expressions)
       @calculator = calculator
+      @precedence = precedence
     end
 
     def solve!
@@ -38,6 +39,10 @@ module Dentaku
 
     private
 
+    def prefer_memory?
+      @precedence == :memory
+    end
+
     def self.dependency_cache
       @dep_cache ||= {}
     end
@@ -57,31 +62,29 @@ module Dentaku
     end
 
     def load_results(&block)
-      variables_in_resolve_order.each_with_object({}) do |var_name, r|
-        begin
-          solved = calculator.memory
-          value_from_memory = solved[var_name.downcase]
+      normalized = expressions.each_with_object({}) { |(k, v), h| h[k.downcase] = v }
+      facts = prefer_memory? ? normalized.merge(calculator.memory) : calculator.memory.merge(normalized)
 
-          if value_from_memory.nil? &&
-              expressions[var_name].nil? &&
-              !solved.has_key?(var_name)
-            next
-          end
+      variables_in_resolve_order.each_with_object({}) do |var_name, results|
+        next if expressions[var_name].nil?
 
-          value = value_from_memory || evaluate!(
-            expressions[var_name],
-            expressions.merge(r).merge(solved),
-            &expression_with_exception_handler(&block)
-          )
+        value = evaluate!(
+          facts[var_name.downcase],
+          facts.merge(results),
+          &expression_with_exception_handler(&block)
+        )
 
-          r[var_name] = value
-        rescue UnboundVariableError, Dentaku::ZeroDivisionError => ex
-          ex.recipient_variable = var_name
-          r[var_name] = block.call(ex)
-        rescue Dentaku::ArgumentError => ex
-          r[var_name] = block.call(ex)
-        end
+        results[var_name] = value
+
+      rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
+        ex.recipient_variable = var_name
+        results[var_name] = block.call(ex)
+
+      rescue Dentaku::ArgumentError => ex
+        results[var_name] = block.call(ex)
+
       end
+
     rescue TSort::Cyclic => ex
       block.call(ex)
       {}

@@ -68,12 +68,12 @@ module Dentaku
       end
     end
 
-    def solve!(expression_hash)
-      BulkExpressionSolver.new(expression_hash, self).solve!
+    def solve!(expression_hash, precedence = :memory)
+      BulkExpressionSolver.new(expression_hash, self, precedence).solve!
     end
 
-    def solve(expression_hash, &block)
-      BulkExpressionSolver.new(expression_hash, self).solve(&block)
+    def solve(expression_hash, precedence = :memory, &block)
+      BulkExpressionSolver.new(expression_hash, self, precedence).solve(&block)
     end
 
     def dependencies(expression, context = {})
