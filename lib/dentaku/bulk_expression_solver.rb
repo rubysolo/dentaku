@@ -6,10 +6,9 @@ require 'dentaku/tokenizer'
 
 module Dentaku
   class BulkExpressionSolver
-    def initialize(expressions, calculator, precedence = :memory)
+    def initialize(expressions, calculator)
       @expression_hash = FlatHash.from_hash(expressions)
       @calculator = calculator
-      @precedence = precedence
     end
 
     def solve!
@@ -39,10 +38,6 @@ module Dentaku
 
     private
 
-    def prefer_memory?
-      @precedence == :memory
-    end
-
     def self.dependency_cache
       @dep_cache ||= {}
     end
@@ -62,8 +57,8 @@ module Dentaku
     end
 
     def load_results(&block)
-      normalized = expressions.each_with_object({}) { |(k, v), h| h[k.downcase] = v }
-      facts = prefer_memory? ? normalized.merge(calculator.memory) : calculator.memory.merge(normalized)
+      normalized = expressions.transform_keys(&:downcase)
+      facts = normalized.merge(calculator.memory)
 
       variables_in_resolve_order.each_with_object({}) do |var_name, results|
         next if expressions[var_name].nil?
