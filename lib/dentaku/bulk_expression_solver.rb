@@ -62,43 +62,42 @@ module Dentaku
                                     .partition { |_, v| calculator.dependencies(v, nil).empty? }
 
       context = calculator.memory.merge(facts.to_h.each_with_object({}) do |(var_name, ast), h|
-        h[var_name] = ast.is_a?(Array) ? ast.map(&:value) : ast.value
-
-      rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
-        ex.recipient_variable = var_name
-        h[var_name] = block.call(ex)
-
-      rescue Dentaku::ArgumentError => ex
-        h[var_name] = block.call(ex)
-
+        with_rescues(var_name, h, block) do
+          h[var_name] = ast.is_a?(Array) ? ast.map(&:value) : ast.value
+        end
       end)
 
       variables_in_resolve_order.each_with_object({}) do |var_name, results|
         next if expressions[var_name].nil?
 
-        results[var_name] = calculator.evaluate!(
-          expressions[var_name],
-          context.merge(results),
-          &expression_with_exception_handler(&block)
-        )
-
-      rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
-        ex.recipient_variable = var_name
-        results[var_name] = block.call(ex)
-
-      rescue Dentaku::ArgumentError => ex
-        results[var_name] = block.call(ex)
-
-      ensure
-        if results[var_name] == :undefined && calculator.memory.has_key?(var_name.downcase)
-          results[var_name] = calculator.memory[var_name.downcase]
+        with_rescues(var_name, results, block) do
+          results[var_name] = calculator.evaluate!(
+            expressions[var_name],
+            context.merge(results),
+            &expression_with_exception_handler(&block)
+          )
         end
-
       end
 
     rescue TSort::Cyclic => ex
       block.call(ex)
       {}
+    end
+
+    def with_rescues(var_name, results, block)
+      yield
+
+    rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
+      ex.recipient_variable = var_name
+      results[var_name] = block.call(ex)
+
+    rescue Dentaku::ArgumentError => ex
+      results[var_name] = block.call(ex)
+
+    ensure
+      if results[var_name] == :undefined && calculator.memory.has_key?(var_name.downcase)
+        results[var_name] = calculator.memory[var_name.downcase]
+      end
     end
 
     def expressions
