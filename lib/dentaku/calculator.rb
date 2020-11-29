@@ -77,13 +77,21 @@ module Dentaku
     end
 
     def dependencies(expression, context = {})
-      if expression.is_a? Array
-        return expression.flat_map { |e| dependencies(e, context) }
+      test_context = context.nil? ? {} : store(context) { memory }
+
+      case expression
+      when Dentaku::AST::Node
+        expression.dependencies(test_context)
+      when Array
+        expression.flat_map { |e| dependencies(e, context) }
+      else
+        ast(expression).dependencies(test_context)
       end
-      store(context) { ast(expression).dependencies(memory) }
     end
 
     def ast(expression)
+      return expression.map { |e| ast(e) } if expression.is_a? Array
+
       @ast_cache.fetch(expression) {
         options = {
           case_sensitive: case_sensitive,

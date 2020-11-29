@@ -57,20 +57,28 @@ module Dentaku
     end
 
     def load_results(&block)
-      normalized_exprs = expressions.transform_keys(&:downcase)
+      facts, _formulas = expressions.transform_keys(&:downcase)
+                                    .transform_values { |v| calculator.ast(v) }
+                                    .partition { |_, v| calculator.dependencies(v, nil).empty? }
+
+      context = calculator.memory.merge(facts.to_h.each_with_object({}) do |(var_name, ast), h|
+        h[var_name] = ast.is_a?(Array) ? ast.map(&:value) : ast.value
+
+      rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
+        ex.recipient_variable = var_name
+        h[var_name] = block.call(ex)
+
+      rescue Dentaku::ArgumentError => ex
+        h[var_name] = block.call(ex)
+
+      end)
 
       variables_in_resolve_order.each_with_object({}) do |var_name, results|
         next if expressions[var_name].nil?
 
-        expression = expressions[var_name]
-        other_expressions = normalized_exprs.select { |k, _| k != var_name.downcase }
-        context = calculator.memory
-                            .merge(other_expressions)
-                            .merge(results)
-
         results[var_name] = calculator.evaluate!(
-          expression,
-          context,
+          expressions[var_name],
+          context.merge(results),
           &expression_with_exception_handler(&block)
         )
 
