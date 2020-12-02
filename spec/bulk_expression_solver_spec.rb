@@ -39,6 +39,16 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(solver.solve!).to eq("the value of x, incremented" => 4)
     end
 
+    it "allows self-referential formulas" do
+      expressions = { x: "x + 1" }
+      solver = described_class.new(expressions, calculator.store(x: 1))
+      expect(solver.solve!).to eq(x: 2)
+
+      expressions = { x: "y + 3", y: "x * 2" }
+      solver = described_class.new(expressions, calculator.store(x: 5, y: 3))
+      expect(solver.solve!).to eq(x: 6, y: 12) # x = 6 by the time y is calculated
+    end
+
     it "evaluates expressions in hashes and arrays, and expands the results" do
       calculator.store(
         fruit_quantities: {

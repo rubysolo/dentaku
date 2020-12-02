@@ -6,10 +6,9 @@ require 'dentaku/tokenizer'
 
 module Dentaku
   class BulkExpressionSolver
-    def initialize(expressions, calculator, precedence = :memory)
+    def initialize(expressions, calculator)
       @expression_hash = FlatHash.from_hash(expressions)
       @calculator = calculator
-      @precedence = precedence
     end
 
     def solve!
@@ -39,10 +38,6 @@ module Dentaku
 
     private
 
-    def prefer_memory?
-      @precedence == :memory
-    end
-
     def self.dependency_cache
       @dep_cache ||= {}
     end
@@ -58,36 +53,51 @@ module Dentaku
     end
 
     def expression_with_exception_handler(&block)
-      ->(expr, ex) { block.call(ex) }
+      ->(_expr, ex) { block.call(ex) }
     end
 
     def load_results(&block)
-      normalized = expressions.each_with_object({}) { |(k, v), h| h[k.downcase] = v }
-      facts = prefer_memory? ? normalized.merge(calculator.memory) : calculator.memory.merge(normalized)
+      facts, _formulas = expressions.transform_keys(&:downcase)
+                                    .transform_values { |v| calculator.ast(v) }
+                                    .partition { |_, v| calculator.dependencies(v, nil).empty? }
+
+      context = calculator.memory.merge(facts.to_h.each_with_object({}) do |(var_name, ast), h|
+        with_rescues(var_name, h, block) do
+          h[var_name] = ast.is_a?(Array) ? ast.map(&:value) : ast.value
+        end
+      end)
 
       variables_in_resolve_order.each_with_object({}) do |var_name, results|
         next if expressions[var_name].nil?
 
-        value = evaluate!(
-          facts[var_name.downcase],
-          facts.merge(results),
-          &expression_with_exception_handler(&block)
-        )
-
-        results[var_name] = value
-
-      rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
-        ex.recipient_variable = var_name
-        results[var_name] = block.call(ex)
-
-      rescue Dentaku::ArgumentError => ex
-        results[var_name] = block.call(ex)
-
+        with_rescues(var_name, results, block) do
+          results[var_name] = calculator.evaluate!(
+            expressions[var_name],
+            context.merge(results),
+            &expression_with_exception_handler(&block)
+          )
+        end
       end
 
     rescue TSort::Cyclic => ex
       block.call(ex)
       {}
+    end
+
+    def with_rescues(var_name, results, block)
+      yield
+
+    rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
+      ex.recipient_variable = var_name
+      results[var_name] = block.call(ex)
+
+    rescue Dentaku::ArgumentError => ex
+      results[var_name] = block.call(ex)
+
+    ensure
+      if results[var_name] == :undefined && calculator.memory.has_key?(var_name.downcase)
+        results[var_name] = calculator.memory[var_name.downcase]
+      end
     end
 
     def expressions
@@ -115,10 +125,6 @@ module Dentaku
           self.class.dependency_cache[cache_key] = d if Dentaku.cache_dependency_order?
         end
       }
-    end
-
-    def evaluate!(expression, results, &block)
-      calculator.evaluate!(expression, results, &block)
     end
   end
 end
