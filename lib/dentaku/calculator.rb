@@ -5,12 +5,13 @@ require 'dentaku/flat_hash'
 require 'dentaku/parser'
 require 'dentaku/string_casing'
 require 'dentaku/token'
+require 'dentaku/variable_resolver'
 
 module Dentaku
   class Calculator
     include StringCasing
     attr_reader :result, :memory, :tokenizer, :case_sensitive, :aliases,
-                :nested_data_support, :ast_cache
+                :nested_data_support, :ast_cache, :variable_resolver
 
     def initialize(options = {})
       clear
@@ -22,6 +23,7 @@ module Dentaku
       @ast_cache = options
       @disable_ast_cache = false
       @function_registry = Dentaku::AST::FunctionRegistry.new
+      @variable_resolver = (options.delete(:variable_resolver) || Dentaku::VariableResolver).new(self)
     end
 
     def self.add_function(name, type, body)
@@ -59,12 +61,13 @@ module Dentaku
       store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
-        unbound = node.dependencies - memory.keys
+        unbound = variable_resolver.unbound_variables(node)
         unless unbound.empty?
           raise UnboundVariableError.new(unbound),
                 "no value provided for variables: #{unbound.uniq.join(', ')}"
         end
-        node.value(memory)
+
+        node.value(variable_resolver)
       end
     end
 
