@@ -26,6 +26,13 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       }.to raise_error(Dentaku::UnboundVariableError)
     end
 
+    it "properly handles access on an unbound variable" do
+      expressions = {more_apples: "apples[0]"}
+      expect {
+        described_class.new(expressions, calculator).solve!
+      }.to raise_error(Dentaku::UnboundVariableError)
+    end
+
     it "lets you know if the result is a div/0 error" do
       expressions = {more_apples: "1/0"}
       expect {

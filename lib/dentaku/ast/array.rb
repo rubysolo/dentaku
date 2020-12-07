@@ -1,6 +1,8 @@
+require_relative "./node"
+
 module Dentaku
   module AST
-    class Array
+    class Array < Node
       def self.arity
       end
 
