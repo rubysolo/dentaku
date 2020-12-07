@@ -1,5 +1,17 @@
 # Change Log
 
+## [v3.4.0] 2020-12-07
+- allow access to intermediate values of flattened hashes
+- catch invalid array syntax in the parse phase
+- drop support for Ruby < 2.5, add support for Ruby 2.7
+- add support for subtracting date literals
+- improve error handling
+- improve math function implementation
+- add caching for calculated variable values
+- allow custom unbound variable handling block at Dentaku module level
+- add enum functions `ANY`, `ALL`, `MAP` and `PLUCK`
+- allow self-referential formulas in bulk expression solver
+- misc internal fixes and enhancements
 ## [v3.3.4] 2019-11-21
 - bugfix release
 
@@ -187,6 +199,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[v3.4.0]:  https://github.com/rubysolo/dentaku/compare/v3.3.4...v3.4.0
 [v3.3.4]:  https://github.com/rubysolo/dentaku/compare/v3.3.3...v3.3.4
 [v3.3.3]:  https://github.com/rubysolo/dentaku/compare/v3.3.2...v3.3.3
 [v3.3.2]:  https://github.com/rubysolo/dentaku/compare/v3.3.1...v3.3.2
