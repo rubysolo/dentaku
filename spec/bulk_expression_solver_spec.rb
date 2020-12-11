@@ -56,6 +56,16 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(solver.solve!).to eq(x: 6, y: 12) # x = 6 by the time y is calculated
     end
 
+    it "does not execute functions unnecessarily" do
+      calls = 0
+      external = ->() { calls += 1 }
+      hash = {test: 'EXTERNAL()'}
+      calculator = Dentaku::Calculator.new
+      calculator.add_function(:external, :numeric, external)
+      calculator.solve(hash)
+      expect(calls).to eq(1)
+    end
+
     it "evaluates expressions in hashes and arrays, and expands the results" do
       calculator.store(
         fruit_quantities: {

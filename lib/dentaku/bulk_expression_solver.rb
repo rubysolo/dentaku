@@ -61,17 +61,19 @@ module Dentaku
                                     .transform_values { |v| calculator.ast(v) }
                                     .partition { |_, v| calculator.dependencies(v, nil).empty? }
 
-      context = calculator.memory.merge(facts.to_h.each_with_object({}) do |(var_name, ast), h|
+      evaluated_facts = facts.to_h.each_with_object({}) do |(var_name, ast), h|
         with_rescues(var_name, h, block) do
           h[var_name] = ast.is_a?(Array) ? ast.map(&:value) : ast.value
         end
-      end)
+      end
+
+      context = calculator.memory.merge(evaluated_facts)
 
       variables_in_resolve_order.each_with_object({}) do |var_name, results|
         next if expressions[var_name].nil?
 
         with_rescues(var_name, results, block) do
-          results[var_name] = calculator.evaluate!(
+          results[var_name] = evaluated_facts[var_name] || calculator.evaluate!(
             expressions[var_name],
             context.merge(results),
             &expression_with_exception_handler(&block)
