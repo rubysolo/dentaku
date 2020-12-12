@@ -1,6 +1,6 @@
 # Change Log
 
-## [HEAD] Unreleased
+## [v3.4.1] 2020-12-12
 - prevent extra evaluations in bulk expression solver
 
 ## [v3.4.0] 2020-12-07
@@ -203,7 +203,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.4.0...HEAD
+[HEAD]:  https://github.com/rubysolo/dentaku/compare/v3.4.0...v3.4.1
 [v3.4.0]:  https://github.com/rubysolo/dentaku/compare/v3.3.4...v3.4.0
 [v3.3.4]:  https://github.com/rubysolo/dentaku/compare/v3.3.3...v3.3.4
 [v3.3.3]:  https://github.com/rubysolo/dentaku/compare/v3.3.2...v3.3.3
