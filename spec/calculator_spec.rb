@@ -502,6 +502,10 @@ describe Dentaku::Calculator do
           {"name" => "Bob",  "age" => 44},
           {"name" => "Jane", "age" => 27}
         ])).to eq(["Bob", "Jane"])
+        expect(calculator.evaluate!('map(users, u, IF(u.age < 30, u, null))', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq([nil, { "name" => "Jane", "age" => 27 }])
       end
     end
 
