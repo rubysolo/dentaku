@@ -700,9 +700,13 @@ describe Dentaku::Calculator do
       it method do
         if Math.method(method).arity == 2
           expect(calculator.evaluate("#{method}(x,y)", x: 1, y: '2')).to eq(Math.send(method, 1, 2))
+          expect(calculator.evaluate("#{method}(x,y) + 1", x: 1, y: '2')).to be_within(0.00001).of(Math.send(method, 1, 2) + 1)
           expect { calculator.evaluate!("#{method}(x)", x: 1) }.to raise_error(Dentaku::ParseError)
         else
           expect(calculator.evaluate("#{method}(1)")).to eq(Math.send(method, 1))
+          unless [:atanh, :frexp, :lgamma].include?(method)
+            expect(calculator.evaluate("#{method}(1) + 1")).to be_within(0.00001).of(Math.send(method, 1) + 1)
+          end
         end
       end
     end
