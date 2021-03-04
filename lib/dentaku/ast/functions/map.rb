@@ -23,7 +23,7 @@ module Dentaku
 
         collection.map do |item_value|
           expression.value(
-            context.update(
+            context.merge(
               FlatHash.from_hash_with_intermediates(item_identifier => item_value)
             )
           )
