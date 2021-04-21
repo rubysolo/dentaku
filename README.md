@@ -152,7 +152,7 @@ Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/m
 
 String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`, `CONTAINS`
 
-Collection: `MAP`, `FILTER`, `ALL`, `ANY`
+Collection: `MAP`, `FILTER`, `ALL`, `ANY`, `PLUCK`
 
 RESOLVING DEPENDENCIES
 ----------------------
