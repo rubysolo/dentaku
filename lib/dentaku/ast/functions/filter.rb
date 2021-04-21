@@ -21,7 +21,7 @@ module Dentaku
         item_identifier = @args[1].identifier
         expression      = @args[2]
 
-        Array(collection).filter do |item_value|
+        Array(collection).select do |item_value|
           expression.value(
             context.merge(
               FlatHash.from_hash_with_intermediates(item_identifier => item_value)
