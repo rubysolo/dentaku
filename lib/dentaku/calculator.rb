@@ -59,7 +59,7 @@ module Dentaku
       store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
-        unbound = node.dependencies - memory.keys
+        unbound = node.dependencies(memory)
         unless unbound.empty?
           raise UnboundVariableError.new(unbound),
                 "no value provided for variables: #{unbound.uniq.join(', ')}"
