@@ -1,5 +1,14 @@
 # Change Log
 
+## [master]
+- add FILTER function
+- add concurrent-ruby dependency to make global calculator object thread safe
+- add Ruby 3 support
+- allow formulas to access intermediate context values
+- fix incorrect Ruby Math function return type
+- fix context mutation bug
+- fix dependency resolution bug
+
 ## [v3.4.1] 2020-12-12
 - prevent extra evaluations in bulk expression solver
 
@@ -203,6 +212,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[master]:  https://github.com/rubysolo/dentaku/compare/v3.4.1...HEAD
 [v3.4.1]:  https://github.com/rubysolo/dentaku/compare/v3.4.0...v3.4.1
 [v3.4.0]:  https://github.com/rubysolo/dentaku/compare/v3.3.4...v3.4.0
 [v3.3.4]:  https://github.com/rubysolo/dentaku/compare/v3.3.3...v3.3.4
