@@ -3,7 +3,7 @@ require_relative '../../exceptions'
 
 module Dentaku
   module AST
-    class Map < Function
+    class Filter < Function
       def self.min_param_count
         3
       end
@@ -21,7 +21,7 @@ module Dentaku
         item_identifier = @args[1].identifier
         expression      = @args[2]
 
-        collection.map do |item_value|
+        Array(collection).select do |item_value|
           expression.value(
             context.merge(
               FlatHash.from_hash_with_intermediates(item_identifier => item_value)
@@ -33,4 +33,4 @@ module Dentaku
   end
 end
 
-Dentaku::AST::Function.register_class(:map, Dentaku::AST::Map)
+Dentaku::AST::Function.register_class(:filter, Dentaku::AST::Filter)

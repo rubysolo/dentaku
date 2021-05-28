@@ -40,8 +40,10 @@ module Dentaku
         self.class.call(*args)
       end
 
+      ARRAY_RETURN_TYPES = [:frexp, :lgamma].freeze
+
       def type
-        nil
+        ARRAY_RETURN_TYPES.include?(@name) ? :array : :numeric
       end
     end
   end

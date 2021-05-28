@@ -1,4 +1,5 @@
 require "bigdecimal"
+require "concurrent"
 require "dentaku/calculator"
 require "dentaku/version"
 
@@ -9,11 +10,11 @@ module Dentaku
   @aliases = {}
 
   def self.evaluate(expression, data = {}, &block)
-    calculator.evaluate(expression, data, &block)
+    calculator.value.evaluate(expression, data, &block)
   end
 
   def self.evaluate!(expression, data = {}, &block)
-    calculator.evaluate!(expression, data, &block)
+    calculator.value.evaluate!(expression, data, &block)
   end
 
   def self.enable_caching!
@@ -55,7 +56,7 @@ module Dentaku
   end
 
   def self.calculator
-    @calculator ||= Dentaku::Calculator.new
+    @calculator ||= Concurrent::ThreadLocalVar.new { Dentaku::Calculator.new }
   end
 end
 

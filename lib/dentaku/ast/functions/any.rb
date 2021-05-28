@@ -23,8 +23,8 @@ module Dentaku
 
         Array(collection).any? do |item_value|
           expression.value(
-            context.update(
-              FlatHash.from_hash(item_identifier => item_value)
+            context.merge(
+              FlatHash.from_hash_with_intermediates(item_identifier => item_value)
             )
           )
         end

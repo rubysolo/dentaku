@@ -26,6 +26,13 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       }.to raise_error(Dentaku::UnboundVariableError)
     end
 
+    it "properly handles access on an unbound variable" do
+      expressions = {more_apples: "apples[0]"}
+      expect {
+        described_class.new(expressions, calculator).solve!
+      }.to raise_error(Dentaku::UnboundVariableError)
+    end
+
     it "lets you know if the result is a div/0 error" do
       expressions = {more_apples: "1/0"}
       expect {
@@ -37,6 +44,26 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expressions = { "the value of x, incremented" => "x + 1" }
       solver = described_class.new(expressions, calculator.store("x" => 3))
       expect(solver.solve!).to eq("the value of x, incremented" => 4)
+    end
+
+    it "allows self-referential formulas" do
+      expressions = { x: "x + 1" }
+      solver = described_class.new(expressions, calculator.store(x: 1))
+      expect(solver.solve!).to eq(x: 2)
+
+      expressions = { x: "y + 3", y: "x * 2" }
+      solver = described_class.new(expressions, calculator.store(x: 5, y: 3))
+      expect(solver.solve!).to eq(x: 6, y: 12) # x = 6 by the time y is calculated
+    end
+
+    it "does not execute functions unnecessarily" do
+      calls = 0
+      external = ->() { calls += 1 }
+      hash = {test: 'EXTERNAL()'}
+      calculator = Dentaku::Calculator.new
+      calculator.add_function(:external, :numeric, external)
+      calculator.solve(hash)
+      expect(calls).to eq(1)
     end
 
     it "evaluates expressions in hashes and arrays, and expands the results" do

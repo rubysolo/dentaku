@@ -59,7 +59,7 @@ module Dentaku
       store(data) do
         node = expression
         node = ast(node) unless node.is_a?(AST::Node)
-        unbound = node.dependencies - memory.keys
+        unbound = node.dependencies(memory)
         unless unbound.empty?
           raise UnboundVariableError.new(unbound),
                 "no value provided for variables: #{unbound.uniq.join(', ')}"
@@ -68,22 +68,30 @@ module Dentaku
       end
     end
 
-    def solve!(expression_hash, precedence = :memory)
-      BulkExpressionSolver.new(expression_hash, self, precedence).solve!
+    def solve!(expression_hash)
+      BulkExpressionSolver.new(expression_hash, self).solve!
     end
 
-    def solve(expression_hash, precedence = :memory, &block)
-      BulkExpressionSolver.new(expression_hash, self, precedence).solve(&block)
+    def solve(expression_hash, &block)
+      BulkExpressionSolver.new(expression_hash, self).solve(&block)
     end
 
     def dependencies(expression, context = {})
-      if expression.is_a? Array
-        return expression.flat_map { |e| dependencies(e, context) }
+      test_context = context.nil? ? {} : store(context) { memory }
+
+      case expression
+      when Dentaku::AST::Node
+        expression.dependencies(test_context)
+      when Array
+        expression.flat_map { |e| dependencies(e, context) }
+      else
+        ast(expression).dependencies(test_context)
       end
-      store(context) { ast(expression).dependencies(memory) }
     end
 
     def ast(expression)
+      return expression.map { |e| ast(e) } if expression.is_a? Array
+
       @ast_cache.fetch(expression) {
         options = {
           case_sensitive: case_sensitive,

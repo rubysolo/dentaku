@@ -197,15 +197,13 @@ describe Dentaku::Calculator do
       )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
     end
 
-    it "allows preferring variables over existing values in memory" do
-      expect(
-        with_memory.solve!({
-          weekly_fruit_budget: "weekly_apple_budget + pear * 4",
-          weekly_apple_budget: "apples * 7",
-          pear:                "1",
-          apples:              "4"
-        }, :variables)
-      ).to eq(apples: 4, pear: 1, weekly_apple_budget: 28, weekly_fruit_budget: 32)
+    it "prefers variables over values in memory if they have no dependencies" do
+      expect(with_memory.solve!(
+        weekly_fruit_budget: "weekly_apple_budget + pear * 4",
+        weekly_apple_budget: "apples * 7",
+        pear:                "1",
+        apples:              "4"
+      )).to eq(apples: 4, pear: 1, weekly_apple_budget: 28, weekly_fruit_budget: 32)
     end
 
     it "preserves hash keys" do
@@ -504,6 +502,10 @@ describe Dentaku::Calculator do
           {"name" => "Bob",  "age" => 44},
           {"name" => "Jane", "age" => 27}
         ])).to eq(["Bob", "Jane"])
+        expect(calculator.evaluate!('map(users, u, IF(u.age < 30, u, null))', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq([nil, { "name" => "Jane", "age" => 27 }])
       end
     end
 
@@ -698,9 +700,13 @@ describe Dentaku::Calculator do
       it method do
         if Math.method(method).arity == 2
           expect(calculator.evaluate("#{method}(x,y)", x: 1, y: '2')).to eq(Math.send(method, 1, 2))
+          expect(calculator.evaluate("#{method}(x,y) + 1", x: 1, y: '2')).to be_within(0.00001).of(Math.send(method, 1, 2) + 1)
           expect { calculator.evaluate!("#{method}(x)", x: 1) }.to raise_error(Dentaku::ParseError)
         else
           expect(calculator.evaluate("#{method}(1)")).to eq(Math.send(method, 1))
+          unless [:atanh, :frexp, :lgamma].include?(method)
+            expect(calculator.evaluate("#{method}(1) + 1")).to be_within(0.00001).of(Math.send(method, 1) + 1)
+          end
         end
       end
     end
