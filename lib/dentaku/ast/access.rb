@@ -1,6 +1,8 @@
+require_relative "./node"
+
 module Dentaku
   module AST
-    class Access
+    class Access < Node
       def self.arity
         2
       end

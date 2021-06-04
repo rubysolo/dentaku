@@ -27,20 +27,26 @@ describe Dentaku do
   end
 
   it 'evaluates with class-level shortcut functions' do
-    expect(Dentaku.evaluate('2+2')).to eq(4)
-    expect(Dentaku.evaluate!('2+2')).to eq(4)
-    expect { Dentaku.evaluate!('a+1') }.to raise_error(Dentaku::UnboundVariableError)
+    expect(described_class.evaluate('2+2')).to eq(4)
+    expect(described_class.evaluate!('2+2')).to eq(4)
+    expect { described_class.evaluate!('a+1') }.to raise_error(Dentaku::UnboundVariableError)
+  end
+
+  it 'accepts a block for custom handling of unbound variables' do
+    unbound = 'apples * 1.5'
+    expect(described_class.evaluate(unbound) { :bar }).to eq(:bar)
+    expect(described_class.evaluate(unbound) { |e| e }).to eq(unbound)
   end
 
   it 'evaluates with class-level aliases' do
-    Dentaku.aliases = { roundup: ['roundupup'] }
-    expect(Dentaku.evaluate('roundupup(6.1)')).to eq(7)
+    described_class.aliases = { roundup: ['roundupup'] }
+    expect(described_class.evaluate('roundupup(6.1)')).to eq(7)
   end
 
   it 'sets caching opt-in flags' do
     expect {
-      Dentaku.enable_caching!
-    }.to change { Dentaku.cache_ast? }.from(false).to(true)
-    .and change { Dentaku.cache_dependency_order? }.from(false).to(true)
+      described_class.enable_caching!
+    }.to change { described_class.cache_ast? }.from(false).to(true)
+    .and change { described_class.cache_dependency_order? }.from(false).to(true)
   end
 end

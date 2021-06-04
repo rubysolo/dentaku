@@ -1,6 +1,8 @@
+require_relative "./node"
+
 module Dentaku
   module AST
-    class Grouping
+    class Grouping < Node
       def initialize(node)
         @node = node
       end

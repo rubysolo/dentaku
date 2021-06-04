@@ -1,23 +1,26 @@
 require "bigdecimal"
+require "concurrent"
 require "dentaku/calculator"
 require "dentaku/version"
 
 module Dentaku
   @enable_ast_caching = false
   @enable_dependency_order_caching = false
+  @enable_identifier_caching = false
   @aliases = {}
 
-  def self.evaluate(expression, data = {})
-    calculator.evaluate(expression, data)
+  def self.evaluate(expression, data = {}, &block)
+    calculator.value.evaluate(expression, data, &block)
   end
 
-  def self.evaluate!(expression, data = {})
-    calculator.evaluate!(expression, data)
+  def self.evaluate!(expression, data = {}, &block)
+    calculator.value.evaluate!(expression, data, &block)
   end
 
   def self.enable_caching!
     enable_ast_cache!
     enable_dependency_order_cache!
+    enable_identifier_cache!
   end
 
   def self.enable_ast_cache!
@@ -36,6 +39,14 @@ module Dentaku
     @enable_dependency_order_caching
   end
 
+  def self.enable_identifier_cache!
+    @enable_identifier_caching = true
+  end
+
+  def self.cache_identifier?
+    @enable_identifier_caching
+  end
+
   def self.aliases
     @aliases
   end
@@ -45,7 +56,7 @@ module Dentaku
   end
 
   def self.calculator
-    @calculator ||= Dentaku::Calculator.new
+    @calculator ||= Concurrent::ThreadLocalVar.new { Dentaku::Calculator.new }
   end
 end
 

@@ -35,8 +35,9 @@ describe 'Dentaku::AST::Function::Sum' do
       expect { calculator.evaluate!('SUM()') }.to raise_error(Dentaku::ArgumentError)
     end
 
-    it 'raises an error if an empty array is passed' do
-      expect { calculator.evaluate!('SUM(x)', x: []) }.to raise_error(Dentaku::ArgumentError)
+    it 'does not raise an error if an empty array is passed' do
+      result = calculator.evaluate!('SUM(x)', x: [])
+      expect(result).to eq(0)
     end
   end
 end

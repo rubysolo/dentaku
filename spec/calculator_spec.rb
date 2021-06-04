@@ -197,6 +197,15 @@ describe Dentaku::Calculator do
       )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
     end
 
+    it "prefers variables over values in memory if they have no dependencies" do
+      expect(with_memory.solve!(
+        weekly_fruit_budget: "weekly_apple_budget + pear * 4",
+        weekly_apple_budget: "apples * 7",
+        pear:                "1",
+        apples:              "4"
+      )).to eq(apples: 4, pear: 1, weekly_apple_budget: 28, weekly_fruit_budget: 32)
+    end
+
     it "preserves hash keys" do
       expect(calculator.solve!(
         'meaning_of_life' => 'age + kids',
@@ -320,6 +329,10 @@ describe Dentaku::Calculator do
       expect(error.unbound_variables).to eq(['a', 'b'])
     end
     expect(calculator.evaluate(unbound)).to be_nil
+  end
+
+  it 'accepts a block for custom handling of unbound variables' do
+    unbound = 'foo * 1.5'
     expect(calculator.evaluate(unbound) { :bar }).to eq(:bar)
     expect(calculator.evaluate(unbound) { |e| e }).to eq(unbound)
   end
@@ -433,6 +446,88 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('if (-1 = -1, -1, 5)')).to eq(-1)
       expect(calculator.evaluate('round(-1.23, 1)')).to eq(BigDecimal('-1.2'))
       expect(calculator.evaluate('NOT(some_boolean) AND -1 > 3', some_boolean: true)).to be_falsey
+    end
+
+    describe "any" do
+      it "enumerates values and returns true if any evaluation is truthy" do
+        expect(calculator.evaluate!('any(xs, x, x > 3)', xs: [1, 2, 3, 4])).to be_truthy
+        expect(calculator.evaluate!('any(xs, x, x > 3)', xs: 3)).to be_falsy
+        expect(calculator.evaluate!('any({1,2,3,4}, x, x > 3)')).to be_truthy
+        expect(calculator.evaluate!('any({1,2,3,4}, x, x > 10)')).to be_falsy
+        expect(calculator.evaluate!('any(users, u, u.age > 33)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_truthy
+        expect(calculator.evaluate!('any(users, u, u.age < 18)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_falsy
+      end
+    end
+
+    describe "all" do
+      it "enumerates values and returns true if all evaluations are truthy" do
+        expect(calculator.evaluate!('all(xs, x, x > 3)', xs: [1, 2, 3, 4])).to be_falsy
+        expect(calculator.evaluate!('any(xs, x, x > 2)', xs: 3)).to be_truthy
+        expect(calculator.evaluate!('all({1,2,3,4}, x, x > 0)')).to be_truthy
+        expect(calculator.evaluate!('all({1,2,3,4}, x, x > 10)')).to be_falsy
+        expect(calculator.evaluate!('all(users, u, u.age > 33)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_falsy
+        expect(calculator.evaluate!('all(users, u, u.age < 50)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to be_truthy
+      end
+    end
+
+    describe "map" do
+      it "maps values" do
+        expect(calculator.evaluate!('map(xs, x, x * 2)', xs: [1, 2, 3, 4])).to eq([2, 4, 6, 8])
+        expect(calculator.evaluate!('map({1,2,3,4}, x, x * 2)')).to eq([2, 4, 6, 8])
+        expect(calculator.evaluate!('map(users, u, u.age)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('map(users, u, u.age)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('map(users, u, u.name)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq(["Bob", "Jane"])
+        expect(calculator.evaluate!('map(users, u, u.name)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq(["Bob", "Jane"])
+        expect(calculator.evaluate!('map(users, u, IF(u.age < 30, u, null))', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq([nil, { "name" => "Jane", "age" => 27 }])
+      end
+    end
+
+    describe "pluck" do
+      it "plucks values from array of hashes" do
+        expect(calculator.evaluate!('pluck(users, age)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('pluck(users, age)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq([44, 27])
+        expect(calculator.evaluate!('pluck(users, name)', users: [
+          {name: "Bob",  age: 44},
+          {name: "Jane", age: 27}
+        ])).to eq(["Bob", "Jane"])
+        expect(calculator.evaluate!('pluck(users, name)', users: [
+          {"name" => "Bob",  "age" => 44},
+          {"name" => "Jane", "age" => 27}
+        ])).to eq(["Bob", "Jane"])
+      end
     end
 
     it 'evaluates functions with stored variables' do
@@ -605,9 +700,13 @@ describe Dentaku::Calculator do
       it method do
         if Math.method(method).arity == 2
           expect(calculator.evaluate("#{method}(x,y)", x: 1, y: '2')).to eq(Math.send(method, 1, 2))
+          expect(calculator.evaluate("#{method}(x,y) + 1", x: 1, y: '2')).to be_within(0.00001).of(Math.send(method, 1, 2) + 1)
           expect { calculator.evaluate!("#{method}(x)", x: 1) }.to raise_error(Dentaku::ParseError)
         else
           expect(calculator.evaluate("#{method}(1)")).to eq(Math.send(method, 1))
+          unless [:atanh, :frexp, :lgamma].include?(method)
+            expect(calculator.evaluate("#{method}(1) + 1")).to be_within(0.00001).of(Math.send(method, 1) + 1)
+          end
         end
       end
     end
@@ -705,6 +804,24 @@ describe Dentaku::Calculator do
       expect do
         without_nested_data.solve!('a.b.c')
       end.to raise_error(Dentaku::UnboundVariableError)
+    end
+  end
+
+  describe 'identifier cache' do
+    it 'reduces call count by caching results of resolved identifiers' do
+      called = 0
+      calculator.store_formula("A1", "B1+B1+B1")
+      calculator.store_formula("B1", "C1+C1+C1+C1")
+      calculator.store_formula("C1", "D1")
+      calculator.store("D1", proc { called += 1; 1 })
+
+      expect {
+        Dentaku.enable_identifier_cache!
+      }.to change {
+        called = 0
+        calculator.evaluate("A1")
+        called
+      }.from(12).to(1)
     end
   end
 end

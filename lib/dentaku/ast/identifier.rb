@@ -20,7 +20,9 @@ module Dentaku
 
         case v
         when Node
-          v.value(context)
+          value = v.value(context)
+          context[identifier] = value if Dentaku.cache_identifier?
+          value
         when Proc
           v.call
         else
@@ -29,13 +31,13 @@ module Dentaku
       end
 
       def dependencies(context = {})
-        context.key?(identifier) ? dependencies_of(context[identifier]) : [identifier]
+        context.key?(identifier) ? dependencies_of(context[identifier], context) : [identifier]
       end
 
       private
 
-      def dependencies_of(node)
-        node.respond_to?(:dependencies) ? node.dependencies : []
+      def dependencies_of(node, context)
+        node.respond_to?(:dependencies) ? node.dependencies(context) : []
       end
     end
   end
