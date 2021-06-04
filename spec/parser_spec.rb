@@ -76,6 +76,11 @@ describe Dentaku::Parser do
     expect(node.value).to eq([1, 2, 3])
   end
 
+  it 'respects boolean and precedence' do
+    node = parse('a and b or c and d')
+    expect(node).to be_a(Dentaku::AST::Or)
+  end
+
   context 'invalid expression' do
     it 'raises a parse error for bad math' do
       expect {
