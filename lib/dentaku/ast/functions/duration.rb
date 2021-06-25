@@ -4,11 +4,11 @@ module Dentaku
   module AST
     class Duration < Function
       def self.min_param_count
-        1
+        2
       end
 
       def self.max_param_count
-        1
+        2
       end
 
       class Value

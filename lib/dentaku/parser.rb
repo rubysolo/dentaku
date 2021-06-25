@@ -43,11 +43,11 @@ module Dentaku
       min_size = operator.arity || operator.min_param_count || count
       max_size = operator.arity || operator.max_param_count || count
 
-      if output.length < min_size
+      if output.length < min_size || args_size < min_size
         fail! :too_few_operands, operator: operator, expect: min_size, actual: output.length
       end
 
-      if output.length > max_size && operations.empty?
+      if output.length > max_size && operations.empty? || args_size > max_size
         fail! :too_many_operands, operator: operator, expect: max_size, actual: output.length
       end
 

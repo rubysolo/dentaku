@@ -89,6 +89,16 @@ describe Dentaku::Parser do
       }.to raise_error(Dentaku::ParseError)
     end
 
+    it 'raises a parse error for too many operands' do
+      expect {
+        parse("IF(1, 0, IF(1, 2, 3, 4))")
+      }.to raise_error(Dentaku::ParseError)
+
+      expect {
+        parse("CASE a WHEN 1 THEN true ELSE THEN IF(1, 2, 3, 4) END")
+      }.to raise_error(Dentaku::ParseError)
+    end
+
     it 'raises a parse error for bad grouping structure' do
       expect {
         parse(",")
