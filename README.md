@@ -144,7 +144,7 @@ Also, all functions from Ruby's Math module, including `SIN`, `COS`, `TAN`, etc.
 
 Comparison: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`,
 
-Logic: `IF`, `AND`, `OR`, `NOT`, `SWITCH`
+Logic: `IF`, `AND`, `OR`, `XOR`, `NOT`, `SWITCH`
 
 Numeric: `MIN`, `MAX`, `SUM`, `AVG`, `COUNT`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`
 
