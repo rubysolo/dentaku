@@ -47,15 +47,5 @@ module Dentaku
       end
     end
 
-    class Xor < Combinator
-      def operator
-        :xor
-      end
-
-      def value(context = {})
-        left.value(context) ^ right.value(context)
-      end
-    end
-
   end
 end

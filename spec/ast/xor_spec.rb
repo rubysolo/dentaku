@@ -16,7 +16,7 @@ describe 'Dentaku::AST::Xor' do
   end
 
   it 'returns false if more than one of the arguments is true' do
-    result = Dentaku('XOR(true, true)')
+    result = Dentaku('XOR(false, true, true)')
     expect(result).to eq(false)
   end
 
@@ -26,7 +26,7 @@ describe 'Dentaku::AST::Xor' do
   end
 
   it 'raises an error if no arguments are passed' do
-    expect { calculator.evaluate!('XOR()') }.to raise_error(Dentaku::ArgumentError)
+    expect { calculator.evaluate!('XOR()') }.to raise_error(Dentaku::ParseError)
   end
 
   it 'raises an error if a non logical argument is passed' do
