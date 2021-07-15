@@ -22,6 +22,7 @@ module Dentaku
 
       and:      AST::And,
       or:       AST::Or,
+      xor:      AST::Xor,
     }.freeze
 
     attr_reader :input, :output, :operations, :arities, :case_sensitive
