@@ -186,6 +186,10 @@ describe Dentaku::Calculator do
     it "finds no dependencies in array literals" do
       expect(calculator.dependencies([1, 2, 3])).to eq([])
     end
+
+    it "finds dependencies in deferred_args" do
+      expect(calculator.dependencies('MAP(vals, val, val + step)')).to eq(['vals', 'step'])
+    end
   end
 
   describe 'solve!' do

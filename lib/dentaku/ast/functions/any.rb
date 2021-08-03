@@ -1,21 +1,8 @@
-require_relative '../function'
-require_relative '../../exceptions'
+require_relative './enumerable'
 
 module Dentaku
   module AST
-    class Any < Function
-      def self.min_param_count
-        3
-      end
-
-      def self.max_param_count
-        3
-      end
-
-      def deferred_args
-        [1, 2]
-      end
-
+    class Any < Enumerable
       def value(context = {})
         collection      = @args[0].value(context)
         item_identifier = @args[1].identifier
