@@ -12,10 +12,6 @@ module Dentaku
         Float::INFINITY
       end
 
-      def deferred_args
-        [1, 2]
-      end
-
       def value(context = {})
         if @args.empty?
           raise Dentaku::ArgumentError.for(
