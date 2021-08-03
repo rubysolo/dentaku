@@ -14,16 +14,8 @@ module Dentaku
       end
 
       def dependencies(context = {})
-        deferred = deferred_args
         @args.each_with_index
-             .reject { |_, i| deferred.include? i }
              .flat_map { |a, _| a.dependencies(context) }
-      end
-
-      # override if your function implementation needs to defer evaluation of
-      # any arguments
-      def deferred_args
-        []
       end
 
       def self.get(name)

@@ -12,8 +12,19 @@ module Dentaku
         3
       end
 
-      def deferred_args
-        [1, 2]
+      def dependencies(context = {})
+        validate_identifier(@args[1])
+
+        collection      = @args[0]
+        item_identifier = @args[1].identifier
+        expression      = @args[2]
+
+        collection_deps = collection.dependencies(context)
+        expression_deps = (expression&.dependencies(context) || []).reject do |i|
+          i == item_identifier || i.start_with?("#{item_identifier}.")
+        end
+
+        collection_deps + expression_deps
       end
 
       def validate_identifier(arg, message = "#{name}() requires second argument to be an identifier")

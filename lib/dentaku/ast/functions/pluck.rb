@@ -12,13 +12,7 @@ module Dentaku
         2
       end
 
-      def deferred_args
-        [1]
-      end
-
       def value(context = {})
-        validate_identifier(@args[1])
-
         collection = Array(@args[0].value(context))
         unless collection.all? { |elem| elem.is_a?(Hash) }
           raise ArgumentError.for(:incompatible_type, value: collection),
