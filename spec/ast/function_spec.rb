@@ -61,4 +61,9 @@ describe Dentaku::AST::Function do
     expect { described_class.numeric('7.') }.to raise_error Dentaku::ArgumentError
     expect { described_class.numeric(true) }.to raise_error Dentaku::ArgumentError
   end
+
+  it "allows read access to arguments" do
+    fn = described_class.new(1, 2, 3)
+    expect(fn.args).to eq([1, 2, 3])
+  end
 end

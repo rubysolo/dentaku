@@ -4,6 +4,8 @@ require_relative 'function_registry'
 module Dentaku
   module AST
     class Function < Node
+      attr_reader :args
+
       # @return [Integer] with the number of significant decimal digits to use.
       DIG = Float::DIG + 1
 
