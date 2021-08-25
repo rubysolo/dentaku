@@ -3,6 +3,8 @@
 ## [Unreleased]
 - fix bug with function argument count
 - add XOR operator
+- make function args publicly accessible
+- better argument handling for collection functions
 
 ## [v3.4.2]
 - add FILTER function

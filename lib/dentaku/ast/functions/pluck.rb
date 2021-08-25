@@ -1,9 +1,9 @@
-require_relative '../function'
+require_relative './enum'
 require_relative '../../exceptions'
 
 module Dentaku
   module AST
-    class Pluck < Function
+    class Pluck < Enum
       def self.min_param_count
         2
       end
@@ -17,7 +17,14 @@ module Dentaku
       end
 
       def value(context = {})
-        collection = @args[0].value(context)
+        validate_identifier(@args[1])
+
+        collection = Array(@args[0].value(context))
+        unless collection.all? { |elem| elem.is_a?(Hash) }
+          raise ArgumentError.for(:incompatible_type, value: collection),
+                'PLUCK() requires first argument to be an array of hashes'
+        end
+
         pluck_path = @args[1].identifier
 
         collection.map { |h| h.transform_keys(&:to_s)[pluck_path] }

@@ -19,6 +19,10 @@ module Dentaku
       def type
         nil
       end
+
+      def name
+        self.class.name.split("::").last.upcase
+      end
     end
   end
 end

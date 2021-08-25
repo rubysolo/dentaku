@@ -1,27 +1,17 @@
-require_relative '../function'
+require_relative './enum'
 require_relative '../../exceptions'
 
 module Dentaku
   module AST
-    class Any < Function
-      def self.min_param_count
-        3
-      end
-
-      def self.max_param_count
-        3
-      end
-
-      def deferred_args
-        [1, 2]
-      end
-
+    class Any < Enum
       def value(context = {})
-        collection      = @args[0].value(context)
+        validate_identifier(@args[1])
+
+        collection      = Array(@args[0].value(context))
         item_identifier = @args[1].identifier
         expression      = @args[2]
 
-        Array(collection).any? do |item_value|
+        collection.any? do |item_value|
           expression.value(
             context.merge(
               FlatHash.from_hash_with_intermediates(item_identifier => item_value)
