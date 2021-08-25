@@ -189,6 +189,7 @@ describe Dentaku::Calculator do
 
     it "finds dependencies in item expressions" do
       expect(calculator.dependencies('MAP(vals, val, val + step)')).to eq(['vals', 'step'])
+      expect(calculator.dependencies('ALL(people, person, person.age < adult)')).to eq(['people', 'adult'])
     end
   end
 

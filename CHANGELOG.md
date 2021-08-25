@@ -5,6 +5,7 @@
 - add XOR operator
 - make function args publicly accessible
 - better argument handling for collection functions
+- better dependency reporting for collection functions
 
 ## [v3.4.2]
 - add FILTER function
