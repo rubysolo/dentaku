@@ -18,10 +18,15 @@ module Dentaku
 
       def value(context = {})
         collection      = @args[0].value(context)
-        item_identifier = @args[1].identifier
+        item_identifier = @args[1]
+        if !item_identifier.is_a?(Identifier)
+          raise ArgumentError.for(:incompatible_type, value: item_identifier, for: Identifier),
+                'MAP() requires second argument to be an identifier'
+        end
+        item_identifier = item_identifier.identifier
         expression      = @args[2]
 
-        collection.map do |item_value|
+        Array(collection).map do |item_value|
           expression.value(
             context.merge(
               FlatHash.from_hash_with_intermediates(item_identifier => item_value)
