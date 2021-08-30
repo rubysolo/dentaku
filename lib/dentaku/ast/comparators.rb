@@ -38,37 +38,37 @@ module Dentaku
 
     class LessThan < Comparator
       def operator
-        return :<
+        :<
       end
     end
 
     class LessThanOrEqual < Comparator
       def operator
-        return :<=
+        :<=
       end
     end
 
     class GreaterThan < Comparator
       def operator
-        return :>
+        :>
       end
     end
 
     class GreaterThanOrEqual < Comparator
       def operator
-        return :>=
+        :>=
       end
     end
 
     class NotEqual < Comparator
       def operator
-        return :!=
+        :!=
       end
     end
 
     class Equal < Comparator
       def operator
-        return :==
+        :==
       end
     end
   end
