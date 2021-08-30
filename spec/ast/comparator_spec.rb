@@ -26,15 +26,16 @@ describe Dentaku::AST::Comparator do
     expect { less_than_or_equal(one, nilly).value(ctx) }.to raise_error Dentaku::ArgumentError
     expect { greater_than(one, nilly).value(ctx) }.to raise_error Dentaku::ArgumentError
     expect { greater_than_or_equal(one, nilly).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { greater_than_or_equal(one, x).value(ctx) }.to raise_error Dentaku::ArgumentError
     expect { not_equal(one, nilly).value(ctx) }.to_not raise_error
     expect { equal(one, nilly).value(ctx) }.to_not raise_error
   end
 
-  it 'raises a dentaku error when nil is passed in as first argument' do
-    expect { less_than(nilly, one).value(ctx) }.to raise_error Dentaku::Error
-    expect { less_than_or_equal(nilly, one).value(ctx) }.to raise_error Dentaku::Error
-    expect { greater_than(nilly, one).value(ctx) }.to raise_error Dentaku::Error
-    expect { greater_than_or_equal(nilly, one).value(ctx) }.to raise_error Dentaku::Error
+  it 'raises a dentaku argument error when nil is passed in as first argument' do
+    expect { less_than(nilly, one).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { less_than_or_equal(nilly, one).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { greater_than(nilly, one).value(ctx) }.to raise_error Dentaku::ArgumentError
+    expect { greater_than_or_equal(nilly, one).value(ctx) }.to raise_error Dentaku::ArgumentError
     expect { not_equal(nilly, one).value(ctx) }.to_not raise_error
     expect { equal(nilly, one).value(ctx) }.to_not raise_error
   end
@@ -48,10 +49,6 @@ describe Dentaku::AST::Comparator do
     expect(equal(x, y).operator).to eq(:==)
     expect { Dentaku::AST::Comparator.new(one, two).operator }
       .to raise_error(NotImplementedError)
-  end
-
-  it 'relies on inheriting classes to expose value method' do
-    expect { described_class.new(one, two).value(ctx) }.to raise_error NoMethodError
   end
 
   private
