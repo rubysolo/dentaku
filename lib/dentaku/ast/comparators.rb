@@ -15,74 +15,60 @@ module Dentaku
         raise NotImplementedError
       end
 
+      def value(context = {})
+        l = validate_value(left.value(context))
+        r = validate_value(right.value(context))
+
+        l.public_send(operator, r)
+      rescue ::ArgumentError => e
+        raise Dentaku::ArgumentError.for(:incompatible_type, value: r, for: l.class), e.message
+      end
+
       private
 
-      def value
-        yield
-      rescue ::ArgumentError => argument_error
-        raise Dentaku::ArgumentError, argument_error.message
-      rescue NoMethodError => no_method_error
-        raise Dentaku::Error, no_method_error.message
+      def validate_value(value)
+        unless value.respond_to?(operator)
+          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator),
+                "#{ self.class } requires operands that respond to #{operator}"
+        end
+
+        value
       end
     end
 
     class LessThan < Comparator
-      def value(context = {})
-        super() { left.value(context) < right.value(context) }
-      end
-
       def operator
-        return :<
+        :<
       end
     end
 
     class LessThanOrEqual < Comparator
-      def value(context = {})
-        super() { left.value(context) <= right.value(context) }
-      end
-
       def operator
-        return :<=
+        :<=
       end
     end
 
     class GreaterThan < Comparator
-      def value(context = {})
-        super() { left.value(context) > right.value(context) }
-      end
-
       def operator
-        return :>
+        :>
       end
     end
 
     class GreaterThanOrEqual < Comparator
-      def value(context = {})
-        super() { left.value(context) >= right.value(context) }
-      end
-
       def operator
-        return :>=
+        :>=
       end
     end
 
     class NotEqual < Comparator
-      def value(context = {})
-        super() { left.value(context) != right.value(context) }
-      end
-
       def operator
-        return :!=
+        :!=
       end
     end
 
     class Equal < Comparator
-      def value(context = {})
-        super() { left.value(context) == right.value(context) }
-      end
-
       def operator
-        return :==
+        :==
       end
     end
   end

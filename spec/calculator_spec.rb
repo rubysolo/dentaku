@@ -262,8 +262,13 @@ describe Dentaku::Calculator do
 
   describe 'solve' do
     it "returns :undefined when variables are unbound" do
-      expressions = {more_apples: "apples + 1"}
-      expect(calculator.solve(expressions)).to eq(more_apples: :undefined)
+      expressions = {more_apples: "apples + 1", compare_apples: "apples > 1"}
+      expect(calculator.solve(expressions)).to eq(more_apples: :undefined, compare_apples: :undefined)
+    end
+
+    it "returns :undefined when variables are nil" do
+      expressions = {more_apples: "apples + 1", compare_apples: "apples > 1"}
+      expect(calculator.store(apples: nil).solve(expressions)).to eq(more_apples: :undefined, compare_apples: :undefined)
     end
 
     it "allows passing in a custom value to an error handler" do
