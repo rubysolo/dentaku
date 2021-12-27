@@ -715,6 +715,12 @@ describe Dentaku::Calculator do
         end
       end
     end
+
+    it 'are defined with a properly named class that represents it to support AST marshaling' do
+      expect {
+        Marshal.dump(calculator.ast('SQRT(20)'))
+      }.not_to raise_error
+    end
   end
 
   describe 'disable_cache' do
