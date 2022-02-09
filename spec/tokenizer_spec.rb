@@ -25,6 +25,9 @@ describe Dentaku::Tokenizer do
       expect(tokens.map(&:category)).to eq([:numeric])
       expect(tokens.map(&:value)).to eq([6.02e23])
     end
+
+    token = tokenizer.tokenize('6E23')
+    expect(token.map(&:value)).to eq([0.6e24])
   end
 
   it 'tokenizes addition' do
