@@ -91,7 +91,7 @@ module Dentaku
 
       def numeric
         new(:numeric, '((?:\d+(\.\d+)?|\.\d+)(?:(e|E)(\+|-)?\d+)?)\b', lambda { |raw|
-          raw =~ /\./ ? BigDecimal(raw) : raw.to_i
+          raw =~ /(\.|e|E)/ ? BigDecimal(raw) : raw.to_i
         })
       end
 
