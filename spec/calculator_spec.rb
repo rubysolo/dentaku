@@ -314,6 +314,20 @@ describe Dentaku::Calculator do
         )
       }.not_to raise_error
     end
+
+    it "integrates with custom functions" do
+      calculator.add_function(:custom, :integer, -> { 1 })
+
+      result = calculator.solve(
+        a: "1",
+        b: "CUSTOM() - a"
+      )
+
+      expect(result).to eq(
+        a: 1,
+        b: 0
+      )
+    end
   end
 
   it 'evaluates a statement with no variables' do
