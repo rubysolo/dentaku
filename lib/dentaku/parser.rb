@@ -144,7 +144,8 @@ module Dentaku
                 inner_case_inputs,
                 operations: [AST::Case],
                 arities: [0],
-                function_registry: @function_registry
+                function_registry: @function_registry,
+                case_sensitive: case_sensitive
               )
               subparser.parse
               output.concat(subparser.output)

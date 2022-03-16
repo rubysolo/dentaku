@@ -71,6 +71,12 @@ describe Dentaku::Parser do
     expect(node.value("x" => 3)).to eq(4)
   end
 
+  it 'evaluates a nested case statement with case-sensitivity' do
+    node = parse('CASE x WHEN 1 THEN CASE Y WHEN "A" THEN 2 WHEN "B" THEN 3 END END', { case_sensitive: true }, { case_sensitive: true })
+    puts node.inspect
+    expect(node.value("x" => 1, "y" => "A", "Y" => "B")).to eq(3)
+  end
+
   it 'evaluates arrays' do
     node = parse('{1, 2, 3}')
     expect(node.value).to eq([1, 2, 3])
@@ -154,8 +160,8 @@ describe Dentaku::Parser do
 
   private
 
-  def parse(expr)
-    tokens = Dentaku::Tokenizer.new.tokenize(expr)
-    described_class.new(tokens).parse
+  def parse(expr, parser_options={}, tokenizer_options={})
+    tokens = Dentaku::Tokenizer.new.tokenize(expr, tokenizer_options)
+    described_class.new(tokens, parser_options).parse
   end
 end

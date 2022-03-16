@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'dentaku'
 describe Dentaku::Calculator do
   let(:calculator)   { described_class.new }
+  let(:with_case_sensitivity) { described_class.new(case_sensitive: true)}
   let(:with_memory)  { described_class.new.store(apples: 3) }
   let(:with_aliases) { described_class.new(aliases: { round: ['rrround'] }) }
   let(:without_nested_data) { described_class.new(nested_data_support: false) }
@@ -686,6 +687,31 @@ describe Dentaku::Calculator do
         formula,
         type: 'organic',
         quantity: 10,
+        fruit: 'banana')
+      expect(value).to eq(5)
+    end
+
+    it 'handles nested case statements with case-sensitivity' do
+      formula = <<-FORMULA
+      CASE fruit
+      WHEN 'apple'
+        THEN 1 * quantity
+      WHEN 'banana'
+        THEN
+        CASE QUANTITY
+        WHEN 1 THEN 2
+        WHEN 10 THEN
+          CASE type
+          WHEN 'organic' THEN 5
+          END
+        END
+      END
+      FORMULA
+      value = with_case_sensitivity.evaluate(
+        formula,
+        type: 'organic',
+        quantity: 1,
+        QUANTITY: 10,
         fruit: 'banana')
       expect(value).to eq(5)
     end
