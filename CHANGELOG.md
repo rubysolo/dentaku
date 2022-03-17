@@ -1,11 +1,16 @@
 # Change Log
 
-## [Unreleased]
+## [v3.5.0]
 - fix bug with function argument count
 - add XOR operator
 - make function args publicly accessible
 - better argument handling for collection functions
 - better dependency reporting for collection functions
+- allow ruby math-backed functions to be serialized
+- improve scientific notation handling
+- improve comparator argument errors
+- respect case sensitivity in nested case statments
+- add visitor pattern
 
 ## [v3.4.2]
 - add FILTER function
@@ -219,7 +224,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[Unreleased]:  https://github.com/rubysolo/dentaku/compare/v3.4.2...HEAD
+[v3.5.0]:  https://github.com/rubysolo/dentaku/compare/v3.4.2...v3.5.0
 [v3.4.2]:  https://github.com/rubysolo/dentaku/compare/v3.4.1...v3.4.2
 [v3.4.1]:  https://github.com/rubysolo/dentaku/compare/v3.4.0...v3.4.1
 [v3.4.0]:  https://github.com/rubysolo/dentaku/compare/v3.3.4...v3.4.0
