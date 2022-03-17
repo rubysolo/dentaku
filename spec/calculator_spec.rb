@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'dentaku'
 describe Dentaku::Calculator do
   let(:calculator)   { described_class.new }
-  let(:with_case_sensitivity) { described_class.new(case_sensitive: true)}
+  let(:with_case_sensitivity) { described_class.new(case_sensitive: true) }
   let(:with_memory)  { described_class.new.store(apples: 3) }
   let(:with_aliases) { described_class.new(aliases: { round: ['rrround'] }) }
   let(:without_nested_data) { described_class.new(nested_data_support: false) }
