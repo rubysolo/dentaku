@@ -6,7 +6,7 @@ describe 'Dentaku::AST::Or' do
   let(:calculator) { Dentaku::Calculator.new }
 
   it 'returns false if all of the arguments are false' do
-    result = Dentaku('OR(1 = "1", 0 = 1)')
+    result = Dentaku('OR(1 = "2", 0 = 1)')
     expect(result).to eq(false)
   end
 
