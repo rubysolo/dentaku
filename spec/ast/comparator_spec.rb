@@ -5,7 +5,9 @@ require 'dentaku/token'
 
 describe Dentaku::AST::Comparator do
   let(:one) { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 1) }
+  let(:one_str) { Dentaku::AST::String.new Dentaku::Token.new(:string, '1') }
   let(:two) { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 2) }
+  let(:two_str) { Dentaku::AST::String.new Dentaku::Token.new(:string, '2') }
   let(:x) { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'x') }
   let(:y) { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'y') }
   let(:nilly) do
@@ -19,6 +21,12 @@ describe Dentaku::AST::Comparator do
     expect(greater_than(two, one).value(ctx)).to be_truthy
     expect(not_equal(x, y).value(ctx)).to be_truthy
     expect(equal(x, y).value(ctx)).to be_falsey
+  end
+
+  it 'performs conversion from string to numeric operands' do
+    expect(less_than(one, two_str).value(ctx)).to be_truthy
+    expect(less_than(one_str, two_str).value(ctx)).to be_truthy
+    expect(less_than(one_str, two).value(ctx)).to be_truthy
   end
 
   it 'raises a dentaku argument error when incorrect arguments are passed in' do

@@ -16,8 +16,8 @@ module Dentaku
       end
 
       def value(context = {})
-        l = validate_value(left.value(context))
-        r = validate_value(right.value(context))
+        l = validate_value(cast(left.value(context)))
+        r = validate_value(cast(right.value(context)))
 
         l.public_send(operator, r)
       rescue ::ArgumentError => e
@@ -25,6 +25,16 @@ module Dentaku
       end
 
       private
+
+      def cast(val)
+        return val unless val.is_a?(::String)
+        return val if val.empty?
+        return val unless val.match?(/\A-?\d*(\.\d+)?\z/)
+
+        v = BigDecimal(val, Float::DIG + 1)
+        v = v.to_i if v.frac.zero?
+        v
+      end
 
       def validate_value(value)
         unless value.respond_to?(operator)
