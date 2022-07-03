@@ -28,9 +28,9 @@ module Dentaku
         raise NotImplementedError
       end
 
-      def value(context = {})
-        l = cast(left.value(context))
-        r = cast(right.value(context))
+      def value(context = {}, prefer_integer = false)
+        l = cast(left.value(context), prefer_integer)
+        r = cast(right.value(context), prefer_integer)
         begin
           l.public_send(operator, r)
         rescue ::TypeError => e
@@ -41,7 +41,7 @@ module Dentaku
 
       private
 
-      def cast(val, prefer_integer = true)
+      def cast(val, prefer_integer = false)
         validate_value(val)
         numeric(val, prefer_integer)
       end
