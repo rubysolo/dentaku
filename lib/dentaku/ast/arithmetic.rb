@@ -31,6 +31,7 @@ module Dentaku
       def value(context = {})
         l = cast(left.value(context))
         r = cast(right.value(context))
+
         begin
           l.public_send(operator, r)
         rescue ::TypeError => e
@@ -41,19 +42,21 @@ module Dentaku
 
       private
 
-      def cast(val, prefer_integer = true)
+      def cast(val)
         validate_value(val)
-        numeric(val, prefer_integer)
+        numeric(val)
       end
 
-      def numeric(val, prefer_integer)
-        v = BigDecimal(val, Float::DIG + 1)
-        v = v.to_i if prefer_integer && v.frac.zero?
-        v
-      rescue ::TypeError
-        # If we got a TypeError BigDecimal or to_i failed;
-        # let value through so ruby things like Time - integer work
-        val
+      def numeric(val)
+        case val
+        when /\.\d+/ then decimal(val)
+        when /\d+/ then val.to_i
+        else val
+        end
+      end
+
+      def decimal(val)
+        BigDecimal(val, Float::DIG + 1)
       end
 
       def valid_node?(node)
@@ -143,7 +146,7 @@ module Dentaku
       end
 
       def value(context = {})
-        r = cast(right.value(context), false)
+        r = decimal(cast(right.value(context)))
         raise Dentaku::ZeroDivisionError if r.zero?
 
         cast(cast(left.value(context)) / r)

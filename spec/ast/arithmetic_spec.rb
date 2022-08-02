@@ -45,6 +45,13 @@ describe Dentaku::AST::Arithmetic do
     expect(add(x, one, 'x' => '.1')).to eq(1.1)
     expect { add(x, one, 'x' => 'invalid') }.to raise_error(Dentaku::ArgumentError)
     expect { add(x, one, 'x' => '') }.to raise_error(Dentaku::ArgumentError)
+
+    int_one = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, "1")
+    decimal_one = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, "1.0")
+
+    expect(add(int_one, int_one).class).to eq(Integer)
+    expect(add(int_one, decimal_one).class).to eq(BigDecimal)
+    expect(add(decimal_one, decimal_one).class).to eq(BigDecimal)
   end
 
   it 'performs arithmetic on arrays' do
