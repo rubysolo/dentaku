@@ -48,7 +48,7 @@ module Dentaku
       end
 
       def numeric(val)
-        case val
+        case val.to_s
         when /\.\d+/ then decimal(val)
         when /\d+/ then val.to_i
         else val
@@ -56,7 +56,7 @@ module Dentaku
       end
 
       def decimal(val)
-        BigDecimal(val, Float::DIG + 1)
+        BigDecimal(val.to_s, Float::DIG + 1)
       end
 
       def valid_node?(node)
