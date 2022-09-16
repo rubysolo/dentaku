@@ -21,5 +21,25 @@ module Dentaku
         :&
       end
     end
+
+    class BitwiseShiftLeft < Operation
+      def value(context = {})
+        left.value(context) << right.value(context)
+      end
+
+      def operator
+        :<<
+      end
+    end
+
+    class BitwiseShiftRight < Operation
+      def value(context = {})
+        left.value(context) >> right.value(context)
+      end
+
+      def operator
+        :>>
+      end
+    end
   end
 end

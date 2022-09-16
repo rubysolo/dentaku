@@ -137,7 +137,7 @@ application, AST caching will consume more memory with each new formula.
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
 
-Math: `+`, `-`, `*`, `/`, `%`, `^`, `|`, `&`
+Math: `+`, `-`, `*`, `/`, `%`, `^`, `|`, `&`, `<<`, `>>`
 
 Also, all functions from Ruby's Math module, including `SIN`, `COS`, `TAN`, etc.
 

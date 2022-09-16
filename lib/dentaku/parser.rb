@@ -10,8 +10,11 @@ module Dentaku
       pow:      AST::Exponentiation,
       negate:   AST::Negation,
       mod:      AST::Modulo,
+
       bitor:    AST::BitwiseOr,
       bitand:   AST::BitwiseAnd,
+      bitshiftleft:  AST::BitwiseShiftLeft,
+      bitshiftright: AST::BitwiseShiftRight,
 
       lt:       AST::LessThan,
       gt:       AST::GreaterThan,

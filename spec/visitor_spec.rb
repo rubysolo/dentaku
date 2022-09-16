@@ -111,7 +111,7 @@ describe TestVisitor do
     visit_nodes('1 < 2 and 3 <= 4 or 5 > 6 AND 7 >= 8 OR 9 != 10 and true')
     visit_nodes('IF(a[0] = NULL, "five", \'seven\')')
     visit_nodes('case (a % 5) when 0 then a else b end')
-    visit_nodes('0xCAFE & 0xDECAF | 0xBEEF')
+    visit_nodes('0xCAFE & (0xDECAF << 3) | (0xBEEF >> 5)')
     visit_nodes('2017-12-24 23:59:59')
     visit_nodes('ALL({1, 2, 3}, "val", val % 2 == 0)')
     visit_nodes('ANY(vals, val, val > 1)')

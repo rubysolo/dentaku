@@ -120,9 +120,9 @@ module Dentaku
 
       def operator
         names = {
-          pow: '^', add: '+', subtract: '-', multiply: '*', divide: '/', mod: '%', bitor: '|', bitand: '&'
+          pow: '^', add: '+', subtract: '-', multiply: '*', divide: '/', mod: '%', bitor: '|', bitand: '&', bitshiftleft: '<<', bitshiftright: '>>'
         }.invert
-        new(:operator, '\^|\+|-|\*|\/|%|\||&', lambda { |raw| names[raw] })
+        new(:operator, '\^|\+|-|\*|\/|%|\||&|<<|>>', lambda { |raw| names[raw] })
       end
 
       def grouping
