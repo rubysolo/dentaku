@@ -9,6 +9,14 @@ module Dentaku
         nil
       end
 
+      def self.min_param_count
+        nil
+      end
+
+      def self.max_param_count
+        nil
+      end
+
       def self.peek(*)
       end
 

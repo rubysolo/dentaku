@@ -38,6 +38,8 @@ module Dentaku
 
     def consume(count = 2)
       operator = operations.pop
+      raise ::ArgumentError if operator.nil?
+
       operator.peek(output)
 
       args_size = operator.arity || count
