@@ -143,6 +143,15 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(exception.recipient_variable).to eq('more_apples')
     end
 
+    it 'stores the recipient variable on the exception when there is an ArgumentError' do
+      expressions = {apples: "NULL", more_apples: "1 + apples"}
+      exception = nil
+      described_class.new(expressions, calculator).solve do |ex|
+        exception = ex
+      end
+      expect(exception.recipient_variable).to eq('more_apples')
+    end
+
     it 'safely handles argument errors' do
       expressions = {i: "a / 5 + d", a: "m * 12", d: "a + b"}
       result = described_class.new(expressions, calculator.store(m: 3)).solve
