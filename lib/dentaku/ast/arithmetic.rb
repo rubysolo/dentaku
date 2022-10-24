@@ -49,8 +49,8 @@ module Dentaku
 
       def numeric(val)
         case val.to_s
-        when /\.\d+/ then decimal(val)
-        when /\d+/ then val.to_i
+        when /\A\d*\.\d+\z/ then decimal(val)
+        when /\A-?\d+\z/ then val.to_i
         else val
         end
       end

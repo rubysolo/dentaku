@@ -41,7 +41,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate("2 & 3 * 9")).to eq (2)
     expect(calculator.evaluate("5%")).to eq (0.05)
     expect(calculator.evaluate('1 << 3')).to eq (8)
-    expect(calculator.evaluate('0xFF >> 14')).to eq (3)
+    expect(calculator.evaluate('0xFF >> 6')).to eq (3)
   end
 
   describe 'evaluate' do
