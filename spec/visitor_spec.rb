@@ -90,6 +90,7 @@ describe TestVisitor do
   def generic_subclasses
     [
       :Arithmetic,
+      :Bitwise,
       :Combinator,
       :Comparator,
       :Function,

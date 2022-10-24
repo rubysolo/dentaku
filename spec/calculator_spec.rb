@@ -69,6 +69,7 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('ROUNDDOWN(a)', a: nil)).to be_nil
       expect(calculator.evaluate('ROUNDUP(a)', a: nil)).to be_nil
       expect(calculator.evaluate('SUM(a,b)', a: nil, b: nil)).to be_nil
+      expect(calculator.evaluate('1.0 & "bar"')).to be_nil
     end
 
     it 'treats explicit nil as logical false' do
@@ -117,6 +118,9 @@ describe Dentaku::Calculator do
       expect { calculator.evaluate!('ROUNDDOWN(a)', a: nil) }.to raise_error(Dentaku::ArgumentError)
       expect { calculator.evaluate!('ROUNDUP(a)', a: nil) }.to raise_error(Dentaku::ArgumentError)
       expect { calculator.evaluate!('SUM(a,b)', a: nil, b: nil) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('"foo" & "bar"') }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('1.0 & "bar"') }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('1 & "bar"') }.to raise_error(Dentaku::ArgumentError)
     end
 
     it 'raises argument error if a function is called with incorrect arity' do
