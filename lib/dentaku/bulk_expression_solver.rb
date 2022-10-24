@@ -89,13 +89,9 @@ module Dentaku
     def with_rescues(var_name, results, block)
       yield
 
-    rescue UnboundVariableError,  Dentaku::ZeroDivisionError => ex
+    rescue Dentaku::UnboundVariableError, Dentaku::ZeroDivisionError, Dentaku::ArgumentError => ex
       ex.recipient_variable = var_name
       results[var_name] = block.call(ex)
-
-    rescue Dentaku::ArgumentError => ex
-      results[var_name] = block.call(ex)
-
     ensure
       if results[var_name] == :undefined && calculator.memory.has_key?(var_name.downcase)
         results[var_name] = calculator.memory[var_name.downcase]
