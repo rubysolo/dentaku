@@ -1,10 +1,9 @@
 module Dentaku
   class Error < StandardError
+    attr_accessor :recipient_variable
   end
 
   class UnboundVariableError < Error
-    attr_accessor :recipient_variable
-
     attr_reader :unbound_variables
 
     def initialize(unbound_variables)
@@ -74,6 +73,7 @@ module Dentaku
 
   class ArgumentError < ::ArgumentError
     attr_reader :reason, :meta
+    attr_accessor :recipient_variable
 
     def initialize(reason, **meta)
       @reason = reason
