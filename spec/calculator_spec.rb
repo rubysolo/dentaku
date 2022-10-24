@@ -84,6 +84,13 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'ast' do
+    it 'raises parsing errors' do
+      expect { calculator.ast('()') }.to raise_error(Dentaku::ParseError)
+      expect { calculator.ast('(}') }.to raise_error(Dentaku::TokenizerError)
+    end
+  end
+
   describe 'evaluate!' do
     it 'raises exception when formula has error' do
       expect { calculator.evaluate!('1 + + 1') }.to raise_error(Dentaku::ParseError)
