@@ -133,6 +133,14 @@ module Dentaku
         :*
       end
 
+      def value(context = {})
+        r = cast(right.value(context)).to_f
+        l = cast(left.value(context)).to_f
+        res = l*r
+        res = res.to_i if res%1 == 0.0
+        res
+      end
+
       def self.precedence
         20
       end
