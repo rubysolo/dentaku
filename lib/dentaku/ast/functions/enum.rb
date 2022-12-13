@@ -12,9 +12,12 @@ module Dentaku
         3
       end
 
-      def dependencies(context = {})
+      def initialize(*args)
+        super
         validate_identifier(@args[1])
+      end
 
+      def dependencies(context = {})
         collection      = @args[0]
         item_identifier = @args[1].identifier
         expression      = @args[2]
@@ -28,9 +31,7 @@ module Dentaku
       end
 
       def validate_identifier(arg, message = "#{name}() requires second argument to be an identifier")
-        unless arg.is_a?(Identifier)
-          raise ArgumentError.for(:incompatible_type, value: arg, for: Identifier), message
-        end
+        raise ParseError.for(:node_invalid), message unless arg.is_a?(Identifier)
       end
     end
   end

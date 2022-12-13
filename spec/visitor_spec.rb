@@ -114,7 +114,7 @@ describe TestVisitor do
     visit_nodes('case (a % 5) when 0 then a else b end')
     visit_nodes('0xCAFE & (0xDECAF << 3) | (0xBEEF >> 5)')
     visit_nodes('2017-12-24 23:59:59')
-    visit_nodes('ALL({1, 2, 3}, "val", val % 2 == 0)')
+    visit_nodes('ALL({1, 2, 3}, val, val % 2 == 0)')
     visit_nodes('ANY(vals, val, val > 1)')
     visit_nodes('COUNT({1, 2, 3})')
     visit_nodes('PLUCK(users, age)')

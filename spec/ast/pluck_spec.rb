@@ -21,7 +21,7 @@ describe Dentaku::AST::Pluck do
     expect do Dentaku.evaluate!('PLUCK(users, "age")', users: [
       {name: "Bob",  age: 44},
       {name: "Jane", age: 27}
-    ]) end.to raise_error(Dentaku::ArgumentError, 'PLUCK() requires second argument to be an identifier')
+    ]) end.to raise_error(Dentaku::ParseError, 'PLUCK() requires second argument to be an identifier')
   end
 
   it 'raises argument error if a non array of hashes is passed as collection' do

@@ -19,7 +19,7 @@ describe Dentaku::AST::Filter do
 
   it 'raises argument error if a string is passed as identifier' do
     expect { calculator.evaluate!('FILTER({1, 2, 3}, "val", val % 2 == 0)') }.to raise_error(
-      Dentaku::ArgumentError, 'FILTER() requires second argument to be an identifier'
+      Dentaku::ParseError, 'FILTER() requires second argument to be an identifier'
     )
   end
 end

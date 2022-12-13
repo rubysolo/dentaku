@@ -21,7 +21,7 @@ describe Dentaku::AST::Map do
 
   it 'raises argument error if a string is passed as identifier' do
     expect { calculator.evaluate!('MAP({1, 2, 3}, "val", val + 1)') }.to raise_error(
-      Dentaku::ArgumentError,  'MAP() requires second argument to be an identifier'
+      Dentaku::ParseError,  'MAP() requires second argument to be an identifier'
     )
   end
 end

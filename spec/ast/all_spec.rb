@@ -19,7 +19,7 @@ describe Dentaku::AST::All do
 
   it 'raises argument error if a string is passed as identifier' do
     expect { calculator.evaluate!('ALL({1, 2, 3}, "val", val % 2 == 0)') }.to raise_error(
-      Dentaku::ArgumentError, 'ALL() requires second argument to be an identifier'
+      Dentaku::ParseError, 'ALL() requires second argument to be an identifier'
     )
   end
 end
