@@ -471,6 +471,13 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('ROUND(apples * 0.93)', apples: 10)).to eq(9)
     end
 
+    it 'include ABS' do
+      expect(calculator.evaluate('abs(-2.2)')).to eq(2.2)
+      expect(calculator.evaluate('abs(5)')).to eq(5)
+
+      expect(calculator.evaluate('ABS(x * -1)', x: 10)).to eq(10)
+    end
+
     it 'include NOT' do
       expect(calculator.evaluate('NOT(some_boolean)', some_boolean: true)).to be_falsey
       expect(calculator.evaluate('NOT(some_boolean)', some_boolean: false)).to be_truthy
