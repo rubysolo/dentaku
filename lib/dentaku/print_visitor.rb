@@ -94,6 +94,10 @@ module Dentaku
       @output << "NULL"
     end
 
+    def visit_array(node)
+      @output << node.value.to_s
+    end
+
     def to_s
       @output
     end
