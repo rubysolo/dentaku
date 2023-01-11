@@ -77,6 +77,10 @@ module Dentaku
       def visit_nil(node)
         process(node)
       end
+
+      def visit_array(node)
+        process(node)
+      end
     end
   end
 end

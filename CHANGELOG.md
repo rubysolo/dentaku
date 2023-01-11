@@ -1,5 +1,10 @@
 # Change Log
 
+## [Unreleased]
+- validate enum arguments at parse time
+- add ABS function
+- add array support for AST visitors
+
 ## [v3.5.1]
 - add bitwise shift left and shift right operators
 - improve numeric conversions
