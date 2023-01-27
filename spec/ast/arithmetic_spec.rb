@@ -4,12 +4,12 @@ require 'dentaku/ast/arithmetic'
 require 'dentaku/token'
 
 describe Dentaku::AST::Arithmetic do
-  let(:one)  { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 1) }
-  let(:two)  { Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, 2) }
-  let(:x)    { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'x') }
-  let(:y)    { Dentaku::AST::Identifier.new Dentaku::Token.new(:identifier, 'y') }
+  let(:one)  { Dentaku::AST::Numeric.new(Dentaku::Token.new(:numeric, 1)) }
+  let(:two)  { Dentaku::AST::Numeric.new(Dentaku::Token.new(:numeric, 2)) }
+  let(:x)    { Dentaku::AST::Identifier.new(Dentaku::Token.new(:identifier, 'x')) }
+  let(:y)    { Dentaku::AST::Identifier.new(Dentaku::Token.new(:identifier, 'y')) }
   let(:ctx)  { {'x' => 1, 'y' => 2} }
-  let(:date) { Dentaku::AST::DateTime.new Dentaku::Token.new(:datetime, DateTime.new(2020, 4, 16)) }
+  let(:date) { Dentaku::AST::DateTime.new(Dentaku::Token.new(:datetime, DateTime.new(2020, 4, 16))) }
 
   it 'performs an arithmetic operation with numeric operands' do
     expect(add(one, two)).to eq(3)
@@ -46,12 +46,20 @@ describe Dentaku::AST::Arithmetic do
     expect { add(x, one, 'x' => 'invalid') }.to raise_error(Dentaku::ArgumentError)
     expect { add(x, one, 'x' => '') }.to raise_error(Dentaku::ArgumentError)
 
-    int_one = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, "1")
-    decimal_one = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, "1.0")
+    int_one = Dentaku::AST::Numeric.new(Dentaku::Token.new(:numeric, "1"))
+    int_neg_one = Dentaku::AST::Numeric.new(Dentaku::Token.new(:numeric, "-1"))
+    decimal_one = Dentaku::AST::Numeric.new(Dentaku::Token.new(:numeric, "1.0"))
+    decimal_neg_one = Dentaku::AST::Numeric.new(Dentaku::Token.new(:numeric, "-1.0"))
 
-    expect(add(int_one, int_one).class).to eq(Integer)
-    expect(add(int_one, decimal_one).class).to eq(BigDecimal)
-    expect(add(decimal_one, decimal_one).class).to eq(BigDecimal)
+    [int_one, int_neg_one].permutation(2).each do |(left, right)|
+      expect(add(left, right).class).to eq(Integer)
+    end
+
+    [decimal_one, decimal_neg_one].each do |left|
+      [int_one, int_neg_one, decimal_one, decimal_neg_one].each do |right|
+        expect(add(left, right).class).to eq(BigDecimal)
+      end
+    end
   end
 
   it 'performs arithmetic on arrays' do

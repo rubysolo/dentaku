@@ -28,8 +28,7 @@ module Dentaku
 
       def cast(val)
         return val unless val.is_a?(::String)
-        return val if val.empty?
-        return val unless val.match?(/\A-?\d*(\.\d+)?\z/)
+        return val unless val.match?(Arithmetic::DECIMAL) || val.match?(Arithmetic::INTEGER)
 
         v = BigDecimal(val, Float::DIG + 1)
         v = v.to_i if v.frac.zero?

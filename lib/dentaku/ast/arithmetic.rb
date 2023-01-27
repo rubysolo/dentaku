@@ -6,6 +6,9 @@ require 'bigdecimal/util'
 module Dentaku
   module AST
     class Arithmetic < Operation
+      DECIMAL = /\A-?\d*\.\d+\z/.freeze
+      INTEGER = /\A-?\d+\z/.freeze
+
       def initialize(*)
         super
 
@@ -47,8 +50,8 @@ module Dentaku
 
       def numeric(val)
         case val.to_s
-        when /\A\d*\.\d+\z/ then decimal(val)
-        when /\A-?\d+\z/ then val.to_i
+        when DECIMAL then decimal(val)
+        when INTEGER then val.to_i
         else val
         end
       end

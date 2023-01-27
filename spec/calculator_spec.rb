@@ -329,6 +329,11 @@ describe Dentaku::Calculator do
       }.not_to raise_error
     end
 
+    it 'allows to compare "-" or "-."' do
+      expect { calculator.solve("IF('-' =  '-', 0, 1)") }.not_to raise_error
+      expect { calculator.solve("IF('-.'= '-.', 0, 1)") }.not_to raise_error
+    end
+
     it "integrates with custom functions" do
       calculator.add_function(:custom, :integer, -> { 1 })
 
