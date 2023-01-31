@@ -8,7 +8,7 @@ module Dentaku
         nil
       end
 
-      def register(name, type, implementation)
+      def register(name, type, implementation, execute = nil)
         function = Class.new(Function) do
           def self.name=(name)
             @name = name
@@ -32,6 +32,14 @@ module Dentaku
 
           def self.type
             @type
+          end
+
+          def self.execute=(execute)
+            @execute = execute
+          end
+
+          def self.execute
+            @execute
           end
 
           def self.arity
@@ -61,6 +69,7 @@ module Dentaku
         function.name = name
         function.type = type
         function.implementation = implementation
+        function.execute = execute
 
         self[function_name(name)] = function
       end
