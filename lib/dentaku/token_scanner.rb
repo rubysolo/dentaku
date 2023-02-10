@@ -7,6 +7,8 @@ module Dentaku
   class TokenScanner
     extend StringCasing
 
+    DATE_TIME_REGEXP = /\d{2}\d{2}?-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})? ?(Z|((\+|\-)\d{2}\:?\d{2}))?/.freeze
+
     def initialize(category, regexp, converter = nil, condition = nil)
       @category  = category
       @regexp    = %r{\A(#{ regexp })}i
@@ -86,7 +88,7 @@ module Dentaku
 
       # NOTE: Convert to DateTime as Array(Time) returns the parts of the time for some reason
       def datetime
-        new(:datetime, /\d{2}\d{2}?-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})? ?(Z|((\+|\-)\d{2}\:?\d{2}))?/, lambda { |raw| Time.parse(raw).to_datetime })
+        new(:datetime, DATE_TIME_REGEXP, lambda { |raw| Time.parse(raw).to_datetime })
       end
 
       def numeric

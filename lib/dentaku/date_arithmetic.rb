@@ -1,7 +1,11 @@
 module Dentaku
   class DateArithmetic
     def initialize(date)
-      @base = date
+      if date.respond_to?(:strftime)
+        @base = date
+      else
+        @base = Time.parse(date).to_datetime
+      end
     end
 
     def add(duration)
