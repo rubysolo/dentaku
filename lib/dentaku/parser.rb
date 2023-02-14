@@ -61,6 +61,10 @@ module Dentaku
       args = Array.new(args_size) { output.pop }.reverse
 
       output.push operator.new(*args)
+
+      if operator.respond_to?(:callback) && !operator.callback.nil?
+        operator.callback.call(args)
+      end
     rescue ::ArgumentError => e
       raise Dentaku::ArgumentError, e.message
     rescue NodeError => e
