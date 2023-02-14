@@ -5,8 +5,7 @@ require 'dentaku/calculator'
 describe Dentaku::Calculator do
   describe 'functions' do
     describe 'external functions' do
-
-      let(:with_external_funcs) do
+      let(:custom_calculator) do
         c = described_class.new
 
         c.add_function(:now, :string, -> { Time.now.to_s })
@@ -22,30 +21,30 @@ describe Dentaku::Calculator do
       end
 
       it 'includes NOW' do
-        now = with_external_funcs.evaluate('NOW()')
+        now = custom_calculator.evaluate('NOW()')
         expect(now).not_to be_nil
         expect(now).not_to be_empty
       end
 
       it 'includes POW' do
-        expect(with_external_funcs.evaluate('POW(2,3)')).to eq(8)
-        expect(with_external_funcs.evaluate('POW(3,2)')).to eq(9)
-        expect(with_external_funcs.evaluate('POW(mantissa,exponent)', mantissa: 2, exponent: 4)).to eq(16)
+        expect(custom_calculator.evaluate('POW(2,3)')).to eq(8)
+        expect(custom_calculator.evaluate('POW(3,2)')).to eq(9)
+        expect(custom_calculator.evaluate('POW(mantissa,exponent)', mantissa: 2, exponent: 4)).to eq(16)
       end
 
       it 'includes BIGGEST' do
-        expect(with_external_funcs.evaluate('BIGGEST(8,6,7,5,3,0,9)')).to eq(9)
+        expect(custom_calculator.evaluate('BIGGEST(8,6,7,5,3,0,9)')).to eq(9)
       end
 
       it 'includes SMALLEST' do
-        expect(with_external_funcs.evaluate('SMALLEST(8,6,7,5,3,0,9)')).to eq(0)
+        expect(custom_calculator.evaluate('SMALLEST(8,6,7,5,3,0,9)')).to eq(0)
       end
 
       it 'includes OPTIONAL' do
-        expect(with_external_funcs.evaluate('OPTIONAL(1,2)')).to eq(3)
-        expect(with_external_funcs.evaluate('OPTIONAL(1,2,3)')).to eq(6)
-        expect { with_external_funcs.dependencies('OPTIONAL()') }.to raise_error(Dentaku::ParseError)
-        expect { with_external_funcs.dependencies('OPTIONAL(1,2,3,4)') }.to raise_error(Dentaku::ParseError)
+        expect(custom_calculator.evaluate('OPTIONAL(1,2)')).to eq(3)
+        expect(custom_calculator.evaluate('OPTIONAL(1,2,3)')).to eq(6)
+        expect { custom_calculator.dependencies('OPTIONAL()') }.to raise_error(Dentaku::ParseError)
+        expect { custom_calculator.dependencies('OPTIONAL(1,2,3,4)') }.to raise_error(Dentaku::ParseError)
       end
 
       it 'supports array parameters' do
@@ -59,6 +58,66 @@ describe Dentaku::Calculator do
         )
 
         expect(calculator.evaluate("INCLUDES(list, 2)", list: [1, 2, 3])).to eq(true)
+      end
+    end
+
+    describe 'with callbacks' do
+      let(:custom_calculator) do
+        c = described_class.new
+
+        @counts = Hash.new(0)
+
+        @initial_time = "2023-02-03"
+        @last_time = @initial_time
+
+        c.add_function(
+            :reverse,
+            :stringl,
+            ->(a) { a.reverse },
+            lambda do |args|
+              args.each do |arg|
+                @counts[arg.value] += 1 if arg.type == :string
+              end
+            end
+        )
+
+        fns = [
+            [:biggest_callback,  :numeric, ->(*args) { args.max }, ->(args) { args.each { |arg| raise Dentaku::ArgumentError unless arg.type == :numeric } }],
+            [:pythagoras, :numeric, ->(l1, l2) { Math.sqrt(l1**2 + l2**2) }, ->(e) { @last_time = Time.now.to_s }],
+            [:callback_lambda, :string, ->() { " " }, ->() { "lambda executed" }],
+            [:no_lambda_function, :numeric, ->(a) { a**a }],
+        ]
+
+        c.add_functions(fns)
+      end
+
+      it 'includes BIGGEST_CALLBACK' do
+        expect(custom_calculator.evaluate('BIGGEST_CALLBACK(1, 2, 5, 4)')).to eq(5)
+        expect { custom_calculator.dependencies('BIGGEST_CALLBACK(1, 3, 6, "hi", 10)') }.to raise_error(Dentaku::ArgumentError)
+      end
+
+      it 'includes REVERSE' do
+        expect(custom_calculator.evaluate('REVERSE(\'Dentaku\')')).to eq('ukatneD')
+        expect { custom_calculator.evaluate('REVERSE(22)') }.to raise_error(NoMethodError)
+        expect(@counts["Dentaku"]).to eq(1)
+      end
+
+      it 'includes PYTHAGORAS' do
+        expect(custom_calculator.evaluate('PYTHAGORAS(8, 7)')).to eq(10.63014581273465)
+        expect(custom_calculator.evaluate('PYTHAGORAS(3, 4)')).to eq(5)
+        expect(@last_time).not_to eq(@initial_time)
+      end
+
+      it 'exposes the `callback` method of a function' do
+        expect(Dentaku::AST::Function::Callback_lambda.callback.call()).to eq("lambda executed")
+      end
+
+      it 'does not add a `callback` method to built-in functions' do
+        expect { Dentaku::AST::If.callback.call }.to raise_error(NoMethodError)
+      end
+
+      it 'defaults `callback` method to nil if not specified' do
+        expect(Dentaku::AST::Function::No_lambda_function.callback).to eq(nil)
       end
     end
 
