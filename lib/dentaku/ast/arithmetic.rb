@@ -32,16 +32,20 @@ module Dentaku
       end
 
       def value(context = {})
-        l = cast(left.value(context))
-        r = cast(right.value(context))
+        calculate(left.value(context), right.value(context))
+      end
+
+      private
+
+      def calculate(left_value, right_value)
+        l = cast(left_value)
+        r = cast(right_value)
 
         l.public_send(operator, r)
       rescue ::TypeError => e
         # Right cannot be converted to a suitable type for left. e.g. [] + 1
         raise Dentaku::ArgumentError.for(:incompatible_type, value: r, for: l.class), e.message
       end
-
-      private
 
       def cast(val)
         validate_value(val)
@@ -58,6 +62,13 @@ module Dentaku
 
       def decimal(val)
         BigDecimal(val.to_s, Float::DIG + 1)
+      end
+
+      def datetime?(val)
+        # val is a Date, Time, or DateTime
+        return true if val.respond_to?(:strftime)
+
+        val.to_s =~ Dentaku::TokenScanner::DATE_TIME_REGEXP
       end
 
       def valid_node?(node)
@@ -105,10 +116,13 @@ module Dentaku
       end
 
       def value(context = {})
-        if left.type == :datetime
-          Dentaku::DateArithmetic.new(left.value(context)).add(right.value(context))
+        left_value = left.value(context)
+        right_value = right.value(context)
+
+        if left.type == :datetime || datetime?(left_value)
+          Dentaku::DateArithmetic.new(left_value).add(right_value)
         else
-          super
+          calculate(left_value, right_value)
         end
       end
     end
@@ -123,10 +137,13 @@ module Dentaku
       end
 
       def value(context = {})
-        if left.type == :datetime
-          Dentaku::DateArithmetic.new(left.value(context)).sub(right.value(context))
+        left_value = left.value(context)
+        right_value = right.value(context)
+
+        if left.type == :datetime || datetime?(left_value)
+          Dentaku::DateArithmetic.new(left_value).sub(right_value)
         else
-          super
+          calculate(left_value, right_value)
         end
       end
     end
