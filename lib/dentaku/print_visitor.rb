@@ -7,22 +7,29 @@ module Dentaku
 
     def visit_operation(node)
       if node.left
-        visit_operand(node.left, node.class.precedence, suffix: " ")
+        visit_operand(node.left, node.class.precedence, suffix: " ", dir: :left)
       end
 
       @output << node.display_operator
 
       if node.right
-        visit_operand(node.right, node.class.precedence, prefix: " ")
+        visit_operand(node.right, node.class.precedence, prefix: " ", dir: :right)
       end
     end
 
-    def visit_operand(node, precedence, prefix: "", suffix: "")
+    def visit_operand(node, precedence, prefix: "", suffix: "", dir: :none)
       @output << prefix
-      @output << "(" if node.is_a?(Dentaku::AST::Operation) && node.class.precedence < precedence
+      @output << "(" if should_output?(node, precedence, dir == :right)
       node.accept(self)
-      @output << ")" if node.is_a?(Dentaku::AST::Operation) && node.class.precedence < precedence
+      @output << ")" if should_output?(node, precedence, dir == :right)
       @output << suffix
+    end
+
+    def should_output?(node, precedence, output_on_equal)
+      return false unless node.is_a?(Dentaku::AST::Operation)
+
+      target_precedence = node.class.precedence
+      target_precedence < precedence || (output_on_equal && target_precedence == precedence)
     end
 
     def visit_function(node)

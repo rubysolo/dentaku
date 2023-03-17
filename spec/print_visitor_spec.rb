@@ -8,6 +8,12 @@ describe Dentaku::PrintVisitor do
     expect(repr).to eq('5 + 4')
   end
 
+  it 'handles grouping correctly' do
+    formula = '10 - (0 - 10)'
+    repr = roundtrip(formula)
+    expect(repr).to eq(formula)
+  end
+
   it 'quotes string literals' do
     repr = roundtrip('Concat(\'a\',   "B")')
     expect(repr).to eq('CONCAT("a", "B")')
