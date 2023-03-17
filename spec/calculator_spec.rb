@@ -22,6 +22,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('(2 + 3) - 1')).to eq(4)
     expect(calculator.evaluate('(-2 + 3) - 1')).to eq(0)
     expect(calculator.evaluate('(-2 - 3) - 1')).to eq(-6)
+    expect(calculator.evaluate('1353+91-1-3322-22')).to eq(-1901)
     expect(calculator.evaluate('1 + -(2 ^ 2)')).to eq(-3)
     expect(calculator.evaluate('3 + -num', num: 2)).to eq(1)
     expect(calculator.evaluate('-num + 3', num: 2)).to eq(1)
@@ -443,6 +444,13 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('t1 < 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_falsy
     expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 1).to_datetime)).to be_falsy
     expect(calculator.evaluate('t1 > 2017-01-02', t1: Time.local(2017, 1, 3).to_datetime)).to be_truthy
+  end
+
+  describe 'disabling date literals' do
+    it 'does not parse formulas with minus signs as dates' do
+      calculator = described_class.new(raw_date_literals: false)
+      expect(calculator.evaluate!('2020-01-01')).to eq(2018)
+    end
   end
 
   describe 'supports date arithmetic' do

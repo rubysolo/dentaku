@@ -7,7 +7,7 @@ module Dentaku
   class TokenScanner
     extend StringCasing
 
-    DATE_TIME_REGEXP = /\d{2}\d{2}?-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})? ?(Z|((\+|\-)\d{2}\:?\d{2}))?/.freeze
+    DATE_TIME_REGEXP = /\d{2}\d{2}?-\d{1,2}-\d{1,2}( \d{1,2}:\d{1,2}:\d{1,2})? ?(Z|((\+|\-)\d{2}\:?\d{2}))?(?!\d)/.freeze
 
     def initialize(category, regexp, converter = nil, condition = nil)
       @category  = category
@@ -75,7 +75,9 @@ module Dentaku
 
       def scanners(options = {})
         @case_sensitive = options.fetch(:case_sensitive, false)
-        @scanners.values
+        raw_date_literals = options.fetch(:raw_date_literals, true)
+
+        @scanners.select { |k, _| raw_date_literals || k != :datetime }.values
       end
 
       def whitespace

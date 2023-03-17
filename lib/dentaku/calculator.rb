@@ -10,7 +10,7 @@ module Dentaku
   class Calculator
     include StringCasing
     attr_reader :result, :memory, :tokenizer, :case_sensitive, :aliases,
-                :nested_data_support, :ast_cache
+                :nested_data_support, :ast_cache, :raw_date_literals
 
     def initialize(options = {})
       clear
@@ -19,6 +19,8 @@ module Dentaku
       @aliases = options.delete(:aliases) || Dentaku.aliases
       @nested_data_support = options.fetch(:nested_data_support, true)
       options.delete(:nested_data_support)
+      @raw_date_literals = options.fetch(:raw_date_literals, true)
+      options.delete(:raw_date_literals)
       @ast_cache = options
       @disable_ast_cache = false
       @function_registry = Dentaku::AST::FunctionRegistry.new
@@ -94,9 +96,10 @@ module Dentaku
 
       @ast_cache.fetch(expression) {
         options = {
+          aliases: aliases,
           case_sensitive: case_sensitive,
           function_registry: @function_registry,
-          aliases: aliases
+          raw_date_literals: raw_date_literals
         }
 
         tokens = tokenizer.tokenize(expression, options)

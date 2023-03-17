@@ -4,7 +4,7 @@ require 'dentaku/token_scanner'
 
 module Dentaku
   class Tokenizer
-    attr_reader :case_sensitive, :aliases
+    attr_reader :aliases
 
     LPAREN = TokenMatcher.new(:grouping, :open)
     RPAREN = TokenMatcher.new(:grouping, :close)
@@ -15,10 +15,14 @@ module Dentaku
       @aliases = options.fetch(:aliases, global_aliases)
       input    = strip_comments(string.to_s.dup)
       input    = replace_aliases(input)
-      @case_sensitive = options.fetch(:case_sensitive, false)
+
+      scanner_options = {
+        case_sensitive: options.fetch(:case_sensitive, false),
+        raw_date_literals: options.fetch(:raw_date_literals, true)
+      }
 
       until input.empty?
-        scanned = TokenScanner.scanners(case_sensitive: case_sensitive).any? do |scanner|
+        scanned = TokenScanner.scanners(scanner_options).any? do |scanner|
           scanned, input = scan(input, scanner)
           scanned
         end
