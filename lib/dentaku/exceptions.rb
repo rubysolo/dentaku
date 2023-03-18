@@ -11,6 +11,15 @@ module Dentaku
     end
   end
 
+  class MathDomainError < Error
+    attr_reader :function_name, :args
+
+    def initialize(function_name, args)
+      @function_name = function_name
+      @args = args
+    end
+  end
+
   class NodeError < Error
     attr_reader :child, :expect, :actual
 

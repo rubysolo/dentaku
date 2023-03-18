@@ -34,6 +34,8 @@ module Dentaku
 
       def self.call(*args)
         @implementation.call(*args)
+      rescue Math::DomainError => _e
+        raise Dentaku::MathDomainError.new(name, args)
       end
 
       def value(context = {})

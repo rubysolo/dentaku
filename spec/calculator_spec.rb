@@ -794,9 +794,9 @@ describe Dentaku::Calculator do
     end
   end
 
-  describe 'math functions' do
+  describe 'math support' do
     Math.methods(false).each do |method|
-      it method do
+      it "includes `#{method}`" do
         if Math.method(method).arity == 2
           expect(calculator.evaluate("#{method}(x,y)", x: 1, y: '2')).to eq(Math.send(method, 1, 2))
           expect(calculator.evaluate("#{method}(x,y) + 1", x: 1, y: '2')).to be_within(0.00001).of(Math.send(method, 1, 2) + 1)
@@ -810,10 +810,15 @@ describe Dentaku::Calculator do
       end
     end
 
-    it 'are defined with a properly named class that represents it to support AST marshaling' do
+    it 'defines a properly named class to support AST marshaling' do
       expect {
         Marshal.dump(calculator.ast('SQRT(20)'))
       }.not_to raise_error
+    end
+
+    it 'properly handles a Math::DomainError' do
+      expect(calculator.evaluate('asin(2)')).to be_nil
+      expect { calculator.evaluate!('asin(2)') }.to raise_error(Dentaku::MathDomainError)
     end
   end
 
