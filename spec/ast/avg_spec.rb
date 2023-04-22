@@ -3,6 +3,11 @@ require 'dentaku/ast/functions/avg'
 require 'dentaku'
 
 describe 'Dentaku::AST::Function::Avg' do
+  it 'returns the average of an array of Numeric values as BigDecimal' do
+    result = Dentaku('AVG(1, 2)')
+    expect(result).to eq(1.5)
+  end
+
   it 'returns the average of an array of Numeric values' do
     result = Dentaku('AVG(1, x, 1.8)', x: 2.3)
     expect(result).to eq(1.7)
