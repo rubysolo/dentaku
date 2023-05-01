@@ -45,19 +45,22 @@ module Dentaku
 
       operator.peek(output)
 
+      output_size = output.length
       args_size = operator.arity || count
       min_size = operator.arity || operator.min_param_count || count
       max_size = operator.arity || operator.max_param_count || count
 
-      if output.length < min_size || args_size < min_size
-        fail! :too_few_operands, operator: operator, expect: min_size, actual: output.length
+      if output_size < min_size || args_size < min_size
+        expect = min_size == max_size ? min_size : min_size..max_size
+        fail! :too_few_operands, operator: operator, expect: expect, actual: output_size
       end
 
-      if output.length > max_size && operations.empty? || args_size > max_size
-        fail! :too_many_operands, operator: operator, expect: max_size, actual: output.length
+      if output_size > max_size && operations.empty? || args_size > max_size
+        expect = min_size == max_size ? min_size : min_size..max_size
+        fail! :too_many_operands, operator: operator, expect: expect, actual: output_size
       end
 
-      fail! :invalid_statement if output.size < args_size
+      fail! :invalid_statement if output_size < args_size
       args = Array.new(args_size) { output.pop }.reverse
 
       output.push operator.new(*args)
@@ -324,9 +327,9 @@ module Dentaku
         when :node_invalid
           "#{meta.fetch(:operator)} requires #{meta.fetch(:expect).join(', ')} operands, but got #{meta.fetch(:actual)}"
         when :too_few_operands
-          "#{meta.fetch(:operator)} has too few operands"
+          "#{meta.fetch(:operator)} has too few operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
         when :too_many_operands
-          "#{meta.fetch(:operator)} has too many operands"
+          "#{meta.fetch(:operator)} has too many operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
         when :undefined_function
           "Undefined function #{meta.fetch(:function_name)}"
         when :unprocessed_token
