@@ -522,6 +522,13 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate('NOT(some_boolean) AND -1 > 3', some_boolean: true)).to be_falsey
     end
 
+    it 'calculates intercept correctly' do
+      x_values = [1, 2, 3, 4, 5]
+      y_values = [2, 3, 5, 4, 6]
+      result = calculator.evaluate('INTERCEPT(x_values, y_values)', x_values: x_values, y_values: y_values)
+      expect(result).to be_within(0.001).of(1.2)
+    end
+
     describe "any" do
       it "enumerates values and returns true if any evaluation is truthy" do
         expect(calculator.evaluate!('any(xs, x, x > 3)', xs: [1, 2, 3, 4])).to be_truthy

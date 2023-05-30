@@ -145,7 +145,7 @@ Comparison: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`,
 
 Logic: `IF`, `AND`, `OR`, `XOR`, `NOT`, `SWITCH`
 
-Numeric: `MIN`, `MAX`, `SUM`, `AVG`, `COUNT`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`, `ABS`
+Numeric: `MIN`, `MAX`, `SUM`, `AVG`, `COUNT`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`, `ABS`, `INTERCEPT`
 
 Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/master/spec/calculator_spec.rb#L593))
 
