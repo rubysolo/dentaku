@@ -198,6 +198,11 @@ describe Dentaku::AST::StringFunctions::Concat do
     expect(subject.value).to eq ''
   end
 
+  it 'concatenates an array' do
+    subject = described_class.new(literal(['ABC', 'DEF']))
+    expect(subject.value).to eq 'ABCDEF'
+  end
+
   it 'has the proper type' do
     expect(subject.type).to eq(:string)
   end

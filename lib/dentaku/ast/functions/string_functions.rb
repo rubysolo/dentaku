@@ -172,7 +172,17 @@ module Dentaku
         end
 
         def value(context = {})
-          @args.map { |arg| arg.value(context).to_s }.join
+          collection(context).map { |member| member.to_s }.join
+        end
+
+        private
+
+        def collection(context)
+          collection = @args.map { |arg| arg.value(context) }
+
+          return collection[0] if collection.length == 1 && collection[0].respond_to?(:join)
+
+          collection
         end
       end
 
