@@ -30,13 +30,17 @@ module Dentaku
       Dentaku::AST::FunctionRegistry.default.register(name, type, body, callback)
     end
 
+    def self.add_functions(functions)
+      functions.each { |(name, type, body, callback)| add_function(name, type, body, callback) }
+    end
+
     def add_function(name, type, body, callback = nil)
       @function_registry.register(name, type, body, callback)
       self
     end
 
-    def add_functions(fns)
-      fns.each { |(name, type, body, callback)| add_function(name, type, body, callback) }
+    def add_functions(functions)
+      functions.each { |(name, type, body, callback)| add_function(name, type, body, callback) }
       self
     end
 

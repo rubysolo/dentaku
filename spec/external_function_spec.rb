@@ -82,10 +82,10 @@ describe Dentaku::Calculator do
         )
 
         fns = [
-            [:biggest_callback,  :numeric, ->(*args) { args.max }, ->(args) { args.each { |arg| raise Dentaku::ArgumentError unless arg.type == :numeric } }],
-            [:pythagoras, :numeric, ->(l1, l2) { Math.sqrt(l1**2 + l2**2) }, ->(e) { @last_time = Time.now.to_s }],
-            [:callback_lambda, :string, ->() { " " }, ->() { "lambda executed" }],
-            [:no_lambda_function, :numeric, ->(a) { a**a }],
+          [:biggest_callback,  :numeric, ->(*args) { args.max }, ->(args) { args.each { |arg| raise Dentaku::ArgumentError unless arg.type == :numeric } }],
+          [:pythagoras, :numeric, ->(l1, l2) { Math.sqrt(l1**2 + l2**2) }, ->(e) { @last_time = Time.now.to_s }],
+          [:callback_lambda, :string, ->() { " " }, ->() { "lambda executed" }],
+          [:no_lambda_function, :numeric, ->(a) { a**a }],
         ]
 
         c.add_functions(fns)
@@ -141,24 +141,36 @@ describe Dentaku::Calculator do
     end
 
     it 'does not store functions across all calculators' do
-      calculator1 = Dentaku::Calculator.new
+      calculator1 = described_class.new
       calculator1.add_function(:my_function, :numeric, ->(x) { 2 * x + 1 })
 
-      calculator2 = Dentaku::Calculator.new
+      calculator2 = described_class.new
       calculator2.add_function(:my_function, :numeric, ->(x) { 4 * x + 3 })
 
       expect(calculator1.evaluate!("1 + my_function(2)")). to eq(1 + 2 * 2 + 1)
       expect(calculator2.evaluate!("1 + my_function(2)")). to eq(1 + 4 * 2 + 3)
 
       expect {
-        Dentaku::Calculator.new.evaluate!("1 + my_function(2)")
+        described_class.new.evaluate!("1 + my_function(2)")
       }.to raise_error(Dentaku::ParseError)
     end
 
     describe 'Dentaku::Calculator.add_function' do
-      it 'adds to default/global function registry' do
-        Dentaku::Calculator.add_function(:global_function, :numeric, ->(x) { 10 + x**2 })
-        expect(Dentaku::Calculator.new.evaluate("global_function(3) + 5")).to eq(10 + 3**2 + 5)
+      it 'adds a function to default/global function registry' do
+        described_class.add_function(:global_function, :numeric, ->(x) { 10 + x**2 })
+        expect(described_class.new.evaluate("global_function(3) + 5")).to eq(10 + 3**2 + 5)
+      end
+    end
+
+    describe 'Dentaku::Calculator.add_functions' do
+      it 'adds multiple functions to default/global function registry' do
+        described_class.add_functions([
+          [:cube, :numeric, ->(x) { x**3 }],
+          [:spongebob, :string, ->(x) { x.split("").each_with_index().map { |c,i| i.even? ? c.upcase : c.downcase }.join() }],
+        ])
+
+        expect(described_class.new.evaluate("1 + cube(3)")).to eq(28)
+        expect(described_class.new.evaluate("spongebob('How are you today?')")).to eq("HoW ArE YoU ToDaY?")
       end
     end
   end
