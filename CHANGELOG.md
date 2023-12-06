@@ -1,9 +1,17 @@
 # Change Log
 
 ## [Unreleased]
-- validate enum arguments at parse time
 - add ABS function
 - add array support for AST visitors
+- add support for function callbacks
+- improve support for date / time values
+- improve error messaging for invalid arity
+- improve AVG function accuracy
+- validate enum arguments at parse time
+- support adding multiple functions at once to global registry
+- fix bug in print visitor precedence checking
+- fix handling of Math::DomainError
+- fix invalid cast
 
 ## [v3.5.1]
 - add bitwise shift left and shift right operators
