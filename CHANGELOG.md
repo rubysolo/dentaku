@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [v3.5.2]
 - add ABS function
 - add array support for AST visitors
 - add support for function callbacks
@@ -244,7 +244,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[Unreleased]: https://github.com/rubysolo/dentaku/compare/v3.5.1...HEAD
+[v3.5.2]: https://github.com/rubysolo/dentaku/compare/v3.5.1...v3.5.2
 [v3.5.1]: https://github.com/rubysolo/dentaku/compare/v3.5.0...v3.5.1
 [v3.5.0]:  https://github.com/rubysolo/dentaku/compare/v3.4.2...v3.5.0
 [v3.4.2]:  https://github.com/rubysolo/dentaku/compare/v3.4.1...v3.4.2
