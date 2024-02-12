@@ -122,6 +122,7 @@ describe TestVisitor do
     visit_nodes('duration(1, day)')
     visit_nodes('MAP(vals, val, val + 1)')
     visit_nodes('FILTER(vals, val, val > 1)')
+    visit_nodes('REDUCE(vals, memo, val, memo + val)')
 
     @expected = Set.new(Dentaku::AST::constants - generic_subclasses)
     expect(@visited.sort).to eq(@expected.sort)
