@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'dentaku/ast/arithmetic'
-
-require 'dentaku/token'
+require 'dentaku'
 
 describe Dentaku::AST::Arithmetic do
   let(:one)  { Dentaku::AST::Numeric.new(Dentaku::Token.new(:numeric, 1)) }
@@ -64,10 +63,52 @@ describe Dentaku::AST::Arithmetic do
 
   it 'performs arithmetic on arrays' do
     expect(add(x, y, 'x' => [1], 'y' => [2])).to eq([1, 2])
+    expect(sub(x, y, 'x' => [1], 'y' => [2])).to eq([1])
   end
 
   it 'performs date arithmetic' do
     expect(add(date, one)).to eq(DateTime.new(2020, 4, 17))
+    expect(sub(date, one)).to eq(DateTime.new(2020, 4, 15))
+  end
+
+  it 'performs arithmetic on object which implements arithmetic' do
+    CanHazMath = Struct.new(:value) do
+      extend Forwardable
+
+      def_delegators :value, :zero?
+
+      def coerce(other)
+        case other
+        when Numeric
+          [other, value]
+        else
+          super
+        end
+      end
+
+      [:+, :-, :/, :*].each do |operand|
+        define_method(operand) do |other|
+          case other
+          when CanHazMath
+            value.public_send(operand, other.value)
+          when Numeric
+            value.public_send(operand, other)
+          end
+        end
+      end
+    end
+
+    op_one = CanHazMath.new(1)
+    op_two = CanHazMath.new(2)
+
+    [op_two, two].each do |left|
+      [op_one, one].each do |right|
+        expect(add(x, y, 'x' => left, 'y' => right)).to eq(3)
+        expect(sub(x, y, 'x' => left, 'y' => right)).to eq(1)
+        expect(mul(x, y, 'x' => left, 'y' => right)).to eq(2)
+        expect(div(x, y, 'x' => left, 'y' => right)).to eq(2)
+      end
+    end
   end
 
   it 'raises ArgumentError if given individually valid but incompatible arguments' do

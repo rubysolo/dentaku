@@ -62,6 +62,8 @@ module Dentaku
 
       def decimal(val)
         BigDecimal(val.to_s, Float::DIG + 1)
+      rescue # return as is, in case value can't be coerced to big decimal
+        val
       end
 
       def datetime?(val)

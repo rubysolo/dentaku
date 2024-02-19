@@ -32,4 +32,29 @@ describe Dentaku::AST::Division do
       described_class.new(group, five)
     }.not_to raise_error
   end
+
+  it 'allows operands that respond to division' do
+    # Sample struct that has a custom definition for division
+    Divisible = Struct.new(:value) do
+      def /(other)
+        case other
+        when Divisible
+          value + other.value
+        when Numeric
+          value + other
+        end
+      end
+    end
+
+    operand_five = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, Divisible.new(5))
+    operand_six = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, Divisible.new(6))
+
+    expect {
+      described_class.new(operand_five, operand_six)
+    }.not_to raise_error
+
+    expect {
+      described_class.new(operand_five, six)
+    }.not_to raise_error
+  end
 end
