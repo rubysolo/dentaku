@@ -29,5 +29,5 @@ Dentaku::AST::Function.register(:intercept, :list, ->(*args) {
   slope = xy_sum / x_square_sum
   intercept = x_values.zip(y_values).map { |x, y| y - slope * x }.sum / n
 
-  BigDecimal(intercept, 6)
+  BigDecimal(intercept, Float::DIG + 1)
 })
