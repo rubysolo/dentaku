@@ -526,7 +526,7 @@ describe Dentaku::Calculator do
       x_values = [1, 2, 3, 4, 5]
       y_values = [2, 3, 5, 4, 6]
       result = calculator.evaluate('INTERCEPT(x_values, y_values)', x_values: x_values, y_values: y_values)
-      expect(result).to be_within(0.001).of(1.2)
+      expect(result).to be_within(0.001).of(1.3)
     end
 
     describe "any" do

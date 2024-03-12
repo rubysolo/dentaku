@@ -67,7 +67,9 @@ module Dentaku
     private_class_method :new
 
     VALID_REASONS = %i[
-      parse_error too_many_opening_parentheses too_many_closing_parentheses
+      parse_error
+      too_many_closing_parentheses
+      too_many_opening_parentheses
       unexpected_zero_width_match
     ].freeze
 
@@ -92,8 +94,11 @@ module Dentaku
     private_class_method :new
 
     VALID_REASONS = %i[
-      invalid_operator invalid_value too_few_arguments
-      too_much_arguments incompatible_type
+      incompatible_type
+      invalid_operator
+      invalid_value
+      too_few_arguments
+      wrong_number_of_arguments
     ].freeze
 
     def self.for(reason, **meta)
