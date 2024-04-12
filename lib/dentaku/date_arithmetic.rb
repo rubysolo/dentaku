@@ -29,7 +29,7 @@ module Dentaku
 
     def sub(duration)
       case duration
-      when DateTime, Numeric
+      when Date, DateTime, Numeric
         @base - duration
       when Dentaku::AST::Duration::Value
         case duration.unit
@@ -40,6 +40,8 @@ module Dentaku
         when :day
           @base - duration.value
         end
+      when Dentaku::TokenScanner::DATE_TIME_REGEXP
+        @base - Time.parse(duration).to_datetime
       else
         raise Dentaku::ArgumentError.for(:incompatible_type, value: duration, for: Numeric),
           "'#{duration || duration.class}' is not coercible for date arithmetic"

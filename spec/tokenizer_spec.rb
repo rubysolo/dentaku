@@ -1,3 +1,4 @@
+require 'dentaku/exceptions'
 require 'dentaku/tokenizer'
 
 describe Dentaku::Tokenizer do
@@ -234,9 +235,9 @@ describe Dentaku::Tokenizer do
   end
 
   it 'tokenizes Time literals' do
-    tokens = tokenizer.tokenize('2017-01-01 2017-01-2 2017-1-03 2017-01-04 12:23:42 2017-1-5 1:2:3 2017-1-06 1:02:30 2017-01-07 12:34:56 Z 2017-01-08 1:2:3 +0800')
-    expect(tokens.length).to eq(8)
-    expect(tokens.map(&:category)).to eq([:datetime, :datetime, :datetime, :datetime, :datetime, :datetime, :datetime, :datetime])
+    tokens = tokenizer.tokenize('2017-01-01 2017-01-2 2017-1-03 2017-01-04 12:23:42 2017-1-5 1:2:3 2017-1-06 1:02:30 2017-01-07 12:34:56 Z 2017-01-08 1:2:3 +0800 2017-01-08T01:02:03.456Z')
+    expect(tokens.length).to eq(9)
+    expect(tokens.map(&:category)).to eq([:datetime, :datetime, :datetime, :datetime, :datetime, :datetime, :datetime, :datetime, :datetime])
     expect(tokens.map(&:value)).to eq([
       Time.local(2017, 1, 1).to_datetime,
       Time.local(2017, 1, 2).to_datetime,
@@ -245,7 +246,8 @@ describe Dentaku::Tokenizer do
       Time.local(2017, 1, 5, 1, 2, 3).to_datetime,
       Time.local(2017, 1, 6, 1, 2, 30).to_datetime,
       Time.utc(2017, 1, 7, 12, 34, 56).to_datetime,
-      Time.new(2017, 1, 8, 1, 2, 3, "+08:00").to_datetime
+      Time.new(2017, 1, 8, 1, 2, 3, "+08:00").to_datetime,
+      Time.utc(2017, 1, 8, 1, 2, 3, 456000).to_datetime
     ])
   end
 
