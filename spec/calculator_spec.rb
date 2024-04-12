@@ -471,16 +471,20 @@ describe Dentaku::Calculator do
 
     it 'from string variable' do
       value = '2023-01-01'
+      value2 = '2022-12-31'
 
-      expect(calculator.evaluate!('value + duration(1, month)', { value: value }).to_date).to eql(Date.parse('2023-02-01'))
-      expect(calculator.evaluate!('value - duration(1, month)', { value: value }).to_date).to eql(Date.parse('2022-12-01'))
+      expect(calculator.evaluate!('value + duration(1, month)', { value: value }).to_date).to eq(Date.parse('2023-02-01'))
+      expect(calculator.evaluate!('value - duration(1, month)', { value: value }).to_date).to eq(Date.parse('2022-12-01'))
+      expect(calculator.evaluate!('value - value2', { value: value, value2: value2 })).to eq(1)
     end
 
     it 'from date object' do
       value = Date.parse('2023-01-01').to_date
+      value2 = Date.parse('2022-12-31').to_date
 
-      expect(calculator.evaluate!('value + duration(1, month)', { value: value }).to_date).to eql(Date.parse('2023-02-01'))
-      expect(calculator.evaluate!('value - duration(1, month)', { value: value }).to_date).to eql(Date.parse('2022-12-01'))
+      expect(calculator.evaluate!('value + duration(1, month)', { value: value }).to_date).to eq(Date.parse('2023-02-01'))
+      expect(calculator.evaluate!('value - duration(1, month)', { value: value }).to_date).to eq(Date.parse('2022-12-01'))
+      expect(calculator.evaluate!('value - value2', { value: value, value2: value2 })).to eq(1)
     end
   end
 
