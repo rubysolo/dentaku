@@ -166,6 +166,13 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('b')).to eq(2)
     end
 
+    it 'stores nested hashes with quotes' do
+      calculator.store(a: {basket: {of: 'apples'}}, b: 2)
+      expect(calculator.evaluate!('`a.basket.of`')).to eq('apples')
+      expect(calculator.evaluate!('`a.basket`')).to eq(of: 'apples')
+      expect(calculator.evaluate!('`b`')).to eq(2)
+    end
+
     it 'stores arrays' do
       calculator.store(a: [1, 2, 3])
       expect(calculator.evaluate!('a[0]')).to eq(1)
@@ -180,12 +187,20 @@ describe Dentaku::Calculator do
   end
 
   describe 'dependencies' do
+    it 'respects quoted identifiers in dependencies' do
+      expect(calculator.dependencies("`bob the builder` + `dole the digger` / 3")).to eq(['bob the builder', 'dole the digger'])
+    end
+
     it "finds dependencies in a generic statement" do
       expect(calculator.dependencies("bob + dole / 3")).to eq(['bob', 'dole'])
     end
 
     it "ignores dependencies passed in context" do
       expect(calculator.dependencies("a + b", a: 1)).to eq(['b'])
+    end
+
+    it "ignores dependencies passed in context for quoted identifiers" do
+      expect(calculator.dependencies("`a-c` + b", "a-c": 1)).to eq(['b'])
     end
 
     it "finds dependencies in formula arguments" do
@@ -211,10 +226,11 @@ describe Dentaku::Calculator do
   describe 'solve!' do
     it "evaluates properly with variables, even if some in memory" do
       expect(with_memory.solve!(
+        "monthly fruit budget": "weekly_fruit_budget * 4",
         weekly_fruit_budget: "weekly_apple_budget + pear * 4",
         weekly_apple_budget: "apples * 7",
         pear:                "1"
-      )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25)
+      )).to eq(pear: 1, weekly_apple_budget: 21, weekly_fruit_budget: 25, "monthly fruit budget": 100)
     end
 
     it "prefers variables over values in memory if they have no dependencies" do
@@ -410,6 +426,13 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('foo1 * 2', 'foo1' => 4)).to eq(8)
     expect(calculator.evaluate('1foo * 2', '1foo' => 2)).to eq(4)
     expect(calculator.evaluate('fo1o * 2', fo1o: 4)).to eq(8)
+  end
+
+  it 'accepts special characters in quoted identifiers' do
+    expect(calculator.evaluate('`foo1 bar` * 2', "foo1 bar": 2)).to eq(4)
+    expect(calculator.evaluate('`foo1-bar` * 2', 'foo1-bar' => 4)).to eq(8)
+    expect(calculator.evaluate('`1foo (bar)` * 2', '1foo (bar)' => 2)).to eq(4)
+    expect(calculator.evaluate('`fo1o *bar*` * 2', 'fo1o *bar*': 4)).to eq(8)
   end
 
   it 'compares string literals with string variables' do
