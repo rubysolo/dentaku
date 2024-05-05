@@ -51,7 +51,8 @@ module Dentaku
           :comparator,
           :boolean,
           :function,
-          :identifier
+          :identifier,
+          :quoted_identifier
         ]
       end
 
@@ -179,6 +180,10 @@ module Dentaku
 
       def identifier
         new(:identifier, '[[[:word:]]\.]+\b', lambda { |raw| standardize_case(raw.strip) })
+      end
+
+      def quoted_identifier
+        new(:identifier, '`[^`]*`', lambda { |raw| raw.gsub(/^`|`$/, '') })
       end
     end
 
