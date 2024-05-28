@@ -125,6 +125,12 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         .to eq(more_apples: :foo)
     end
 
+    it "allows passing in ast as expression" do
+      expressions = {more_apples: calculator.ast("1/0")}
+      expect(described_class.new(expressions, calculator).solve { :foo })
+        .to eq(more_apples: :foo)
+    end
+
     it 'stores the recipient variable on the exception when there is a div/0 error' do
       expressions = {more_apples: "1/0"}
       exception = nil
