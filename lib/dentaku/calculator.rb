@@ -63,8 +63,7 @@ module Dentaku
       } if expression.is_a? Array
 
       store(data) do
-        node = expression
-        node = ast(node) unless node.is_a?(AST::Node)
+        node = ast(expression)
         unbound = node.dependencies(memory)
         unless unbound.empty?
           raise UnboundVariableError.new(unbound),
@@ -96,6 +95,7 @@ module Dentaku
     end
 
     def ast(expression)
+      return expression if expression.is_a?(AST::Node)
       return expression.map { |e| ast(e) } if expression.is_a? Array
 
       @ast_cache.fetch(expression) {
