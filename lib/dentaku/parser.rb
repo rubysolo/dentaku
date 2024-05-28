@@ -60,10 +60,14 @@ module Dentaku
         fail! :too_many_operands, operator: operator, expect: expect, actual: output_size
       end
 
-      fail! :invalid_statement if output_size < args_size
-      args = Array.new(args_size) { output.pop }.reverse
+      if operator == AST::Array && output.empty?
+        output.push(operator.new())
+      else
+        fail! :invalid_statement if output_size < args_size
+        args = Array.new(args_size) { output.pop }.reverse
 
-      output.push operator.new(*args)
+        output.push operator.new(*args)
+      end
 
       if operator.respond_to?(:callback) && !operator.callback.nil?
         operator.callback.call(args)
