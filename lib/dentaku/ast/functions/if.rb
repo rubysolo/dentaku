@@ -36,13 +36,9 @@ module Dentaku
       end
 
       def dependencies(context = {})
-        deps = predicate.dependencies(context)
-
-        if deps.empty?
-          predicate.value(context) ? left.dependencies(context) : right.dependencies(context)
-        else
-          (deps + left.dependencies(context) + right.dependencies(context)).uniq
-        end
+        predicate.value(context) ? left.dependencies(context) : right.dependencies(context)
+      rescue Dentaku::Error, Dentaku::ArgumentError, Dentaku::ZeroDivisionError
+        args.flat_map { |arg| arg.dependencies(context) }.uniq
       end
     end
   end
