@@ -197,5 +197,16 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(results).to eq('key' => [3, :undefined])
       expect { solver.solve! }.to raise_error(Dentaku::UnboundVariableError)
     end
+
+    it do
+      calculator.store(val: nil)
+      expressions = {
+        a: 'IF(5 / 0 > 0, 100, 1000)',
+        b: 'IF(val = 0, 0, IF(val > 0, 0, 0))'
+      }
+      solver = described_class.new(expressions, calculator)
+      results = solver.solve
+      expect(results).to eq(a: :undefined, b: :undefined)
+    end
   end
 end

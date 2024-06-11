@@ -39,10 +39,16 @@ module Dentaku
         deps = predicate.dependencies(context)
 
         if deps.empty?
-          predicate.value(context) ? left.dependencies(context) : right.dependencies(context)
-        else
-          (deps + left.dependencies(context) + right.dependencies(context)).uniq
+          begin
+            value = predicate.value(context)
+            evaluated = true
+          rescue Dentaku::Error, Dentaku::ArgumentError, Dentaku::ZeroDivisionError
+            evaluated = false
+          end
+          return value ? left.dependencies(context) : right.dependencies(context) if evaluated
         end
+
+        (deps + left.dependencies(context) + right.dependencies(context)).uniq
       end
     end
   end
