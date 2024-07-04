@@ -50,6 +50,7 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate("400/60%").round(2)).to eq (666.67)
     expect(calculator.evaluate("(400/60%)*1").round(2)).to eq (666.67)
     expect(calculator.evaluate("60% * 1").round(2)).to eq (0.60)
+    expect(calculator.evaluate("50% + 50%")).to eq (1.0)
   end
 
   describe 'evaluate' do
