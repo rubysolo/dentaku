@@ -159,6 +159,13 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('area', length: 5, width: 5)).to eq(25)
     end
 
+    it 'stores dates' do
+      calculator.store("d1", Date.parse("2024/01/02"))
+      calculator.store("d2", Date.parse("2024/01/06"))
+      expect(calculator.solve(diff: "d1 - d2")).to eq(diff: -4)
+    end
+
+
     it 'stores nested hashes' do
       calculator.store(a: {basket: {of: 'apples'}}, b: 2)
       expect(calculator.evaluate!('a.basket.of')).to eq('apples')
