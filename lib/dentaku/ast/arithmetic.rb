@@ -179,50 +179,42 @@ module Dentaku
 
     class Modulo < Arithmetic
       def self.arity
-        @arity
+        2
       end
 
-      def self.peek(input)
-        @arity = 1
-        @arity = 2 if input.length > 1
+      def self.precedence
+        20
       end
 
-      def initialize(left, right = nil)
-        if right
-          @left  = left
-          @right = right
-        else
-          @right = left
-        end
+      def self.resolve_class(next_token)
+        next_token.nil? || next_token.operator? || next_token.close? ? Percentage : self
+      end
 
-        unless valid_left?
-          raise NodeError.new(%i[numeric nil], left.type, :left),
-                "#{self.class} requires numeric operands or nil"
-        end
+      def operator
+        :%
+      end
+    end
+
+    class Percentage < Arithmetic
+      def self.arity
+        1
+      end
+
+      def initialize(child)
+        @right = child
+
         unless valid_right?
           raise NodeError.new(:numeric, right.type, :right),
-                "#{self.class} requires numeric operands"
+                "#{self.class} requires a numeric operand"
         end
       end
 
       def dependencies(context = {})
-        if percent?
-          @right.dependencies(context)
-        else
-          super
-        end
-      end
-
-      def percent?
-        left.nil?
+        @right.dependencies(context)
       end
 
       def value(context = {})
-        if percent?
-          cast(right.value(context)) * 0.01
-        else
-          super
-        end
+        cast(right.value(context)) * 0.01
       end
 
       def operator
@@ -230,11 +222,7 @@ module Dentaku
       end
 
       def self.precedence
-        20
-      end
-
-      def valid_left?
-        valid_node?(left) || left.nil?
+        30
       end
     end
 

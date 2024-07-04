@@ -108,7 +108,7 @@ describe TestVisitor do
   it 'visits all concrete AST node types' do
     @visited = Set.new
 
-    visit_nodes('(1 + 7) * (8 ^ 2) / - 3.0 - apples')
+    visit_nodes('(1 + 7) * (8 ^ 2) / - 3.0 - apples * 5%')
     visit_nodes('1 < 2 and 3 <= 4 or 5 > 6 AND 7 >= 8 OR 9 != 10 and true')
     visit_nodes('IF(a[0] = NULL, "five", \'seven\')')
     visit_nodes('case (a % 5) when 0 then a else b end')

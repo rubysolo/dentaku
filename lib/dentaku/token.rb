@@ -20,8 +20,20 @@ module Dentaku
       length.zero?
     end
 
+    def operator?
+      is?(:operator)
+    end
+
     def grouping?
       is?(:grouping)
+    end
+
+    def open?
+      grouping? && value == :open
+    end
+
+    def close?
+      grouping? && value == :close
     end
 
     def is?(c)

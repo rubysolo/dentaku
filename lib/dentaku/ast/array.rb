@@ -14,9 +14,6 @@ module Dentaku
         Float::INFINITY
       end
 
-      def self.peek(*)
-      end
-
       def initialize(*elements)
         @elements = *elements
       end
@@ -32,7 +29,7 @@ module Dentaku
       def type
         nil
       end
-      
+
       def accept(visitor)
         visitor.visit_array(self)
       end

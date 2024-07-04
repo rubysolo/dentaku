@@ -9,7 +9,8 @@ module Dentaku
         nil
       end
 
-      def self.peek(*)
+      def self.resolve_class(*)
+        self
       end
 
       def dependencies(context = {})

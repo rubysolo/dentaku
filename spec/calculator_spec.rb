@@ -30,7 +30,6 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('0 * 10 ^ -5')).to eq(0)
     expect(calculator.evaluate('3 + 0 * -3')).to eq(3)
     expect(calculator.evaluate('3 + 0 / -3')).to eq(3)
-    expect(calculator.evaluate('15 % 8')).to eq(7)
     expect(calculator.evaluate('(((695759/735000)^(1/(1981-1991)))-1)*1000').round(4)).to eq(5.5018)
     expect(calculator.evaluate('0.253/0.253')).to eq(1)
     expect(calculator.evaluate('0.253/d', d: 0.253)).to eq(1)
@@ -40,9 +39,17 @@ describe Dentaku::Calculator do
     expect(calculator.evaluate('t + 1*24*60*60', t: Time.local(2017, 1, 1))).to eq(Time.local(2017, 1, 2))
     expect(calculator.evaluate("2 | 3 * 9")).to eq (27)
     expect(calculator.evaluate("2 & 3 * 9")).to eq (2)
-    expect(calculator.evaluate("5%")).to eq (0.05)
     expect(calculator.evaluate('1 << 3')).to eq (8)
     expect(calculator.evaluate('0xFF >> 6')).to eq (3)
+  end
+
+  it "differentiates between percentage and modulo operators" do
+    expect(calculator.evaluate('15 % 8')).to eq(7)
+    expect(calculator.evaluate('15 % (4 * 2)')).to eq(7)
+    expect(calculator.evaluate("5%")).to eq (0.05)
+    expect(calculator.evaluate("400/60%").round(2)).to eq (666.67)
+    expect(calculator.evaluate("(400/60%)*1").round(2)).to eq (666.67)
+    expect(calculator.evaluate("60% * 1").round(2)).to eq (0.60)
   end
 
   describe 'evaluate' do

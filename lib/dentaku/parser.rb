@@ -43,8 +43,6 @@ module Dentaku
       operator = operations.pop
       fail! :invalid_statement if operator.nil?
 
-      operator.peek(output)
-
       output_size = output.length
       args_size = operator.arity || count
       min_size = operator.arity || operator.min_param_count || count
@@ -100,6 +98,7 @@ module Dentaku
 
         when :operator, :comparator, :combinator
           op_class = operation(token)
+          op_class = op_class.resolve_class(input.first)
 
           if op_class.right_associative?
             while operations.last && operations.last < AST::Operation && op_class.precedence < operations.last.precedence
