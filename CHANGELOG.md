@@ -1,9 +1,13 @@
 # Change Log
 
 ## [Unreleased]
-- REDUCE function
-- INTERCEPT function
-- consistent support for custom class arithmetic
+- add support for empty array literals
+- add support for quoted identifiers
+- add REDUCE function
+- add INTERCEPT function
+- improve date/time parsing an arithmetic
+- improve custom class arithmetic
+- fix IF dependency
 
 ## [v3.5.2]
 - add ABS function
