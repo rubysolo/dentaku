@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [v3.5.3]
 - add support for empty array literals
 - add support for quoted identifiers
 - add REDUCE function
@@ -253,7 +253,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
-[Unreleased]: https://github.com/rubysolo/dentaku/compare/v3.5.2...HEAD
+[Unreleased]: https://github.com/rubysolo/dentaku/compare/v3.5.3...HEAD
+[v3.5.3]: https://github.com/rubysolo/dentaku/compare/v3.5.2...v3.5.3
 [v3.5.2]: https://github.com/rubysolo/dentaku/compare/v3.5.1...v3.5.2
 [v3.5.1]: https://github.com/rubysolo/dentaku/compare/v3.5.0...v3.5.1
 [v3.5.0]:  https://github.com/rubysolo/dentaku/compare/v3.4.2...v3.5.0
