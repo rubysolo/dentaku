@@ -107,6 +107,22 @@ RSpec.describe Dentaku::BulkExpressionSolver do
   end
 
   describe "#solve" do
+    it 'resolves capitalized keys when they are declared out of order' do
+      expressions = {
+        FIRST: "SECOND * 2",
+        SECOND: "THIRD * 2",
+        THIRD: 2,
+      }
+
+      result = described_class.new(expressions, calculator).solve
+
+      expect(result).to eq(
+        FIRST: 8,
+        SECOND: 4,
+        THIRD: 2
+      )
+    end
+
     it "returns :undefined when variables are unbound" do
       expressions = {more_apples: "apples + 1"}
       expect(described_class.new(expressions, calculator).solve)
