@@ -4,12 +4,29 @@ require 'dentaku'
 
 describe Dentaku::AST::Pluck do
   let(:calculator) { Dentaku::Calculator.new }
+
   it 'operates on each value in an array' do
     result = Dentaku('PLUCK(users, age)', users: [
       {name: "Bob",  age: 44},
       {name: "Jane", age: 27}
     ])
     expect(result).to eq([44, 27])
+  end
+
+  it 'allows specifying a default for missing values' do
+    result = Dentaku!('PLUCK(users, age, -1)', users: [
+      {name: "Bob"},
+      {name: "Jane", age: 27}
+    ])
+    expect(result).to eq([-1, 27])
+  end
+
+  it 'returns nil if pluck key is missing from a hash' do
+    result = Dentaku!('PLUCK(users, age)', users: [
+      {name: "Bob"},
+      {name: "Jane", age: 27}
+    ])
+    expect(result).to eq([nil, 27])
   end
 
   it 'works with an empty array' do
