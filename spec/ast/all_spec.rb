@@ -4,6 +4,7 @@ require 'dentaku'
 
 describe Dentaku::AST::All do
   let(:calculator) { Dentaku::Calculator.new }
+
   it 'performs ALL operation' do
     result = Dentaku('ALL(vals, val, val > 1)', vals: [1, 2, 3])
     expect(result).to eq(false)
@@ -21,5 +22,17 @@ describe Dentaku::AST::All do
     expect { calculator.evaluate!('ALL({1, 2, 3}, "val", val % 2 == 0)') }.to raise_error(
       Dentaku::ParseError, 'ALL() requires second argument to be an identifier'
     )
+  end
+
+  it 'treats missing keys in hashes as NULL in permissive mode' do
+    expect(
+      calculator.evaluate('ALL(items, item, item.value)', items: [{value: 1}, {}])
+    ).to be_falsy
+  end
+
+  it 'raises an error if accessing a missing key in a hash in strict mode' do
+    expect {
+      calculator.evaluate!('ALL(items, item, item.value)', items: [{value: 1}, {}])
+    }.to raise_error(Dentaku::UnboundVariableError)
   end
 end

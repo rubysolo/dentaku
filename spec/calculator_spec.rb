@@ -173,7 +173,6 @@ describe Dentaku::Calculator do
       expect(calculator.solve(diff: "d1 - d2")).to eq(diff: -4)
     end
 
-
     it 'stores nested hashes' do
       calculator.store(a: {basket: {of: 'apples'}}, b: 2)
       expect(calculator.evaluate!('a.basket.of')).to eq('apples')

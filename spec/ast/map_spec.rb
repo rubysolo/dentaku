@@ -4,6 +4,7 @@ require 'dentaku'
 
 describe Dentaku::AST::Map do
   let(:calculator) { Dentaku::Calculator.new }
+
   it 'operates on each value in an array' do
     result = Dentaku('SUM(MAP(vals, val, val + 1))', vals: [1, 2, 3])
     expect(result).to eq(9)
@@ -23,5 +24,17 @@ describe Dentaku::AST::Map do
     expect { calculator.evaluate!('MAP({1, 2, 3}, "val", val + 1)') }.to raise_error(
       Dentaku::ParseError,  'MAP() requires second argument to be an identifier'
     )
+  end
+
+  it 'treats missing keys in hashes as NULL in permissive mode' do
+    expect(
+      calculator.evaluate('MAP(items, item, item.value)', items: [{value: 1}, {}])
+    ).to eq([1, nil])
+  end
+
+  it 'raises an error if accessing a missing key in a hash in strict mode' do
+    expect {
+      calculator.evaluate!('MAP(items, item, item.value)', items: [{value: 1}, {}])
+    }.to raise_error(Dentaku::UnboundVariableError)
   end
 end

@@ -52,25 +52,37 @@ module Dentaku
     end
 
     def evaluate(expression, data = {}, &block)
-      evaluate!(expression, data)
+      context = evaluation_context(data, :permissive)
+      return evaluate_array(expression, context, &block) if expression.is_a?(Array)
+
+      evaluate!(expression, context)
     rescue Dentaku::Error, Dentaku::ArgumentError, Dentaku::ZeroDivisionError => ex
       block.call(expression, ex) if block_given?
     end
 
-    def evaluate!(expression, data = {}, &block)
-      return expression.map { |e|
-        evaluate(e, data, &block)
-      } if expression.is_a? Array
+    private def evaluate_array(expression, data = {}, &block)
+      expression.map { |e| evaluate(e, data, &block) }
+    end
 
-      store(data) do
+    def evaluate!(expression, data = {}, &block)
+      context = evaluation_context(data, :strict)
+      return evaluate_array!(expression, context, &block) if expression.is_a? Array
+
+      store(context) do
         node = ast(expression)
         unbound = node.dependencies(memory)
+
         unless unbound.empty?
           raise UnboundVariableError.new(unbound),
                 "no value provided for variables: #{unbound.uniq.join(', ')}"
         end
+
         node.value(memory)
       end
+    end
+
+    private def evaluate_array!(expression, data = {}, &block)
+      expression.map { |e| evaluate!(e, data, &block) }
     end
 
     def solve!(expression_hash)
@@ -128,6 +140,10 @@ module Dentaku
       else
         raise ::ArgumentError
       end
+    end
+
+    def evaluation_context(data, evaluation_mode)
+      data.key?(:__evaluation_mode) ? data : data.merge(__evaluation_mode: evaluation_mode)
     end
 
     def store(key_or_hash, value = nil)

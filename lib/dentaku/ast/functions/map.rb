@@ -9,11 +9,7 @@ module Dentaku
         expression      = @args[2]
 
         collection.map do |item_value|
-          expression.value(
-            context.merge(
-              FlatHash.from_hash_with_intermediates(item_identifier => item_value)
-            )
-          )
+          mapped_value(expression, context, item_identifier => item_value)
         end
       end
     end

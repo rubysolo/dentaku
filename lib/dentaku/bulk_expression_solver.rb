@@ -6,16 +6,41 @@ require 'dentaku/tokenizer'
 
 module Dentaku
   class BulkExpressionSolver
+    class StrictEvaluator
+      def initialize(calculator)
+        @calculator = calculator
+      end
+
+      def evaluate(*args)
+        @calculator.evaluate!(*args)
+      end
+    end
+
+    class PermissiveEvaluator
+      def initialize(calculator, block)
+        @calculator = calculator
+        @block = block || ->(*) { :undefined }
+      end
+
+      def evaluate(*args)
+        @calculator.evaluate(*args) { |expr, ex|
+          @block.call(ex)
+        }
+      end
+    end
+
     def initialize(expressions, calculator)
       @expression_hash = FlatHash.from_hash(expressions)
       @calculator = calculator
     end
 
     def solve!
+      @evaluator = StrictEvaluator.new(calculator)
       solve(&raise_exception_handler)
     end
 
     def solve(&block)
+      @evaluator ||= PermissiveEvaluator.new(calculator, block)
       error_handler = block || return_undefined_handler
       results = load_results(&error_handler)
 
@@ -42,7 +67,7 @@ module Dentaku
       @dep_cache ||= {}
     end
 
-    attr_reader :expression_hash, :calculator
+    attr_reader :expression_hash, :calculator, :evaluator
 
     def return_undefined_handler
       ->(*) { :undefined }
@@ -52,8 +77,11 @@ module Dentaku
       ->(ex) { raise ex }
     end
 
-    def expression_with_exception_handler(&block)
-      ->(_expr, ex) { block.call(ex) }
+    def expression_with_exception_handler(var_name, &block)
+      ->(_expr, ex) {
+        ex.recipient_variable = var_name
+        block.call(ex)
+      }
     end
 
     def load_results(&block)
@@ -73,11 +101,14 @@ module Dentaku
         next if expressions[var_name].nil?
 
         with_rescues(var_name, results, block) do
-          results[var_name] = evaluated_facts[var_name] || calculator.evaluate!(
+          results[var_name] = evaluated_facts[var_name] || evaluator.evaluate(
             expressions[var_name],
             context.merge(results),
-            &expression_with_exception_handler(&block)
-          )
+            &expression_with_exception_handler(var_name, &block)
+          ).tap { |res|
+            res.recipient_variable = var_name if res.respond_to?(:recipient_variable=)
+            res
+          }
         end
       end
 
@@ -88,7 +119,6 @@ module Dentaku
 
     def with_rescues(var_name, results, block)
       yield
-
     rescue Dentaku::UnboundVariableError, Dentaku::ZeroDivisionError, Dentaku::ArgumentError => ex
       ex.recipient_variable = var_name
       results[var_name] = block.call(ex)

@@ -33,6 +33,19 @@ module Dentaku
       def validate_identifier(arg, message = "#{name}() requires second argument to be an identifier")
         raise ParseError.for(:node_invalid), message unless arg.is_a?(Identifier)
       end
+
+      private
+
+      def mapped_value(expression, context, item_context)
+        expression.value(
+          context.merge(
+            FlatHash.from_hash_with_intermediates(item_context)
+          )
+        )
+      rescue => e
+        raise e if context["__evaluation_mode"] == :strict
+        nil
+      end
     end
   end
 end
