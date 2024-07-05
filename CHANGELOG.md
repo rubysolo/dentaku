@@ -1,5 +1,11 @@
 # Change Log
 
+## [Unreleased]
+- add support for default value for PLUCK function
+- improve error handling for MAP/ANY/ALL functions
+- fix modulo / percentage operator determination
+- fix string casing bug with bulk expressions
+
 ## [v3.5.3]
 - add support for empty array literals
 - add support for quoted identifiers
