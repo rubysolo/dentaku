@@ -523,6 +523,17 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('value - duration(1, month)', { value: value }).to_date).to eq(Date.parse('2022-12-01'))
       expect(calculator.evaluate!('value - value2', { value: value, value2: value2 })).to eq(1)
     end
+
+    it 'from time object' do
+      value = Time.local(2023, 7, 13, 10, 42, 11)
+      value2 = Time.local(2023, 12, 1, 9, 42, 10)
+
+      expect(calculator.evaluate!('value + duration(1, month)', { value: value })).to eq(Time.local(2023, 8, 13, 10, 42, 11))
+      expect(calculator.evaluate!('value - duration(1, day)', { value: value })).to eq(Time.local(2023, 7, 12, 10, 42, 11))
+      expect(calculator.evaluate!('value - duration(1, year)', { value: value })).to eq(Time.local(2022, 7, 13, 10, 42, 11))
+      expect(calculator.evaluate!('value2 - value', { value: value, value2: value2 })).to eq(12_182_399.0)
+      expect(calculator.evaluate!('value - 7200', { value: value })).to eq(Time.local(2023, 7, 13, 8, 42, 11))
+    end
   end
 
   describe 'functions' do

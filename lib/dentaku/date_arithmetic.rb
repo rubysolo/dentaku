@@ -13,13 +13,11 @@ module Dentaku
       when Numeric
         @base + duration
       when Dentaku::AST::Duration::Value
-        case duration.unit
-        when :year
-          Time.local(@base.year + duration.value, @base.month, @base.day).to_datetime
-        when :month
-          @base >> duration.value
-        when :day
-          @base + duration.value
+        case @base
+        when Time
+          change_datetime(@base.to_datetime, duration.unit, duration.value).to_time
+        else
+          change_datetime(@base, duration.unit, duration.value)
         end
       else
         raise Dentaku::ArgumentError.for(:incompatible_type, value: duration, for: Numeric),
@@ -29,22 +27,33 @@ module Dentaku
 
     def sub(duration)
       case duration
-      when Date, DateTime, Numeric
+      when Date, DateTime, Numeric, Time
         @base - duration
       when Dentaku::AST::Duration::Value
-        case duration.unit
-        when :year
-          Time.local(@base.year - duration.value, @base.month, @base.day).to_datetime
-        when :month
-          @base << duration.value
-        when :day
-          @base - duration.value
+        case @base
+        when Time
+          change_datetime(@base.to_datetime, duration.unit, -duration.value).to_time
+        else
+          change_datetime(@base, duration.unit, -duration.value)
         end
       when Dentaku::TokenScanner::DATE_TIME_REGEXP
         @base - Time.parse(duration).to_datetime
       else
         raise Dentaku::ArgumentError.for(:incompatible_type, value: duration, for: Numeric),
           "'#{duration || duration.class}' is not coercible for date arithmetic"
+      end
+    end
+
+    private
+
+    def change_datetime(base, unit, value)
+      case unit
+      when :year
+        base >> (value * 12)
+      when :month
+        base >> value
+      when :day
+        base + value
       end
     end
   end
