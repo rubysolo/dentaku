@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
     Dentaku is a parser and evaluator for mathematical formulas
   DESC
 
+  s.add_dependency('bigdecimal')
   s.add_dependency('concurrent-ruby')
 
   s.add_development_dependency('codecov')
