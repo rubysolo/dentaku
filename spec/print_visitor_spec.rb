@@ -59,6 +59,11 @@ describe Dentaku::PrintVisitor do
     expect(repr).to eq('2017-12-24 23:59:59')
   end
 
+  it 'handles a percentage in a formula' do
+    repr = roundtrip('((3*4%) * 0.001)')
+    expect(repr).to eq('3 * 4% * 0.001')
+  end
+
   private
 
   def roundtrip(string)

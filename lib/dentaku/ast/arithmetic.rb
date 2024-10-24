@@ -201,24 +201,28 @@ module Dentaku
       end
 
       def initialize(child)
-        @right = child
+        @left = child
 
-        unless valid_right?
-          raise NodeError.new(:numeric, right.type, :right),
+        unless valid_left?
+          raise NodeError.new(:numeric, left.type, :left),
                 "#{self.class} requires a numeric operand"
         end
       end
 
       def dependencies(context = {})
-        @right.dependencies(context)
+        @left.dependencies(context)
       end
 
       def value(context = {})
-        cast(right.value(context)) * 0.01
+        cast(left.value(context)) * 0.01
       end
 
       def operator
         :%
+      end
+
+      def operator_spacing
+        ""
       end
 
       def self.precedence

@@ -7,13 +7,13 @@ module Dentaku
 
     def visit_operation(node)
       if node.left
-        visit_operand(node.left, node.class.precedence, suffix: " ", dir: :left)
+        visit_operand(node.left, node.class.precedence, suffix: node.operator_spacing, dir: :left)
       end
 
       @output << node.display_operator
 
       if node.right
-        visit_operand(node.right, node.class.precedence, prefix: " ", dir: :right)
+        visit_operand(node.right, node.class.precedence, prefix: node.operator_spacing, dir: :right)
       end
     end
 

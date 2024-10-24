@@ -33,7 +33,12 @@ module Dentaku
       def display_operator
         operator.to_s
       end
+
       alias_method :to_s, :display_operator
+
+      def operator_spacing
+        " "
+      end
     end
   end
 end
