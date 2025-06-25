@@ -147,7 +147,7 @@ Logic: `IF`, `AND`, `OR`, `XOR`, `NOT`, `SWITCH`
 
 Numeric: `MIN`, `MAX`, `SUM`, `AVG`, `COUNT`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`, `ABS`, `INTERCEPT`
 
-Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/master/spec/calculator_spec.rb#L593))
+Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/main/lib/dentaku/ast/case.rb))
 
 String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`, `CONTAINS`
 
