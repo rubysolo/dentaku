@@ -7,6 +7,18 @@ require 'dentaku/exceptions'
 
 module Dentaku
   module AST
+    # Examples of using in a formula:
+    #
+    #     CASE x WHEN 1 THEN 2 WHEN 3 THEN 4 ELSE END
+    #
+    #     CASE fruit
+    #     WHEN 'apple'
+    #       THEN 1 * quantity
+    #     WHEN 'banana'
+    #       THEN 2 * quantity
+    #     ELSE
+    #       3 * quantity
+    #     END
     class Case < Node
       attr_reader :switch, :conditions, :else
 
