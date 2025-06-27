@@ -166,7 +166,7 @@ describe Dentaku::Calculator do
       it 'adds multiple functions to default/global function registry' do
         described_class.add_functions([
           [:cube, :numeric, ->(x) { x**3 }],
-          [:spongebob, :string, ->(x) { x.split("").each_with_index().map { |c,i| i.even? ? c.upcase : c.downcase }.join() }],
+          [:spongebob, :string, ->(x) { x.split("").each_with_index().map { |c, i| i.even? ? c.upcase : c.downcase }.join() }],
         ])
 
         expect(described_class.new.evaluate("1 + cube(3)")).to eq(28)

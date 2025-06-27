@@ -531,7 +531,7 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('value + duration(1, month)', { value: value })).to eq(Time.local(2023, 8, 13, 10, 42, 11))
       expect(calculator.evaluate!('value - duration(1, day)', { value: value })).to eq(Time.local(2023, 7, 12, 10, 42, 11))
       expect(calculator.evaluate!('value - duration(1, year)', { value: value })).to eq(Time.local(2022, 7, 13, 10, 42, 11))
-      expect(calculator.evaluate!('value2 - value', { value: value, value2: value2 })).to eq(12_182_399.0)
+      expect(calculator.evaluate!('value2 - value', { value: value, value2: value2 })).to eq(value2 - value)
       expect(calculator.evaluate!('value - 7200', { value: value })).to eq(Time.local(2023, 7, 13, 8, 42, 11))
     end
   end
