@@ -1,10 +1,8 @@
 require 'pry'
 require 'simplecov'
-require 'codecov'
 
 SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
-  SimpleCov::Formatter::Codecov,
 ])
 
 SimpleCov.minimum_coverage 90
