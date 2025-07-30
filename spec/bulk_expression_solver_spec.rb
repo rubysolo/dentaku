@@ -33,8 +33,15 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       }.to raise_error(Dentaku::UnboundVariableError)
     end
 
-    it "lets you know if the result is a div/0 error" do
+    it "lets you know if the result is a div/0 error when dividing" do
       expressions = {more_apples: "1/0"}
+      expect {
+        described_class.new(expressions, calculator).solve!
+      }.to raise_error(Dentaku::ZeroDivisionError)
+    end
+
+    it "lets you know if the result is a div/0 error when taking modulo" do
+      expressions = {more_apples: "1%0"}
       expect {
         described_class.new(expressions, calculator).solve!
       }.to raise_error(Dentaku::ZeroDivisionError)

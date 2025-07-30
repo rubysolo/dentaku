@@ -193,6 +193,13 @@ module Dentaku
       def operator
         :%
       end
+
+      def value(context = {})
+        r = decimal(cast(right.value(context)))
+        raise Dentaku::ZeroDivisionError if r.zero?
+
+        cast(cast(left.value(context)) % r)
+      end
     end
 
     class Percentage < Arithmetic
