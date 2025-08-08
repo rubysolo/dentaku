@@ -20,16 +20,16 @@ describe Dentaku::AST::Division do
     expect(node.value.round(4)).to eq(0.8333)
   end
 
-  it 'requires numeric operands' do
+  it 'requires operands that respond to /' do
     expect {
-      described_class.new(five, t)
-    }.to raise_error(Dentaku::NodeError, /requires numeric operands/)
+      described_class.new(five, t).value
+    }.to raise_error(Dentaku::ArgumentError, /requires operands that respond to \//)
 
     expression = Dentaku::AST::Multiplication.new(five, five)
     group = Dentaku::AST::Grouping.new(expression)
 
     expect {
-      described_class.new(group, five)
+      described_class.new(group, five).value
     }.not_to raise_error
   end
 
@@ -44,17 +44,21 @@ describe Dentaku::AST::Division do
           value + other
         end
       end
+
+      def zero?
+        value.zero?
+      end
     end
 
     operand_five = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, Divisible.new(5))
     operand_six = Dentaku::AST::Numeric.new Dentaku::Token.new(:numeric, Divisible.new(6))
 
     expect {
-      described_class.new(operand_five, operand_six)
+      described_class.new(operand_five, operand_six).value
     }.not_to raise_error
 
     expect {
-      described_class.new(operand_five, six)
+      described_class.new(operand_five, six).value
     }.not_to raise_error
   end
 end

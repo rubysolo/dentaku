@@ -9,20 +9,6 @@ module Dentaku
       DECIMAL = /\A-?\d*\.\d+\z/.freeze
       INTEGER = /\A-?\d+\z/.freeze
 
-      def initialize(*)
-        super
-
-        unless valid_left?
-          raise NodeError.new(:numeric, left.type, :left),
-                "#{self.class} requires numeric operands"
-        end
-
-        unless valid_right?
-          raise NodeError.new(:numeric, right.type, :right),
-                "#{self.class} requires numeric operands"
-        end
-      end
-
       def type
         :numeric
       end
@@ -69,8 +55,9 @@ module Dentaku
       def datetime?(val)
         # val is a Date, Time, or DateTime
         return true if val.respond_to?(:strftime)
+        return false unless val.is_a?(::String)
 
-        val.to_s =~ Dentaku::TokenScanner::DATE_TIME_REGEXP
+        val =~ Dentaku::TokenScanner::DATE_TIME_REGEXP
       end
 
       def valid_node?(node)
