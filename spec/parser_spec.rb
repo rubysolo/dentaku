@@ -27,6 +27,9 @@ describe Dentaku::Parser do
   it 'calculates bitwise OR' do
     node = parse('2|3')
     expect(node.value).to eq(3)
+
+    node = parse('(5 | 2) + 1')
+    expect(node.value).to eq(8)
   end
 
   it 'performs multiple operations in one stream' do
