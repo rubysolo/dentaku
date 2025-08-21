@@ -111,6 +111,13 @@ describe Dentaku::AST::Arithmetic do
     end
   end
 
+  it 'does not try to parse nested string as date' do
+    a = ['2017-01-01', '2017-01-02']
+    b = ['2017-01-01']
+
+    expect(Dentaku('a - b', a: a, b: b)).to eq(['2017-01-02'])
+  end
+
   it 'raises ArgumentError if given individually valid but incompatible arguments' do
     expect { add(one, date) }.to raise_error(Dentaku::ArgumentError)
     expect { add(x, one, 'x' => [1]) }.to raise_error(Dentaku::ArgumentError)

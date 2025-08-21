@@ -77,11 +77,17 @@ describe Dentaku::Parser do
   end
 
   it 'evaluates arrays' do
+    node = parse('{}')
+    expect(node.value).to eq([])
+
     node = parse('{1, 2, 3}')
     expect(node.value).to eq([1, 2, 3])
 
-    node = parse('{}')
-    expect(node.value).to eq([])
+    node = parse('{1, 2, 3} + {4,5,6}')
+    expect(node.value).to eq([1, 2, 3, 4, 5, 6])
+
+    node = parse('{1, 2, 3} - {2,3}')
+    expect(node.value).to eq([1])
   end
 
   context 'invalid expression' do
