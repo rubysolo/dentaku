@@ -267,6 +267,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[v3.5.5]: https://github.com/rubysolo/dentaku/compare/v3.5.4...v3.5.5
 [v3.5.4]: https://github.com/rubysolo/dentaku/compare/v3.5.3...v3.5.4
 [v3.5.3]: https://github.com/rubysolo/dentaku/compare/v3.5.2...v3.5.3
 [v3.5.2]: https://github.com/rubysolo/dentaku/compare/v3.5.1...v3.5.2
