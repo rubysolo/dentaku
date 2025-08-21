@@ -1,13 +1,19 @@
 # Change Log
 
-## [v3.5.4]
+## [v3.5.5] 2025-08-20
+- fix percentages in print visitor
+- repo cleanup
+- fix modulo zero
+- fix array arithmetic
+
+## [v3.5.4] 2024-08-13
 - add support for default value for PLUCK function
 - improve error handling for MAP/ANY/ALL functions
 - fix modulo / percentage operator determination
 - fix string casing bug with bulk expressions
 - add explicit gem dependency for BigDecimal
 
-## [v3.5.3]
+## [v3.5.3] 2024-07-04
 - add support for empty array literals
 - add support for quoted identifiers
 - add REDUCE function
@@ -16,7 +22,7 @@
 - improve custom class arithmetic
 - fix IF dependency
 
-## [v3.5.2]
+## [v3.5.2] 2023-12-06
 - add ABS function
 - add array support for AST visitors
 - add support for function callbacks
@@ -29,14 +35,14 @@
 - fix handling of Math::DomainError
 - fix invalid cast
 
-## [v3.5.1]
+## [v3.5.1] 2022-10-24
 - add bitwise shift left and shift right operators
 - improve numeric conversions
 - improve parse exceptions
 - improve bitwise exceptions
 - include variable name in bulk expression exceptions
 
-## [v3.5.0]
+## [v3.5.0] 2022-03-17
 - fix bug with function argument count
 - add XOR operator
 - make function args publicly accessible
@@ -48,7 +54,7 @@
 - respect case sensitivity in nested case statments
 - add visitor pattern
 
-## [v3.4.2]
+## [v3.4.2] 2021-07-14
 - add FILTER function
 - add concurrent-ruby dependency to make global calculator object thread safe
 - add Ruby 3 support
