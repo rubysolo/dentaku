@@ -88,13 +88,9 @@ module Dentaku
         i += 1
       end
 
-      while operations.any?
-        consume
-      end
+      consume while operations.any?
 
-      unless output.count == 1
-        fail! :invalid_statement
-      end
+      fail! :invalid_statement unless output.count == 1
 
       output.first
     end
@@ -127,7 +123,7 @@ module Dentaku
       when :function
         handle_function(token)
       when :case
-        handle_case(token, index, tokens)
+        handle_case(token)
       when :access
         handle_access(token)
       when :array
@@ -142,13 +138,9 @@ module Dentaku
     def handle_operator(token, lookahead)
       op_class = operation(token).resolve_class(lookahead)
       if op_class.right_associative?
-        while operations.last && operations.last < AST::Operation && op_class.precedence < operations.last.precedence
-          consume
-        end
+        consume while operations.last && operations.last < AST::Operation && op_class.precedence < operations.last.precedence
       else
-        while operations.last && operations.last < AST::Operation && op_class.precedence <= operations.last.precedence
-          consume
-        end
+        consume while operations.last && operations.last < AST::Operation && op_class.precedence <= operations.last.precedence
       end
       operations.push op_class
     end
@@ -160,74 +152,40 @@ module Dentaku
       operations.push func
     end
 
-    def handle_case(token, index, tokens)
-      case_index = operations.index { |o| o == AST::Case } || -1
+    def handle_case(token)
+      # We always operate on the innermost (most recent) CASE on the stack.
+      case_index = operations.rindex(AST::Case) || -1
       token_index = case_index + 1
 
       case token.value
       when :open
-        if operations.include?(AST::Case)
-          # nested case extraction (non-recursive outer parser)
-          open_cases = 0
-          case_end_index = nil
-          j = index + 1
-          while j < tokens.length
-            t = tokens[j]
-            if t.category == :case
-              if t.value == :open
-                open_cases += 1
-              elsif t.value == :close
-                if open_cases > 0
-                  open_cases -= 1
-                else
-                  case_end_index = j
-                  break
-                end
-              end
-            end
-            j += 1
-          end
-          inner_case_inputs = tokens.slice!(index + 1, case_end_index - index) || []
-          subparser = Parser.new(
-            inner_case_inputs,
-            operations: [AST::Case],
-            arities: [0],
-            function_registry: @function_registry,
-            case_sensitive: case_sensitive
-          )
-          subparser.parse
-          output.concat(subparser.output)
-        else
-          operations.push AST::Case
-          arities.push(0)
-        end
+        # Start a new CASE context.
+        operations.push AST::Case
+        arities.push(0)
 
       when :close
+        # Finalize any trailing THEN/ELSE expression still on the stack.
         if operations[token_index] == AST::CaseThen
-          while operations.last != AST::Case
-            consume
-          end
+          consume_until(AST::Case)
           operations.push(AST::CaseConditional)
           consume(2)
           arities[-1] += 1
         elsif operations[token_index] == AST::CaseElse
-          while operations.last != AST::Case
-            consume
-          end
+          consume_until(AST::Case)
           arities[-1] += 1
         end
-        fail! :unprocessed_token, token_name: token.value unless operations.count >= 1 && operations.last == AST::Case
+        fail! :unprocessed_token, token_name: token.value unless operations.last == AST::Case
         consume(arities.pop.succ)
 
       when :when
         if operations[token_index] == AST::CaseThen
-          while ![AST::CaseWhen, AST::Case].include?(operations.last)
-            consume
-          end
+          # Close out previous WHEN/THEN pair.
+          consume_until([AST::CaseWhen, AST::Case])
           operations.push(AST::CaseConditional)
           consume(2)
           arities[-1] += 1
         elsif operations.last == AST::Case
+          # First WHEN: finalize switch variable expression.
           operations.push(AST::CaseSwitchVariable)
           consume
         end
@@ -235,25 +193,32 @@ module Dentaku
 
       when :then
         if operations[token_index] == AST::CaseWhen
-          while ![AST::CaseThen, AST::Case].include?(operations.last)
-            consume
-          end
+          consume_until([AST::CaseThen, AST::Case])
         end
         operations.push(AST::CaseThen)
 
       when :else
         if operations[token_index] == AST::CaseThen
-          while operations.last != AST::Case
-            consume
-          end
+          consume_until(AST::Case)
           operations.push(AST::CaseConditional)
           consume(2)
           arities[-1] += 1
         end
         operations.push(AST::CaseElse)
+
       else
         fail! :unknown_case_token, token_name: token.value
       end
+    end
+
+    def consume_until(target)
+      matcher =
+        case target
+        when Array then ->(op) { target.include?(op) }
+        else ->(op) { op == target }
+        end
+
+      consume while operations.any? && !matcher.call(operations.last)
     end
 
     def handle_access(token)
@@ -262,9 +227,7 @@ module Dentaku
         operations.push AST::Access
 
       when :rbracket
-        while operations.any? && operations.last != AST::Access
-          consume
-        end
+        consume while operations.any? && operations.last != AST::Access
         fail! :unbalanced_bracket, token: token unless operations.last == AST::Access
         consume
       end
@@ -277,9 +240,7 @@ module Dentaku
         arities.push 0
 
       when :array_end
-        while operations.any? && operations.last != AST::Array
-          consume
-        end
+        consume while operations.any? && operations.last != AST::Array
         fail! :unbalanced_bracket, token: token unless operations.last == AST::Array
         consume(arities.pop.succ)
       end
@@ -298,9 +259,7 @@ module Dentaku
         end
 
       when :close
-        while operations.any? && operations.last != AST::Grouping
-          consume
-        end
+        consume while operations.any? && operations.last != AST::Grouping
         lparen = operations.pop
         fail! :unbalanced_parenthesis, token unless lparen == AST::Grouping
         if operations.last && operations.last < AST::Function
@@ -310,9 +269,8 @@ module Dentaku
       when :comma
         fail! :invalid_statement if arities.empty?
         arities[-1] += 1
-        while operations.any? && operations.last != AST::Grouping && operations.last != AST::Array
-          consume
-        end
+        consume while operations.any? && operations.last != AST::Grouping && operations.last != AST::Array
+
       else
         fail! :unknown_grouping_token, token_name: token.value
       end
