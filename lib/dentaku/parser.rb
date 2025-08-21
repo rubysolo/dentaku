@@ -37,6 +37,7 @@ module Dentaku
       @arities           = options.fetch(:arities, [])
       @function_registry = options.fetch(:function_registry, nil)
       @case_sensitive    = options.fetch(:case_sensitive, false)
+      @skip_indices      = []
     end
 
     def consume(count = 2)
@@ -82,6 +83,10 @@ module Dentaku
 
       i = 0
       while i < input.length
+        if @skip_indices.include?(i)
+          i += 1
+          next
+        end
         token = input[i]
         lookahead = input[i + 1]
         process_token(token, lookahead, i, input)
@@ -251,7 +256,9 @@ module Dentaku
       when :open
         if lookahead && lookahead.value == :close
           # empty grouping (e.g. function with zero arguments) — we trigger consume later
-          tokens.delete_at(tokens.index(lookahead)) # remove the close to mimic previous shift behavior
+          # skip to the end
+          lookahead_index = tokens.index(lookahead)
+          @skip_indices << lookahead_index if lookahead_index
           arities.pop
           consume(0)
         else
