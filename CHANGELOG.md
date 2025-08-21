@@ -5,6 +5,7 @@
 - repo cleanup
 - fix modulo zero
 - fix array arithmetic
+- refactor parser
 
 ## [v3.5.4] 2024-08-13
 - add support for default value for PLUCK function

@@ -53,17 +53,18 @@ module Dentaku
         fail! :too_few_operands, operator: operator, expect: expect, actual: output_size
       end
 
-      if output_size > max_size && operations.empty? || args_size > max_size
+      if (output_size > max_size && operations.empty?) || args_size > max_size
         expect = min_size == max_size ? min_size : min_size..max_size
         fail! :too_many_operands, operator: operator, expect: expect, actual: output_size
       end
 
+      args = []
       if operator == AST::Array && output.empty?
-        output.push(operator.new())
+        # special case: empty array literal '{}'
+        output.push(operator.new)
       else
         fail! :invalid_statement if output_size < args_size
         args = Array.new(args_size) { output.pop }.reverse
-
         output.push operator.new(*args)
       end
 
@@ -79,224 +80,12 @@ module Dentaku
     def parse
       return AST::Nil.new if input.empty?
 
-      while token = input.shift
-        case token.category
-        when :datetime
-          output.push AST::DateTime.new(token)
-
-        when :numeric
-          output.push AST::Numeric.new(token)
-
-        when :logical
-          output.push AST::Logical.new(token)
-
-        when :string
-          output.push AST::String.new(token)
-
-        when :identifier
-          output.push AST::Identifier.new(token, case_sensitive: case_sensitive)
-
-        when :operator, :comparator, :combinator
-          op_class = operation(token)
-          op_class = op_class.resolve_class(input.first)
-
-          if op_class.right_associative?
-            while operations.last && operations.last < AST::Operation && op_class.precedence < operations.last.precedence
-              consume
-            end
-
-            operations.push op_class
-          else
-            while operations.last && operations.last < AST::Operation && op_class.precedence <= operations.last.precedence
-              consume
-            end
-
-            operations.push op_class
-          end
-
-        when :null
-          output.push AST::Nil.new
-
-        when :function
-          func = function(token)
-          if func.nil?
-            fail! :undefined_function, function_name: token.value
-          end
-
-          arities.push 0
-          operations.push func
-
-        when :case
-          case_index = operations.index { |o| o == AST::Case } || -1
-          token_index = case_index + 1
-
-          case token.value
-          when :open
-            # special handling for case nesting: strip out inner case
-            # statements and parse their AST segments recursively
-            if operations.include?(AST::Case)
-              open_cases = 0
-              case_end_index = nil
-
-              input.each_with_index do |input_token, index|
-                if input_token.category == :case
-                  if input_token.value == :open
-                    open_cases += 1
-                  end
-
-                  if input_token.value == :close
-                    if open_cases > 0
-                      open_cases -= 1
-                    else
-                      case_end_index = index
-                      break
-                    end
-                  end
-                end
-              end
-              inner_case_inputs = input.slice!(0..case_end_index)
-              subparser = Parser.new(
-                inner_case_inputs,
-                operations: [AST::Case],
-                arities: [0],
-                function_registry: @function_registry,
-                case_sensitive: case_sensitive
-              )
-              subparser.parse
-              output.concat(subparser.output)
-            else
-              operations.push AST::Case
-              arities.push(0)
-            end
-          when :close
-            if operations[token_index] == AST::CaseThen
-              while operations.last != AST::Case
-                consume
-              end
-
-              operations.push(AST::CaseConditional)
-              consume(2)
-              arities[-1] += 1
-            elsif operations[token_index] == AST::CaseElse
-              while operations.last != AST::Case
-                consume
-              end
-
-              arities[-1] += 1
-            end
-
-            unless operations.count >= 1 && operations.last == AST::Case
-              fail! :unprocessed_token, token_name: token.value
-            end
-            consume(arities.pop.succ)
-          when :when
-            if operations[token_index] == AST::CaseThen
-              while ![AST::CaseWhen, AST::Case].include?(operations.last)
-                consume
-              end
-              operations.push(AST::CaseConditional)
-              consume(2)
-              arities[-1] += 1
-            elsif operations.last == AST::Case
-              operations.push(AST::CaseSwitchVariable)
-              consume
-            end
-
-            operations.push(AST::CaseWhen)
-          when :then
-            if operations[token_index] == AST::CaseWhen
-              while ![AST::CaseThen, AST::Case].include?(operations.last)
-                consume
-              end
-            end
-            operations.push(AST::CaseThen)
-          when :else
-            if operations[token_index] == AST::CaseThen
-              while operations.last != AST::Case
-                consume
-              end
-
-              operations.push(AST::CaseConditional)
-              consume(2)
-              arities[-1] += 1
-            end
-
-            operations.push(AST::CaseElse)
-          else
-            fail! :unknown_case_token, token_name: token.value
-          end
-
-        when :access
-          case token.value
-          when :lbracket
-            operations.push AST::Access
-          when :rbracket
-            while operations.any? && operations.last != AST::Access
-              consume
-            end
-
-            unless operations.last == AST::Access
-              fail! :unbalanced_bracket, token: token
-            end
-            consume
-          end
-
-        when :array
-          case token.value
-          when :array_start
-            operations.push AST::Array
-            arities.push 0
-          when :array_end
-            while operations.any? && operations.last != AST::Array
-              consume
-            end
-
-            unless operations.last == AST::Array
-              fail! :unbalanced_bracket, token: token
-            end
-
-            consume(arities.pop.succ)
-          end
-
-        when :grouping
-          case token.value
-          when :open
-            if input.first && input.first.value == :close
-              input.shift
-              arities.pop
-              consume(0)
-            else
-              operations.push AST::Grouping
-            end
-
-          when :close
-            while operations.any? && operations.last != AST::Grouping
-              consume
-            end
-
-            lparen = operations.pop
-            unless lparen == AST::Grouping
-              fail! :unbalanced_parenthesis, token
-            end
-
-            if operations.last && operations.last < AST::Function
-              consume(arities.pop.succ)
-            end
-
-          when :comma
-            fail! :invalid_statement if arities.empty?
-            arities[-1] += 1
-            while operations.any? && operations.last != AST::Grouping && operations.last != AST::Array
-              consume
-            end
-
-          else
-            fail! :unknown_grouping_token, token_name: token.value
-          end
-
-        else
-          fail! :not_implemented_token_category, token_category: token.category
-        end
+      i = 0
+      while i < input.length
+        token = input[i]
+        lookahead = input[i + 1]
+        process_token(token, lookahead, i, input)
+        i += 1
       end
 
       while operations.any?
@@ -323,6 +112,211 @@ module Dentaku
     end
 
     private
+
+    def process_token(token, lookahead, index, tokens)
+      case token.category
+      when :datetime      then output << AST::DateTime.new(token)
+      when :numeric       then output << AST::Numeric.new(token)
+      when :logical       then output << AST::Logical.new(token)
+      when :string        then output << AST::String.new(token)
+      when :identifier    then output << AST::Identifier.new(token, case_sensitive: case_sensitive)
+      when :operator, :comparator, :combinator
+        handle_operator(token, lookahead)
+      when :null
+        output << AST::Nil.new
+      when :function
+        handle_function(token)
+      when :case
+        handle_case(token, index, tokens)
+      when :access
+        handle_access(token)
+      when :array
+        handle_array(token)
+      when :grouping
+        handle_grouping(token, lookahead, tokens)
+      else
+        fail! :not_implemented_token_category, token_category: token.category
+      end
+    end
+
+    def handle_operator(token, lookahead)
+      op_class = operation(token).resolve_class(lookahead)
+      if op_class.right_associative?
+        while operations.last && operations.last < AST::Operation && op_class.precedence < operations.last.precedence
+          consume
+        end
+      else
+        while operations.last && operations.last < AST::Operation && op_class.precedence <= operations.last.precedence
+          consume
+        end
+      end
+      operations.push op_class
+    end
+
+    def handle_function(token)
+      func = function(token)
+      fail! :undefined_function, function_name: token.value if func.nil?
+      arities.push 0
+      operations.push func
+    end
+
+    def handle_case(token, index, tokens)
+      case_index = operations.index { |o| o == AST::Case } || -1
+      token_index = case_index + 1
+
+      case token.value
+      when :open
+        if operations.include?(AST::Case)
+          # nested case extraction (non-recursive outer parser)
+          open_cases = 0
+          case_end_index = nil
+          j = index + 1
+          while j < tokens.length
+            t = tokens[j]
+            if t.category == :case
+              if t.value == :open
+                open_cases += 1
+              elsif t.value == :close
+                if open_cases > 0
+                  open_cases -= 1
+                else
+                  case_end_index = j
+                  break
+                end
+              end
+            end
+            j += 1
+          end
+          inner_case_inputs = tokens.slice!(index + 1, case_end_index - index) || []
+          subparser = Parser.new(
+            inner_case_inputs,
+            operations: [AST::Case],
+            arities: [0],
+            function_registry: @function_registry,
+            case_sensitive: case_sensitive
+          )
+          subparser.parse
+          output.concat(subparser.output)
+        else
+          operations.push AST::Case
+          arities.push(0)
+        end
+
+      when :close
+        if operations[token_index] == AST::CaseThen
+          while operations.last != AST::Case
+            consume
+          end
+          operations.push(AST::CaseConditional)
+          consume(2)
+          arities[-1] += 1
+        elsif operations[token_index] == AST::CaseElse
+          while operations.last != AST::Case
+            consume
+          end
+          arities[-1] += 1
+        end
+        fail! :unprocessed_token, token_name: token.value unless operations.count >= 1 && operations.last == AST::Case
+        consume(arities.pop.succ)
+
+      when :when
+        if operations[token_index] == AST::CaseThen
+          while ![AST::CaseWhen, AST::Case].include?(operations.last)
+            consume
+          end
+          operations.push(AST::CaseConditional)
+          consume(2)
+          arities[-1] += 1
+        elsif operations.last == AST::Case
+          operations.push(AST::CaseSwitchVariable)
+          consume
+        end
+        operations.push(AST::CaseWhen)
+
+      when :then
+        if operations[token_index] == AST::CaseWhen
+          while ![AST::CaseThen, AST::Case].include?(operations.last)
+            consume
+          end
+        end
+        operations.push(AST::CaseThen)
+
+      when :else
+        if operations[token_index] == AST::CaseThen
+          while operations.last != AST::Case
+            consume
+          end
+          operations.push(AST::CaseConditional)
+          consume(2)
+          arities[-1] += 1
+        end
+        operations.push(AST::CaseElse)
+      else
+        fail! :unknown_case_token, token_name: token.value
+      end
+    end
+
+    def handle_access(token)
+      case token.value
+      when :lbracket
+        operations.push AST::Access
+
+      when :rbracket
+        while operations.any? && operations.last != AST::Access
+          consume
+        end
+        fail! :unbalanced_bracket, token: token unless operations.last == AST::Access
+        consume
+      end
+    end
+
+    def handle_array(token)
+      case token.value
+      when :array_start
+        operations.push AST::Array
+        arities.push 0
+
+      when :array_end
+        while operations.any? && operations.last != AST::Array
+          consume
+        end
+        fail! :unbalanced_bracket, token: token unless operations.last == AST::Array
+        consume(arities.pop.succ)
+      end
+    end
+
+    def handle_grouping(token, lookahead, tokens)
+      case token.value
+      when :open
+        if lookahead && lookahead.value == :close
+          # empty grouping (e.g. function with zero arguments) — we trigger consume later
+          tokens.delete_at(tokens.index(lookahead)) # remove the close to mimic previous shift behavior
+          arities.pop
+          consume(0)
+        else
+          operations.push AST::Grouping
+        end
+
+      when :close
+        while operations.any? && operations.last != AST::Grouping
+          consume
+        end
+        lparen = operations.pop
+        fail! :unbalanced_parenthesis, token unless lparen == AST::Grouping
+        if operations.last && operations.last < AST::Function
+          consume(arities.pop.succ)
+        end
+
+      when :comma
+        fail! :invalid_statement if arities.empty?
+        arities[-1] += 1
+        while operations.any? && operations.last != AST::Grouping && operations.last != AST::Array
+          consume
+        end
+      else
+        fail! :unknown_grouping_token, token_name: token.value
+      end
+    end
 
     def fail!(reason, **meta)
       message =
