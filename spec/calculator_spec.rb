@@ -121,6 +121,7 @@ describe Dentaku::Calculator do
       expect { calculator.evaluate!('"foo" & "bar"') }.to raise_error(Dentaku::ArgumentError)
       expect { calculator.evaluate!('1.0 & "bar"') }.to raise_error(Dentaku::ArgumentError)
       expect { calculator.evaluate!('1 & "bar"') }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('data < 1', data: { a: 5 }) }.to raise_error(Dentaku::ArgumentError)
     end
 
     it 'raises argument error if a function is called with incorrect arity' do
