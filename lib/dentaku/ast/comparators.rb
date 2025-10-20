@@ -20,7 +20,7 @@ module Dentaku
         r = validate_value(cast(right.value(context)))
 
         l.public_send(operator, r)
-      rescue ::ArgumentError => e
+      rescue ::ArgumentError, ::TypeError => e
         raise Dentaku::ArgumentError.for(:incompatible_type, value: r, for: l.class), e.message
       end
 
