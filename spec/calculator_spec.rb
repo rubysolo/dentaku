@@ -236,6 +236,12 @@ describe Dentaku::Calculator do
       expect(calculator.dependencies('MAP(vals, val, val + step)')).to eq(['vals', 'step'])
       expect(calculator.dependencies('ALL(people, person, person.age < adult)')).to eq(['people', 'adult'])
     end
+
+    it "raises an error when trying to find dependencies with invalid syntax" do
+      expect { calculator.dependencies('bob + / 3') }.to raise_error(Dentaku::ParseError)
+      expect { calculator.dependencies('123 * TRUE') }.to raise_error(Dentaku::ParseError)
+      expect { calculator.dependencies('4 + "asdf"') }.to raise_error(Dentaku::ParseError)
+    end
   end
 
   describe 'solve!' do

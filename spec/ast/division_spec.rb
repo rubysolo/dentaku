@@ -22,14 +22,14 @@ describe Dentaku::AST::Division do
 
   it 'requires operands that respond to /' do
     expect {
-      described_class.new(five, t).value
-    }.to raise_error(Dentaku::ArgumentError, /requires operands that respond to \//)
+      described_class.new(five, t)
+    }.to raise_error(Dentaku::NodeError, /requires operands/)
 
     expression = Dentaku::AST::Multiplication.new(five, five)
     group = Dentaku::AST::Grouping.new(expression)
 
     expect {
-      described_class.new(group, five).value
+      described_class.new(group, five)
     }.not_to raise_error
   end
 

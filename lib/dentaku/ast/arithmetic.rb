@@ -9,6 +9,20 @@ module Dentaku
       DECIMAL = /\A-?\d*\.\d+\z/.freeze
       INTEGER = /\A-?\d+\z/.freeze
 
+      def initialize(*)
+        super
+
+        unless valid_left?
+          raise NodeError.new(:incompatible, left.type, :left),
+                "#{self.class} requires operands that are numeric or compatible types, not #{left.type}"
+        end
+
+        unless valid_right?
+          raise NodeError.new(:incompatible, right.type, :right),
+                "#{self.class} requires operands that are numeric or compatible types, not #{right.type}"
+        end
+      end
+
       def type
         :numeric
       end
@@ -61,7 +75,19 @@ module Dentaku
       end
 
       def valid_node?(node)
-        node && (node.type == :numeric || node.type == :integer || node.dependencies.any?)
+        return false unless node
+
+        # Allow nodes with dependencies (identifiers that will be resolved later)
+        return true if node.dependencies.any?
+
+        # Allow compatible types
+        return true if [:numeric, :integer, :array].include?(node.type)
+
+        # Allow nodes without a type (operations, groupings)
+        return true if node.type.nil?
+
+        # Reject incompatible types
+        false
       end
 
       def valid_left?
