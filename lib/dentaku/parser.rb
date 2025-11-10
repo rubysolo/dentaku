@@ -87,9 +87,10 @@ module Dentaku
           i += 1
           next
         end
+
         token = input[i]
         lookahead = input[i + 1]
-        process_token(token, lookahead, i, input)
+        process_token(token, lookahead, i)
         i += 1
       end
 
@@ -114,7 +115,7 @@ module Dentaku
 
     private
 
-    def process_token(token, lookahead, index, tokens)
+    def process_token(token, lookahead, index)
       case token.category
       when :datetime      then output << AST::DateTime.new(token)
       when :numeric       then output << AST::Numeric.new(token)
@@ -134,7 +135,7 @@ module Dentaku
       when :array
         handle_array(token)
       when :grouping
-        handle_grouping(token, lookahead, tokens)
+        handle_grouping(token, lookahead, index)
       else
         fail! :not_implemented_token_category, token_category: token.category
       end
@@ -251,14 +252,13 @@ module Dentaku
       end
     end
 
-    def handle_grouping(token, lookahead, tokens)
+    def handle_grouping(token, lookahead, token_index)
       case token.value
       when :open
         if lookahead && lookahead.value == :close
           # empty grouping (e.g. function with zero arguments) — we trigger consume later
           # skip to the end
-          lookahead_index = tokens.index(lookahead)
-          @skip_indices << lookahead_index if lookahead_index
+          @skip_indices << token_index + 1
           arities.pop
           consume(0)
         else
