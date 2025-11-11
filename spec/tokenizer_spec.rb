@@ -49,6 +49,20 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:category)).to eq([:grouping, :operator, :numeric, :grouping])
     expect(tokens.map(&:value)).to eq([:open, :negate, 5, :close])
 
+    tokens = tokenizer.tokenize('{-5, -2}[-1]')
+    expect(tokens.map(&:category)).to eq([
+      :array,                                   # {
+      :operator, :numeric, :grouping,           # -5,
+      :operator, :numeric, :array,              # -2}
+      :access, :operator, :numeric, :access     # [-1]
+    ])
+    expect(tokens.map(&:value)).to eq([
+      :array_start,                     # {
+      :negate, 5, :comma,               # -5,
+      :negate, 2, :array_end,           # -2}
+      :lbracket, :negate, 1, :rbracket  # [-1]
+    ])
+
     tokens = tokenizer.tokenize('if(-5 > x, -7, -8) - 9')
     expect(tokens.map(&:category)).to eq([
       :function, :grouping,                                      # if(

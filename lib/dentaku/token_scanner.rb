@@ -114,12 +114,14 @@ module Dentaku
 
       def negate
         new(:operator, '-', lambda { |raw| :negate }, lambda { |last_token|
-          last_token.nil?             ||
-          last_token.is?(:operator)   ||
-          last_token.is?(:comparator) ||
-          last_token.is?(:combinator) ||
-          last_token.value == :open   ||
-          last_token.value == :comma
+          last_token.nil?               ||
+          last_token.is?(:operator)     ||
+          last_token.is?(:comparator)   ||
+          last_token.is?(:combinator)   ||
+          last_token.value == :open     ||
+          last_token.value == :comma    ||
+          last_token.value == :lbracket ||
+          last_token.value == :array_start
         })
       end
 
