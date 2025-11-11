@@ -52,6 +52,11 @@ describe Dentaku::Parser do
     expect(node.value).to eq(2)
   end
 
+  it 'parses multiple zero-argument functions in sequence' do
+    node = parse('count() + count()') # count() without arguments returns 0
+    expect(node.value).to eq(0)
+  end
+
   it 'represents formulas with variables' do
     node = parse('5 * x')
     expect { node.value }.to raise_error(Dentaku::UnboundVariableError)
