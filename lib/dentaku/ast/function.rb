@@ -37,20 +37,6 @@ module Dentaku
       def self.registry
         @registry ||= FunctionRegistry.new
       end
-
-      # @return [Numeric] where possible it returns an Integer otherwise a BigDecimal.
-      # An Exception will be raised if a value is passed that cannot be cast to a Number.
-      def self.numeric(value)
-        return value if value.is_a?(::Numeric)
-
-        if value.is_a?(::String)
-          number = value[/\A-?\d*\.?\d+\z/]
-          return number.include?('.') ? BigDecimal(number, DIG) : number.to_i if number
-        end
-
-        raise Dentaku::ArgumentError.for(:incompatible_type, value: value, for: Numeric),
-          "'#{value || value.class}' is not coercible to numeric"
-      end
     end
   end
 end

@@ -28,10 +28,10 @@ module Dentaku
 
       def cast(val)
         return val unless val.is_a?(::String)
-        return val unless val.match?(Arithmetic::DECIMAL) || val.match?(Arithmetic::INTEGER)
+        return val unless Dentaku::NumericParser.match(val)
 
-        v = BigDecimal(val, Float::DIG + 1)
-        v = v.to_i if v.frac.zero?
+        v = Dentaku::NumericParser.parse_string(val)
+        v = v.to_i if v.is_a?(BigDecimal) && v.frac.zero?
         v
       end
 

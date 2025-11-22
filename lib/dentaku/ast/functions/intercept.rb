@@ -17,8 +17,8 @@ Dentaku::AST::Function.register(:intercept, :list, ->(*args) {
   end
 
   n = x_values.length.to_f
-  x_values = x_values.map { |arg| Dentaku::AST::Function.numeric(arg) }
-  y_values = y_values.map { |arg| Dentaku::AST::Function.numeric(arg) }
+  x_values = x_values.map { |arg| Dentaku::NumericParser.ensure_numeric!(arg) }
+  y_values = y_values.map { |arg| Dentaku::NumericParser.ensure_numeric!(arg) }
 
   x_avg = x_values.sum / n
   y_avg = y_values.sum / n
