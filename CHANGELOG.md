@@ -1,5 +1,15 @@
 # Change Log
 
+## [v3.5.7] 2025-12-16
+- fix misclassification of unary minus as subtraction
+- fix parsing empty function call
+
+## [v3.5.6] 2025-10-20
+- fix comparison of Hash with integer
+- refactor case parsing
+- remove input mutation
+- fix bug with arithmetic node validation
+
 ## [v3.5.5] 2025-08-20
 - fix percentages in print visitor
 - repo cleanup
@@ -267,6 +277,7 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[v3.5.6]: https://github.com/rubysolo/dentaku/compare/v3.5.5...v3.5.6
 [v3.5.5]: https://github.com/rubysolo/dentaku/compare/v3.5.4...v3.5.5
 [v3.5.4]: https://github.com/rubysolo/dentaku/compare/v3.5.3...v3.5.4
 [v3.5.3]: https://github.com/rubysolo/dentaku/compare/v3.5.2...v3.5.3
