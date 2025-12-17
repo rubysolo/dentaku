@@ -6,9 +6,6 @@ require 'bigdecimal/util'
 module Dentaku
   module AST
     class Arithmetic < Operation
-      DECIMAL = /\A-?\d*\.\d+\z/.freeze
-      INTEGER = /\A-?\d+\z/.freeze
-
       def initialize(*)
         super
 
@@ -49,15 +46,7 @@ module Dentaku
 
       def cast(val)
         validate_value(val)
-        numeric(val)
-      end
-
-      def numeric(val)
-        case val.to_s
-        when DECIMAL then decimal(val)
-        when INTEGER then val.to_i
-        else val
-        end
+        Dentaku::NumericParser.ensure_numeric(val) || val
       end
 
       def decimal(val)
@@ -114,7 +103,7 @@ module Dentaku
       end
 
       def validate_format(string)
-        unless string =~ /\A-?\d*(\.\d+)?\z/ && !string.empty?
+        unless Dentaku::NumericParser.match(string)
           raise Dentaku::ArgumentError.for(:invalid_value, value: string, for: BigDecimal),
                 "String input '#{string}' is not coercible to numeric"
         end

@@ -2,6 +2,7 @@ require 'bigdecimal'
 require 'time'
 require 'dentaku/string_casing'
 require 'dentaku/token'
+require 'dentaku/numeric_parser'
 
 module Dentaku
   class TokenScanner
@@ -95,13 +96,11 @@ module Dentaku
       end
 
       def numeric
-        new(:numeric, '((?:\d+(\.\d+)?|\.\d+)(?:(e|E)(\+|-)?\d+)?)\b', lambda { |raw|
-          raw =~ /(\.|e|E)/ ? BigDecimal(raw) : raw.to_i
-        })
+        new(:numeric, NumericParser::NUMERIC_PATTERN, lambda { |raw| NumericParser.parse_numeric_string(raw) })
       end
 
       def hexadecimal
-        new(:numeric, '(0x[0-9a-f]+)\b', lambda { |raw| raw[2..-1].to_i(16) })
+        new(:numeric, NumericParser::HEXADECIMAL_PATTERN, lambda { |raw| NumericParser.parse_hexadecimal_string(raw) })
       end
 
       def double_quoted_string
