@@ -1,5 +1,9 @@
 # Change Log
 
+## [UNRELEASED]
+- unify numeric matching and parsing
+- fix frozen-string-literal warning
+
 ## [v3.5.7] 2025-12-16
 - fix misclassification of unary minus as subtraction
 - fix parsing empty function call
@@ -277,6 +281,8 @@
 ## [v0.1.0] 2012-01-20
 - initial release
 
+[UNRELEASED]: https://github.com/rubysolo/dentaku/compare/v3.5.7...HEAD
+[v3.5.7]: https://github.com/rubysolo/dentaku/compare/v3.5.6...v3.5.7
 [v3.5.6]: https://github.com/rubysolo/dentaku/compare/v3.5.5...v3.5.6
 [v3.5.5]: https://github.com/rubysolo/dentaku/compare/v3.5.4...v3.5.5
 [v3.5.4]: https://github.com/rubysolo/dentaku/compare/v3.5.3...v3.5.4
