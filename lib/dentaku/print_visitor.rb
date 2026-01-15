@@ -1,3 +1,4 @@
+# frozen_string_literal: false
 module Dentaku
   class PrintVisitor
     def initialize(node)
