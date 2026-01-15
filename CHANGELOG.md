@@ -1,5 +1,8 @@
 # Change Log
 
+## [v3.5.8] UNRELEASED
+- fix frozen-string-literal warning
+
 ## [v3.5.7] 2025-12-16
 - fix misclassification of unary minus as subtraction
 - fix parsing empty function call
