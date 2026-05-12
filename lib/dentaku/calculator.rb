@@ -5,6 +5,7 @@ require 'dentaku/flat_hash'
 require 'dentaku/parser'
 require 'dentaku/string_casing'
 require 'dentaku/token'
+require 'dentaku/humanize_visitor'
 
 module Dentaku
   class Calculator
@@ -128,6 +129,10 @@ module Dentaku
       else
         ast(expression).dependencies(AST::Node::STATIC_CONTEXT).uniq
       end
+    end
+
+    def humanize(expression, data = {})
+      HumanizeVisitor.new(ast(expression), data).to_s
     end
 
     def ast(expression)
