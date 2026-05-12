@@ -2,6 +2,7 @@ require 'dentaku/bulk_expression_solver'
 require 'dentaku/dependency_resolver'
 require 'dentaku/exceptions'
 require 'dentaku/flat_hash'
+require 'dentaku/humanize_visitor'
 require 'dentaku/parser'
 require 'dentaku/string_casing'
 require 'dentaku/token'
@@ -104,6 +105,15 @@ module Dentaku
       else
         ast(expression).dependencies(test_context)
       end
+    end
+
+    # Returns a natural-language English representation of an expression.
+    # Optionally substitutes identifiers with values from `data`.
+    #
+    #   calculator.humanize("days >= min and days <= max", min: 5, max: 20)
+    #   # => "days is greater than or equal to 5 and days is less than or equal to 20"
+    def humanize(expression, data = {})
+      HumanizeVisitor.new(ast(expression), data).to_s
     end
 
     def ast(expression)
