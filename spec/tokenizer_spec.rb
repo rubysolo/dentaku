@@ -360,6 +360,12 @@ describe Dentaku::Tokenizer do
       expect(tokenizer.replace_aliases(input)).to eq('min(4,6,2)')
     end
 
+    it 'replaces aliases with whitespace before parentheses' do
+      input = 'rrrrround! (8.2) + minimo (4,6,2)'
+      tokenizer.tokenize(input, aliases: aliases)
+      expect(tokenizer.replace_aliases(input)).to eq('round (8.2) + min (4,6,2)')
+    end
+
     it 'replace only whole aliases without word parts' do
       input = 'maximo(2,minimoooo())' # `minimoooo` doesn't match `minimo`
       tokenizer.tokenize(input, aliases: aliases)

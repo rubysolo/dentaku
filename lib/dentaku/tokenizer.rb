@@ -83,7 +83,7 @@ module Dentaku
 
     def alias_regex
       values = @aliases.values.flatten.join('|')
-      /(?<=\p{Punct}|[[:space:]]|\A)(#{values})(?=\()/i
+      /(?<=\p{Punct}|[[:space:]]|\A)(#{values})(?=\s*\()/i
     end
 
     private
