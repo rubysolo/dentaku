@@ -39,7 +39,7 @@ module Dentaku
       end
 
       def value(context = {})
-        args = @args.flatten.map { |a| Dentaku::AST::Function.numeric(a.value(context)) }
+        args = @args.flatten.map { |a|Dentaku::NumericParser.ensure_numeric!(a.value(context)) }
         self.class.call(*args)
       end
 

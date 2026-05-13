@@ -9,5 +9,5 @@ Dentaku::AST::Function.register(:avg, :numeric, ->(*args) {
     ), 'AVG() requires at least one argument'
   end
 
-  flatten_args.map { |arg| Dentaku::AST::Function.numeric(arg) }.reduce(0, :+) / BigDecimal(flatten_args.length)
+  flatten_args.map { |arg| Dentaku::NumericParser.ensure_numeric!(arg) }.reduce(0, :+) / BigDecimal(flatten_args.length)
 })

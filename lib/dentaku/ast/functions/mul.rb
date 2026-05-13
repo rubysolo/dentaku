@@ -8,5 +8,5 @@ Dentaku::AST::Function.register(:mul, :numeric, ->(*args) {
     ), 'MUL() requires at least one argument'
   end
 
-  args.flatten.map { |arg| Dentaku::AST::Function.numeric(arg) }.reduce(1, :*)
+  args.flatten.map { |arg| Dentaku::NumericParser.ensure_numeric!(arg) }.reduce(1, :*)
 })
