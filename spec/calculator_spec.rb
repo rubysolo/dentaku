@@ -961,9 +961,19 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'functions with whitespace before parentheses' do
+    it 'accepts regular functions' do
+      expect(calculator.evaluate('round (5.1)')).to eq(5)
+    end
+  end
+
   describe 'aliases' do
     it 'accepts aliases as instance option' do
       expect(with_aliases.evaluate('rrround(5.1)')).to eq(5)
+    end
+
+    it 'accepts aliases with whitespace before parentheses' do
+      expect(with_aliases.evaluate('rrround (5.1)')).to eq(5)
     end
   end
 
