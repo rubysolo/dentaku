@@ -969,13 +969,11 @@ describe Dentaku::Calculator do
 
   describe 'logical operators with unbound operands' do
     it 'short-circuits OR when the bound operand is true' do
-      pending 'AND/OR do not yet short-circuit unbound operands (issue #234)'
       expect(calculator.evaluate!('a OR b', a: true)).to eq(true)
       expect(calculator.evaluate!('a OR b', b: true)).to eq(true)
     end
 
     it 'short-circuits AND when the bound operand is false' do
-      pending 'AND/OR do not yet short-circuit unbound operands (issue #234)'
       expect(calculator.evaluate!('a AND b', a: false)).to eq(false)
       expect(calculator.evaluate!('a AND b', b: false)).to eq(false)
     end

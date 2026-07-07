@@ -148,6 +148,31 @@ considered rough estimates, and you should measure with representative formulas
 from your application.  Also, if new formulas are constantly introduced to your
 application, AST caching will consume more memory with each new formula.
 
+DEPENDENCY ANALYSIS AND SHORT-CIRCUITING
+----------------------------------------
+
+Dentaku treats formulas as pure: a subexpression may be evaluated zero or one
+times, so custom functions should not rely on side effects or call counts.
+
+Logical constructs short-circuit.  `IF` and `CASE` only evaluate the branch
+that is taken, and `AND` / `OR` resolve as soon as one operand decides the
+result.  An unbound variable raises `Dentaku::UnboundVariableError` only when
+its value is actually needed:
+
+```ruby
+calculator.evaluate!('a OR b', a: true)   #=> true
+calculator.evaluate!('a OR b', a: false)  #=> raises Dentaku::UnboundVariableError
+```
+
+`calculator.dependencies(expression)` reports the identifiers a formula
+needs.  When called with a context, it is resolution-aware: guard positions
+(`IF` predicates, `CASE` switches, `AND` / `OR` operands) whose own
+dependencies are already satisfied are evaluated -- executing any functions
+they contain -- in order to prune branches that cannot be taken.  Because
+unused operands are never checked, a misspelled identifier on a branch that
+is not taken will not be reported at evaluation time; call `dependencies`
+without a context to statically list every identifier a formula mentions.
+
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
 

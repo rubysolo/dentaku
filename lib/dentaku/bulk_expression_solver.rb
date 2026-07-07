@@ -11,8 +11,8 @@ module Dentaku
         @calculator = calculator
       end
 
-      def evaluate(*args)
-        @calculator.evaluate!(*args)
+      def evaluate(*args, &block)
+        @calculator.evaluate!(*args, &block)
       end
     end
 
@@ -22,10 +22,9 @@ module Dentaku
         @block = block || ->(*) { :undefined }
       end
 
-      def evaluate(*args)
-        @calculator.evaluate(*args) { |expr, ex|
-          @block.call(ex)
-        }
+      def evaluate(*args, &block)
+        handler = block || ->(_expr, ex) { @block.call(ex) }
+        @calculator.evaluate(*args, &handler)
       end
     end
 
