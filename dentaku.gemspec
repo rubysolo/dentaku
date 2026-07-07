@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('bigdecimal')
   s.add_dependency('concurrent-ruby')
+  s.add_dependency('tsort')
 
   s.add_development_dependency('pry')
   s.add_development_dependency('pry-byebug')
