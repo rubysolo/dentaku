@@ -967,6 +967,27 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'logical operators with unbound operands' do
+    it 'short-circuits OR when the bound operand is true' do
+      pending 'AND/OR do not yet short-circuit unbound operands (issue #234)'
+      expect(calculator.evaluate!('a OR b', a: true)).to eq(true)
+      expect(calculator.evaluate!('a OR b', b: true)).to eq(true)
+    end
+
+    it 'short-circuits AND when the bound operand is false' do
+      pending 'AND/OR do not yet short-circuit unbound operands (issue #234)'
+      expect(calculator.evaluate!('a AND b', a: false)).to eq(false)
+      expect(calculator.evaluate!('a AND b', b: false)).to eq(false)
+    end
+
+    it 'still raises when the unbound operand is needed to decide' do
+      expect { calculator.evaluate!('a OR b', a: false) }
+        .to raise_error(Dentaku::UnboundVariableError)
+      expect { calculator.evaluate!('a AND b', a: true) }
+        .to raise_error(Dentaku::UnboundVariableError)
+    end
+  end
+
   describe 'aliases' do
     it 'accepts aliases as instance option' do
       expect(with_aliases.evaluate('rrround(5.1)')).to eq(5)
