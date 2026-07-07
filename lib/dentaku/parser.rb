@@ -190,8 +190,11 @@ module Dentaku
           operations.push(AST::CaseConditional)
           consume(2)
           arities[-1] += 1
-        elsif operations.last == AST::Case
-          # First WHEN: finalize switch variable expression.
+        elsif operations[token_index].nil? ||
+              (operations[token_index] != AST::CaseWhen && operations[token_index] < AST::Operation)
+          # First WHEN: fold any operators pending from an unparenthesized
+          # switch expression, then finalize the switch variable.
+          consume_until(AST::Case)
           operations.push(AST::CaseSwitchVariable)
           consume
         end

@@ -23,6 +23,9 @@ OTHER CHANGES
   calculator was created (including the implicit top-level calculator) apply
 - `CASE` expressions only report dependencies for the branch that would be
   taken when the switch value is resolvable
+- fix parsing of `CASE` statements with an unparenthesized operation as the
+  switch expression (`CASE a % 5 WHEN ...`), which also makes `PrintVisitor`
+  output for such statements re-parseable
 - modernize low-risk Ruby syntax
 - unify numeric matching and parsing
 - fix frozen-string-literal warning
