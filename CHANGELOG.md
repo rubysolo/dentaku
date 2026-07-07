@@ -26,6 +26,9 @@ OTHER CHANGES
 - fix parsing of `CASE` statements with an unparenthesized operation as the
   switch expression (`CASE a % 5 WHEN ...`), which also makes `PrintVisitor`
   output for such statements re-parseable
+- declare `tsort` as an explicit dependency for Ruby 4.1 (#334, thanks @david942j)
+- fix alias function calls with whitespace before the opening parenthesis
+  (#335, thanks @DirkDoes)
 - modernize low-risk Ruby syntax
 - unify numeric matching and parsing
 - fix frozen-string-literal warning
