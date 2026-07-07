@@ -172,6 +172,18 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(exception.recipient_variable).to eq('more_apples')
     end
 
+    it 'sets the recipient variable before the solve block is invoked' do
+      pending 'evaluators drop the per-variable handler, so it is only set after ' \
+              'the block returns, and only on the block return value (issue #333)'
+      expressions = {more_apples: "apples + 1"}
+      seen = :unset
+      described_class.new(expressions, calculator).solve do |ex|
+        seen = ex.recipient_variable
+        :err
+      end
+      expect(seen).to eq('more_apples')
+    end
+
     it 'stores the recipient variable on the exception when there is an ArgumentError' do
       expressions = {apples: "NULL", more_apples: "1 + apples"}
       exception = nil
