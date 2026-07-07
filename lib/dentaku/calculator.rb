@@ -9,21 +9,29 @@ require 'dentaku/token'
 module Dentaku
   class Calculator
     include StringCasing
-    attr_reader :result, :memory, :tokenizer, :case_sensitive, :aliases,
+    attr_reader :result, :memory, :tokenizer, :case_sensitive,
                 :nested_data_support, :ast_cache, :raw_date_literals
 
-    def initialize(options = {})
+    def initialize(case_sensitive: false, aliases: nil, nested_data_support: true,
+                   raw_date_literals: true, ast_cache: {},
+                   cache_ast: nil, cache_dependency_order: nil)
       clear
       @tokenizer = Tokenizer.new
-      @case_sensitive = options.delete(:case_sensitive)
-      @aliases = options.delete(:aliases) || Dentaku.aliases
-      @nested_data_support = options.fetch(:nested_data_support, true)
-      options.delete(:nested_data_support)
-      @raw_date_literals = options.fetch(:raw_date_literals, true)
-      options.delete(:raw_date_literals)
-      @ast_cache = options
+      @case_sensitive = case_sensitive
+      @aliases = aliases
+      @nested_data_support = nested_data_support
+      @raw_date_literals = raw_date_literals
+      @ast_cache = ast_cache
+      @cache_ast = cache_ast
+      @cache_dependency_order = cache_dependency_order
       @disable_ast_cache = false
       @function_registry = Dentaku::AST::FunctionRegistry.new
+    end
+
+    # explicitly configured aliases win; otherwise the module-level default is
+    # resolved lazily so it can be set after this calculator was created
+    def aliases
+      @aliases || Dentaku.aliases
     end
 
     def self.add_function(name, type, body, callback = nil)
@@ -56,7 +64,7 @@ module Dentaku
       return evaluate_array(expression, context, &block) if expression.is_a?(Array)
 
       evaluate!(expression, context)
-    rescue Dentaku::Error, Dentaku::ArgumentError, Dentaku::ZeroDivisionError => ex
+    rescue Dentaku::Error => ex
       block.call(expression, ex) if block_given?
     end
 
@@ -186,7 +194,13 @@ module Dentaku
     end
 
     def cache_ast?
-      Dentaku.cache_ast? && !@disable_ast_cache
+      return false if @disable_ast_cache
+
+      @cache_ast.nil? ? Dentaku.cache_ast? : @cache_ast
+    end
+
+    def cache_dependency_order?
+      @cache_dependency_order.nil? ? Dentaku.cache_dependency_order? : @cache_dependency_order
     end
   end
 end

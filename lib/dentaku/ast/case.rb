@@ -65,7 +65,16 @@ module Dentaku
       end
 
       def dependencies(context = {})
-        # TODO: should short-circuit
+        switch_value = @switch.value(context)
+
+        @conditions.each do |condition|
+          if condition.when.value(context) == switch_value
+            return condition.then.dependencies(context)
+          end
+        end
+
+        else_dependencies(context)
+      rescue Dentaku::Error
         switch_dependencies(context) +
         condition_dependencies(context) +
         else_dependencies(context)

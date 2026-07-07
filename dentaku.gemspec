@@ -18,6 +18,8 @@ Gem::Specification.new do |s|
   s.add_dependency('concurrent-ruby')
   s.add_dependency('tsort')
 
+  s.required_ruby_version = ">= 3.2"
+
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
