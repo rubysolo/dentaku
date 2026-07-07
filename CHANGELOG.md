@@ -1,6 +1,29 @@
 # Change Log
 
-## [UNRELEASED]
+## [v4.0.0.pre] 2026-07-06
+BREAKING CHANGES
+- require Ruby 3.2 or newer
+- `Calculator.new` takes keyword arguments; the AST cache must now be passed
+  explicitly via `ast_cache:` instead of as leftover options, unknown options
+  raise `ArgumentError`, and the passed values are no longer mutated
+- `Dentaku::Error` is now a module included by all Dentaku exceptions, so
+  `rescue Dentaku::Error` also catches `Dentaku::ArgumentError` and
+  `Dentaku::ZeroDivisionError`; exceptions that previously subclassed
+  `Dentaku::Error` now subclass `Dentaku::BaseError`
+- `TokenMatcher` no longer builds function matchers via `method_missing`; use
+  `TokenMatcher.function(name)` (the unused `math_neg_pow` / `math_neg_mul`
+  matcher symbols were removed)
+- remove Travis CI configuration
+
+OTHER CHANGES
+- document Ruby compatibility policy
+- cache flags can be set per calculator (`cache_ast:`,
+  `cache_dependency_order:`), defaulting to the module-level settings
+- module-level `Dentaku.aliases` is resolved lazily, so aliases set after a
+  calculator was created (including the implicit top-level calculator) apply
+- `CASE` expressions only report dependencies for the branch that would be
+  taken when the switch value is resolvable
+- modernize low-risk Ruby syntax
 - unify numeric matching and parsing
 - fix frozen-string-literal warning
 

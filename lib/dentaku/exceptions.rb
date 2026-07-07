@@ -1,9 +1,16 @@
 module Dentaku
-  class Error < StandardError
+  # Shared by all Dentaku exceptions so that `rescue Dentaku::Error` catches
+  # everything the gem raises, including exceptions that subclass Ruby
+  # built-ins (Dentaku::ArgumentError, Dentaku::ZeroDivisionError).
+  module Error
     attr_accessor :recipient_variable
   end
 
-  class UnboundVariableError < Error
+  class BaseError < StandardError
+    include Error
+  end
+
+  class UnboundVariableError < BaseError
     attr_reader :unbound_variables
 
     def initialize(unbound_variables)
@@ -11,7 +18,7 @@ module Dentaku
     end
   end
 
-  class MathDomainError < Error
+  class MathDomainError < BaseError
     attr_reader :function_name, :args
 
     def initialize(function_name, args)
@@ -20,7 +27,7 @@ module Dentaku
     end
   end
 
-  class NodeError < Error
+  class NodeError < BaseError
     attr_reader :child, :expect, :actual
 
     def initialize(expect, actual, child)
@@ -30,7 +37,7 @@ module Dentaku
     end
   end
 
-  class ParseError < Error
+  class ParseError < BaseError
     attr_reader :reason, :meta
 
     def initialize(reason, **meta)
@@ -56,7 +63,7 @@ module Dentaku
     end
   end
 
-  class TokenizerError < Error
+  class TokenizerError < BaseError
     attr_reader :reason, :meta
 
     def initialize(reason, **meta)
@@ -83,8 +90,9 @@ module Dentaku
   end
 
   class ArgumentError < ::ArgumentError
+    include Error
+
     attr_reader :reason, :meta
-    attr_accessor :recipient_variable
 
     def initialize(reason, **meta)
       @reason = reason
@@ -111,6 +119,6 @@ module Dentaku
   end
 
   class ZeroDivisionError < ::ZeroDivisionError
-    attr_accessor :recipient_variable
+    include Error
   end
 end

@@ -13,6 +13,16 @@ language that allows run-time binding of values to variables referenced in the
 formulas.  It is intended to safely evaluate untrusted expressions without
 opening security holes.
 
+COMPATIBILITY
+-------------
+
+Dentaku supports Ruby 3.2 and newer, tracking Ruby's own maintenance policy:
+when a Ruby version reaches end-of-life, it may be dropped from the supported
+compatibility contract in the next major or minor release. Older Rubies may
+continue to work, but are not tested.
+
+New code should target the lowest supported Ruby version, currently Ruby 3.2.
+
 EXAMPLE
 -------
 
@@ -122,6 +132,13 @@ phases, so if performance is a concern, you can enable AST caching:
 
 ```ruby
 Dentaku.enable_ast_cache!
+```
+
+Caching can also be controlled per calculator, overriding the module-level
+setting:
+
+```ruby
+calculator = Dentaku::Calculator.new(cache_ast: true)
 ```
 
 After this, Dentaku will cache the AST of each formula that it evaluates, so

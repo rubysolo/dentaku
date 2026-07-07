@@ -150,7 +150,7 @@ module Dentaku
       cache_key = expressions.keys.map(&:to_s).sort.join("|")
       @ordered_deps ||= self.class.dependency_cache.fetch(cache_key) {
         DependencyResolver.find_resolve_order(dependencies).tap do |d|
-          self.class.dependency_cache[cache_key] = d if Dentaku.cache_dependency_order?
+          self.class.dependency_cache[cache_key] = d if calculator.cache_dependency_order?
         end
       }
     end

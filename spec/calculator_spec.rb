@@ -975,6 +975,39 @@ describe Dentaku::Calculator do
     it 'accepts aliases with whitespace before parentheses' do
       expect(with_aliases.evaluate('rrround (5.1)')).to eq(5)
     end
+
+    it 'applies module-level aliases set after calculator creation' do
+      Dentaku.aliases = { round: ['redondear'] }
+      expect(calculator.evaluate('redondear(5.1)')).to eq(5)
+    ensure
+      Dentaku.aliases = {}
+    end
+  end
+
+  describe 'constructor options' do
+    it 'raises on unknown options' do
+      expect { described_class.new(case_sensitve: true) }
+        .to raise_error(::ArgumentError, /unknown keyword/)
+    end
+
+    it 'accepts a pre-warmed AST cache' do
+      node = calculator.ast('1+1')
+      warmed = described_class.new(ast_cache: { '1+1' => node })
+      expect(warmed.ast_cache).to eq('1+1' => node)
+    end
+
+    it 'caches ASTs when caching is enabled on the instance' do
+      caching = described_class.new(cache_ast: true)
+      caching.ast('1+1')
+      expect(caching.ast_cache.keys).to eq(['1+1'])
+    end
+
+    it 'does not cache ASTs when disabled on the instance, even if enabled globally' do
+      allow(Dentaku).to receive(:cache_ast?) { true }
+      non_caching = described_class.new(cache_ast: false)
+      non_caching.ast('1+1')
+      expect(non_caching.ast_cache).to be_empty
+    end
   end
 
   describe 'nested_data' do
