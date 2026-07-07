@@ -16,6 +16,10 @@ BREAKING CHANGES
   `TokenMatcher.function(name)` (the unused `math_neg_pow` / `math_neg_mul`
   matcher symbols were removed)
 - remove Travis CI configuration
+- `AND` / `OR` short-circuit: an unbound variable no longer raises when the
+  bound operand already decides the result (#234); formulas are documented
+  as pure, and misspelled identifiers on never-taken branches are no longer
+  reported at evaluation time (use `dependencies` for static validation)
 
 OTHER CHANGES
 - document Ruby compatibility policy
@@ -28,6 +32,8 @@ OTHER CHANGES
 - fix parsing of `CASE` statements with an unparenthesized operation as the
   switch expression (`CASE a % 5 WHEN ...`), which also makes `PrintVisitor`
   output for such statements re-parseable
+- fix `recipient_variable` being nil inside `solve` blocks, a regression
+  introduced in 3.5.4 (#333)
 - modernize low-risk Ruby syntax
 
 ## [v3.5.8] 2026-08-01
