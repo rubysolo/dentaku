@@ -84,6 +84,17 @@ describe Dentaku::Parser do
     expect(node.value("x" => 1, "y" => "A", "Y" => "B")).to eq(3)
   end
 
+  it 'evaluates a case statement with an unparenthesized operation as switch' do
+    node = parse('CASE a % 5 WHEN 0 THEN a ELSE b END')
+    expect(node.value("a" => 10, "b" => 1)).to eq(10)
+    expect(node.value("a" => 7, "b" => 1)).to eq(1)
+  end
+
+  it 'evaluates a case statement with a comparator as switch' do
+    node = parse('CASE a > 5 WHEN true THEN a ELSE b END')
+    expect(node.value("a" => 10, "b" => 1)).to eq(10)
+  end
+
   it 'evaluates arrays' do
     node = parse('{}')
     expect(node.value).to eq([])

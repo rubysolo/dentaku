@@ -49,6 +49,11 @@ describe Dentaku::PrintVisitor do
     expect(repr).to eq('CASE a % 5 WHEN 0 THEN a ELSE b END')
   end
 
+  it 'prints a case statement that can be re-parsed' do
+    repr = roundtrip('case (a % 5) when 0 then a else b end')
+    expect(roundtrip(repr)).to eq(repr)
+  end
+
   it 'handles a bitwise operators' do
     repr = roundtrip('0xCAFE & 0xDECAF | 0xBEEF')
     expect(repr).to eq('0xCAFE & 0xDECAF | 0xBEEF')
