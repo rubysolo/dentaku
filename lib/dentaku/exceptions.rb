@@ -43,6 +43,7 @@ module Dentaku
     def initialize(reason, **meta)
       @reason = reason
       @meta = meta
+      super(default_message)
     end
 
     private_class_method :new
@@ -61,6 +62,39 @@ module Dentaku
 
       new(reason, **meta)
     end
+
+    private
+
+    def default_message
+      case reason
+      when :node_invalid
+        if meta.key?(:operator)
+          "#{meta[:operator]} requires #{Array(meta[:expect]).join(', ')} operands, but got #{meta[:actual]}"
+        else
+          "Node is invalid"
+        end
+      when :too_few_operands
+        "#{meta[:operator]} has too few operands (given #{meta[:actual]}, expected #{meta[:expect]})"
+      when :too_many_operands
+        "#{meta[:operator]} has too many operands (given #{meta[:actual]}, expected #{meta[:expect]})"
+      when :undefined_function
+        "Undefined function #{meta[:function_name]}"
+      when :unprocessed_token
+        "Unprocessed token #{meta[:token_name]}"
+      when :unknown_case_token
+        "Unknown case token #{meta[:token_name]}"
+      when :unbalanced_bracket
+        "Unbalanced bracket"
+      when :unbalanced_parenthesis
+        "Unbalanced parenthesis"
+      when :unknown_grouping_token
+        "Unknown grouping token #{meta[:token_name]}"
+      when :not_implemented_token_category
+        "Not implemented for tokens of category #{meta[:token_category]}"
+      when :invalid_statement
+        "Invalid statement"
+      end
+    end
   end
 
   class TokenizerError < BaseError
@@ -69,6 +103,7 @@ module Dentaku
     def initialize(reason, **meta)
       @reason = reason
       @meta = meta
+      super(default_message)
     end
 
     private_class_method :new
@@ -86,6 +121,21 @@ module Dentaku
       end
 
       new(reason, **meta)
+    end
+
+    private
+
+    def default_message
+      case reason
+      when :parse_error
+        "parse error at: '#{meta[:at]}'"
+      when :too_many_opening_parentheses
+        "too many opening parentheses"
+      when :too_many_closing_parentheses
+        "too many closing parentheses"
+      when :unexpected_zero_width_match
+        "unexpected zero-width match (:#{meta[:token_category]}) at '#{meta[:at]}'"
+      end
     end
   end
 

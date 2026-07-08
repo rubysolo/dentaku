@@ -28,3 +28,27 @@ describe Dentaku::Error do
     expect(Dentaku::ZeroDivisionError.new).to be_a(::ZeroDivisionError)
   end
 end
+
+describe Dentaku::ParseError do
+  it 'builds a message from reason and metadata' do
+    exception = described_class.for(:too_few_operands, operator: 'Dentaku::AST::Addition', expect: 2, actual: 1)
+    expect(exception.message).to eq('Dentaku::AST::Addition has too few operands (given 1, expected 2)')
+  end
+
+  it 'constructs with sparse metadata' do
+    expect(described_class.for(:node_invalid).message).to eq('Node is invalid')
+  end
+
+  it 'allows call sites to override the default message' do
+    expect {
+      raise described_class.for(:node_invalid), 'Case missing switch variable'
+    }.to raise_error(described_class, 'Case missing switch variable')
+  end
+end
+
+describe Dentaku::TokenizerError do
+  it 'builds a message from reason and metadata' do
+    exception = described_class.for(:parse_error, at: '$5')
+    expect(exception.message).to eq("parse error at: '$5'")
+  end
+end

@@ -195,6 +195,21 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('a[x+1]', x: 1)).to eq(3)
     end
 
+    it 'accesses into strings and nested arrays' do
+      expect(calculator.evaluate!('a[1]', a: 'abc')).to eq('b')
+      expect(calculator.evaluate!('a[1][0]', a: [[1], [2, 3]])).to eq(2)
+    end
+
+    it 'raises an argument error when accessing into a non-indexable value' do
+      expect { calculator.evaluate!('a[0]', a: 5) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('a[0]', a: nil) }.to raise_error(Dentaku::ArgumentError)
+      expect { calculator.evaluate!('a[0]', a: true) }.to raise_error(Dentaku::ArgumentError)
+    end
+
+    it 'raises an argument error when the index type is incompatible' do
+      expect { calculator.evaluate!("a['one']", a: [1, 2, 3]) }.to raise_error(Dentaku::ArgumentError)
+    end
+
     it 'evaluates arrays' do
       expect(calculator.evaluate([1, 2, 3])).to eq([1, 2, 3])
       expect(calculator.evaluate!('{1,2,3}')).to eq([1, 2, 3])

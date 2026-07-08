@@ -1,3 +1,4 @@
+require_relative "../exceptions"
 require_relative "./node"
 
 module Dentaku
@@ -25,7 +26,17 @@ module Dentaku
       def value(context = {})
         structure = @structure.value(context)
         index = @index.value(context)
-        structure[index]
+
+        unless structure.respond_to?(:[]) && !structure.is_a?(::Numeric)
+          raise Dentaku::ArgumentError.for(:incompatible_type, value: structure),
+                "#{self.class} requires an indexable structure, but got #{structure.class}"
+        end
+
+        begin
+          structure[index]
+        rescue ::TypeError => e
+          raise Dentaku::ArgumentError.for(:incompatible_type, value: index), e.message
+        end
       end
 
       def dependencies(context = {})
