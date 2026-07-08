@@ -178,6 +178,15 @@ describe Dentaku::Parser do
         parse("undefined()")
       }.to raise_error(Dentaku::ParseError)
     end
+
+    it 'raises a parse error for an unbalanced closing parenthesis' do
+      # the tokenizer catches unbalanced parentheses in a string expression,
+      # so exercise the parser directly with a hand-built token list
+      rparen = Dentaku::Token.new(:grouping, :close)
+      expect {
+        described_class.new([rparen]).parse
+      }.to raise_error(Dentaku::ParseError)
+    end
   end
 
   it "evaluates explicit 'NULL' as nil" do

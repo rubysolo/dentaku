@@ -18,6 +18,11 @@ BREAKING CHANGES
   bound operand already decides the result (#234); formulas are documented
   as pure, and misspelled identifiers on never-taken branches are no longer
   reported at evaluation time (use `dependencies` for static validation)
+- indexing into a non-indexable value (e.g. `a[0]` where `a` is a number,
+  `NULL`, or a boolean) now raises `Dentaku::ArgumentError` instead of
+  silently returning a bit-reference result or leaking a raw Ruby
+  `NoMethodError`; an incompatible index type (e.g. a string index into an
+  array) raises `Dentaku::ArgumentError` instead of a raw `TypeError`
 
 OTHER CHANGES
 - document Ruby compatibility policy
@@ -38,6 +43,12 @@ OTHER CHANGES
 - modernize low-risk Ruby syntax
 - unify numeric matching and parsing
 - fix frozen-string-literal warning
+- `ParseError` and `TokenizerError` now build their own default messages from
+  `reason` and `meta` (message text is unchanged); `Parser#fail!` and
+  `Tokenizer#fail!` reduce to one-liners
+- fix crashes on two error paths: the parser's unbalanced-parenthesis report
+  raised a Ruby `ArgumentError` instead of a `ParseError`, and the tokenizer's
+  zero-width-match report raised a `KeyError` instead of a `TokenizerError`
 
 ## [v3.5.7] 2025-12-16
 - fix misclassification of unary minus as subtraction
