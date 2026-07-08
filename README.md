@@ -151,8 +151,10 @@ application, AST caching will consume more memory with each new formula.
 DEPENDENCY ANALYSIS AND SHORT-CIRCUITING
 ----------------------------------------
 
-Dentaku treats formulas as pure: a subexpression may be evaluated zero or one
-times, so custom functions should not rely on side effects or call counts.
+Dentaku treats formulas as pure: a subexpression may be evaluated zero, one,
+or more than one time (for example, a guard position may be evaluated once
+during dependency analysis and again during evaluation), so custom functions
+should not rely on side effects or call counts.
 
 Logical constructs short-circuit.  `IF` and `CASE` only evaluate the branch
 that is taken, and `AND` / `OR` resolve as soon as one operand decides the
