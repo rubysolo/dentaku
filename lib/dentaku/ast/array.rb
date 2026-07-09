@@ -33,6 +33,12 @@ module Dentaku
       def accept(visitor)
         visitor.visit_array(self)
       end
+
+      private
+
+      def compute_pure?
+        @elements.all?(&:pure?)
+      end
     end
   end
 end

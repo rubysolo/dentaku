@@ -18,6 +18,12 @@ module Dentaku
       def dependencies(context = {})
         @node.dependencies(context)
       end
+
+      private
+
+      def compute_pure?
+        @node.pure?
+      end
     end
   end
 end

@@ -50,6 +50,12 @@ module Dentaku
       def accept(visitor)
         visitor.visit_access(self)
       end
+
+      private
+
+      def compute_pure?
+        @structure.pure? && @index.pure?
+      end
     end
   end
 end

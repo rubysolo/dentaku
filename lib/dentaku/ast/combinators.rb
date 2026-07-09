@@ -22,10 +22,12 @@ module Dentaku
       end
 
       def dependencies(context = {})
+        return super if static_mode?(context)
+
         left_deps = left.dependencies(context)
         right_deps = right.dependencies(context)
-        return [] if left_deps.empty? && decisive?(left.value(context))
-        return [] if right_deps.empty? && decisive?(right.value(context))
+        return [] if left_deps.empty? && left.pure? && decisive?(left.value(context))
+        return [] if right_deps.empty? && right.pure? && decisive?(right.value(context))
 
         (left_deps + right_deps).uniq
       rescue Dentaku::Error
