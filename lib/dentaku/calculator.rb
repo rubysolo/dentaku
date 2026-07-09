@@ -34,21 +34,21 @@ module Dentaku
       @aliases || Dentaku.aliases
     end
 
-    def self.add_function(name, type, body, callback = nil)
-      Dentaku::AST::FunctionRegistry.default.register(name, type, body, callback)
+    def self.add_function(name, type, body, callback = nil, volatile: false)
+      Dentaku::AST::FunctionRegistry.default.register(name, type, body, callback, volatile: volatile)
     end
 
     def self.add_functions(functions)
-      functions.each { |(name, type, body, callback)| add_function(name, type, body, callback) }
+      functions.each { |(name, type, body, callback, volatile)| add_function(name, type, body, callback, volatile: !!volatile) }
     end
 
-    def add_function(name, type, body, callback = nil)
-      @function_registry.register(name, type, body, callback)
+    def add_function(name, type, body, callback = nil, volatile: false)
+      @function_registry.register(name, type, body, callback, volatile: volatile)
       self
     end
 
     def add_functions(functions)
-      functions.each { |(name, type, body, callback)| add_function(name, type, body, callback) }
+      functions.each { |(name, type, body, callback, volatile)| add_function(name, type, body, callback, volatile: !!volatile) }
       self
     end
 
@@ -111,6 +111,20 @@ module Dentaku
         expression.flat_map { |e| dependencies(e, context) }
       else
         ast(expression).dependencies(test_context)
+      end
+    end
+
+    # every identifier the expression could reference, regardless of
+    # branching: purely syntactic, ignores stored memory, and never
+    # evaluates guards or functions
+    def identifiers(expression)
+      case expression
+      when Dentaku::AST::Node
+        expression.dependencies(AST::Node::STATIC_CONTEXT).uniq
+      when Array
+        expression.flat_map { |e| identifiers(e) }.uniq
+      else
+        ast(expression).dependencies(AST::Node::STATIC_CONTEXT).uniq
       end
     end
 

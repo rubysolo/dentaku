@@ -46,6 +46,11 @@ module Dentaku
 
       private
 
+      # bypasses Operation's binary initialize, so left/right are unset
+      def compute_pure?
+        @node.pure?
+      end
+
       def valid_node?(node)
         node && (node.dependencies.any? || node.type == :numeric)
       end

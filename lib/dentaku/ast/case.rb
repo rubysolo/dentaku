@@ -65,6 +65,8 @@ module Dentaku
       end
 
       def dependencies(context = {})
+        return all_dependencies(context) if static_mode?(context) || !prunable?
+
         switch_value = @switch.value(context)
 
         @conditions.each do |condition|
@@ -75,9 +77,7 @@ module Dentaku
 
         else_dependencies(context)
       rescue Dentaku::Error
-        switch_dependencies(context) +
-        condition_dependencies(context) +
-        else_dependencies(context)
+        all_dependencies(context)
       end
 
       def accept(visitor)
@@ -85,6 +85,20 @@ module Dentaku
       end
 
       private
+
+      # pruning evaluates the switch and each when-clause until one matches;
+      # all of them must be side-effect free before we may do that
+      def prunable?
+        return @prunable if defined?(@prunable)
+
+        @prunable = @switch.pure? && @conditions.all? { |condition| condition.when.pure? }
+      end
+
+      def all_dependencies(context)
+        switch_dependencies(context) +
+        condition_dependencies(context) +
+        else_dependencies(context)
+      end
 
       def switch_dependencies(context = {})
         @switch.dependencies(context)
@@ -96,6 +110,10 @@ module Dentaku
 
       def else_dependencies(context = {})
         @else ? @else.dependencies(context) : []
+      end
+
+      def compute_pure?
+        ([@switch] + @conditions + [@else]).compact.all?(&:pure?)
       end
     end
   end

@@ -8,7 +8,7 @@ module Dentaku
         nil
       end
 
-      def register(name, type, implementation, callback = nil)
+      def register(name, type, implementation, callback = nil, volatile: false)
         function = Class.new(Function) do
           def self.name=(name)
             @name = name
@@ -42,6 +42,14 @@ module Dentaku
             @callback
           end
 
+          def self.volatile=(volatile)
+            @volatile = volatile
+          end
+
+          def self.volatile?
+            @volatile
+          end
+
           def self.arity
             @implementation.arity < 0 ? nil : @implementation.arity
           end
@@ -70,6 +78,7 @@ module Dentaku
         function.type = type
         function.implementation = implementation
         function.callback = callback
+        function.volatile = volatile
 
         self[function_name(name)] = function
       end

@@ -34,6 +34,13 @@ module Dentaku
       def to_s
         'WHEN'
       end
+
+      private
+
+      # bypasses Operation's binary initialize, so left/right are unset
+      def compute_pure?
+        @node.pure?
+      end
     end
   end
 end

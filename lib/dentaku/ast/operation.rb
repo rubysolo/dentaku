@@ -39,6 +39,13 @@ module Dentaku
       def operator_spacing
         " "
       end
+
+      private
+
+      # compact: unary operations (e.g. Percentage) only populate left
+      def compute_pure?
+        [left, right].compact.all?(&:pure?)
+      end
     end
   end
 end

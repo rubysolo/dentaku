@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased]
+- add `volatile:` option to `add_function` / `add_functions` / function
+  registration for functions that read external state or return different
+  values across calls; volatile functions are never executed during
+  dependency analysis, so a conditional guarded by one reports all branches
+  as dependencies (and `evaluate!` requires variables from every branch),
+  and the guard is evaluated exactly once per `evaluate!` instead of twice
+  (#339, thanks @d-krushinsky)
+- add `Calculator#identifiers`, a purely syntactic listing of every
+  identifier a formula could reference regardless of branching -- nothing
+  is evaluated and stored variables are not subtracted (#197, #339)
+
 ## [v4.0.0.pre] 2026-07-06
 BREAKING CHANGES
 - require Ruby 3.2 or newer

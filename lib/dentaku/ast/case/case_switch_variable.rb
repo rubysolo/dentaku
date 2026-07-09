@@ -30,6 +30,12 @@ module Dentaku
       def accept(visitor)
         visitor.visit_switch(self)
       end
+
+      private
+
+      def compute_pure?
+        @node.pure?
+      end
     end
   end
 end

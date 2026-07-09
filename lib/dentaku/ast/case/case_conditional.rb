@@ -33,6 +33,12 @@ module Dentaku
       def accept(visitor)
         visitor.visit_case_conditional(self)
       end
+
+      private
+
+      def compute_pure?
+        @when.pure? && @then.pure?
+      end
     end
   end
 end
