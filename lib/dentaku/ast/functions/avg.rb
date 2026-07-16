@@ -5,7 +5,7 @@ Dentaku::AST::Function.register(:avg, :numeric, ->(*args) {
   if flatten_args.empty?
     raise Dentaku::ArgumentError.for(
         :too_few_arguments,
-        function_name: 'AVG()', expected: 1.., actual: 0
+        function_name: 'AVG', expected: 1.., actual: 0
     ), 'AVG() requires at least one argument'
   end
 

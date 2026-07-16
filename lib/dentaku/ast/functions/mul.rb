@@ -4,7 +4,7 @@ Dentaku::AST::Function.register(:mul, :numeric, ->(*args) {
   if args.empty?
     raise Dentaku::ArgumentError.for(
         :too_few_arguments,
-        function_name: 'MUL()', expected: 1.., actual: 0
+        function_name: 'MUL', expected: 1.., actual: 0
     ), 'MUL() requires at least one argument'
   end
 
