@@ -16,7 +16,7 @@ module Dentaku
         collection = Array(@args[0].value(context))
 
         unless collection.all? { |elem| elem.is_a?(Hash) }
-          raise ArgumentError.for(:incompatible_type, value: collection),
+          raise ArgumentError.for(:incompatible_type, actual: collection),
                 'PLUCK() requires first argument to be an array of hashes'
         end
 

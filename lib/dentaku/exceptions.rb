@@ -28,10 +28,10 @@ module Dentaku
   end
 
   class NodeError < BaseError
-    attr_reader :child, :expect, :actual
+    attr_reader :child, :expected, :actual
 
-    def initialize(expect, actual, child)
-      @expect = Array(expect)
+    def initialize(expected, actual, child)
+      @expected = Array(expected)
       @actual = actual
       @child = child
     end
@@ -69,15 +69,15 @@ module Dentaku
       case reason
       when :node_invalid
         if meta.key?(:operator)
-          expected = Array(meta[:expect]).map { |e| e == :incompatible ? :compatible : e }
+          expected = Array(meta[:expected]).map { |e| e == :incompatible ? :compatible : e }
           "#{meta[:operator]} requires #{expected.join(', ')} operands, but got #{meta[:actual]}"
         else
           "Node is invalid"
         end
       when :too_few_operands
-        "#{meta[:operator]} has too few operands (given #{meta[:actual]}, expected #{meta[:expect]})"
+        "#{meta[:operator]} has too few operands (given #{meta[:actual]}, expected #{meta[:expected]})"
       when :too_many_operands
-        "#{meta[:operator]} has too many operands (given #{meta[:actual]}, expected #{meta[:expect]})"
+        "#{meta[:operator]} has too many operands (given #{meta[:actual]}, expected #{meta[:expected]})"
       when :undefined_function
         "Undefined function #{meta[:function_name]}"
       when :unprocessed_token

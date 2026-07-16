@@ -9,9 +9,9 @@ module Dentaku
 
         left_value.public_send(operator, right_value)
       rescue NoMethodError => e
-        raise Dentaku::ArgumentError.for(:invalid_operator, value: left_value, for: left_value.class)
+        raise Dentaku::ArgumentError.for(:invalid_operator, actual: left_value, expected: Integer)
       rescue TypeError => e
-        raise Dentaku::ArgumentError.for(:invalid_operator, value: right_value, for: right_value.class)
+        raise Dentaku::ArgumentError.for(:invalid_operator, actual: right_value, expected: Integer)
       end
     end
 

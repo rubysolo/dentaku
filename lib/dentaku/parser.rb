@@ -50,13 +50,13 @@ module Dentaku
       max_size = operator.arity || operator.max_param_count || count
 
       if output_size < min_size || args_size < min_size
-        expect = min_size == max_size ? min_size : min_size..max_size
-        fail! :too_few_operands, operator: operator, expect: expect, actual: output_size
+        expected = min_size == max_size ? min_size : min_size..max_size
+        fail! :too_few_operands, operator: operator, expected: expected, actual: output_size
       end
 
       if (output_size > max_size && operations.empty?) || args_size > max_size
-        expect = min_size == max_size ? min_size : min_size..max_size
-        fail! :too_many_operands, operator: operator, expect: expect, actual: output_size
+        expected = min_size == max_size ? min_size : min_size..max_size
+        fail! :too_many_operands, operator: operator, expected: expected, actual: output_size
       end
 
       args = []
@@ -75,7 +75,7 @@ module Dentaku
     rescue ::ArgumentError => e
       raise Dentaku::ArgumentError, e.message
     rescue NodeError => e
-      raise ParseError.for(:node_invalid, operator: operator, child: e.child, expect: e.expect, actual: e.actual), e.message
+      raise ParseError.for(:node_invalid, operator: operator, child: e.child, expected: e.expected, actual: e.actual), e.message
     end
 
     def parse

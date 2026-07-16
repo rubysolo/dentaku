@@ -28,14 +28,14 @@ module Dentaku
         index = @index.value(context)
 
         unless structure.respond_to?(:[]) && !structure.is_a?(::Numeric)
-          raise Dentaku::ArgumentError.for(:incompatible_type, value: structure),
+          raise Dentaku::ArgumentError.for(:incompatible_type, actual: structure),
                 "#{self.class} requires an indexable structure, but got #{structure.class}"
         end
 
         begin
           structure[index]
         rescue ::TypeError => e
-          raise Dentaku::ArgumentError.for(:incompatible_type, value: index), e.message
+          raise Dentaku::ArgumentError.for(:incompatible_type, actual: index), e.message
         end
       end
 
