@@ -4,7 +4,7 @@ Dentaku::AST::Function.register(:intercept, :list, ->(*args) {
   if args.length != 2
     raise Dentaku::ArgumentError.for(
         :wrong_number_of_arguments,
-        function_name: 'INTERCEPT()', exact: 2, given: args.length
+        function_name: 'INTERCEPT()', expected: 2, actual: args.length
     ), 'INTERCEPT() requires exactly two arrays of numbers'
   end
 

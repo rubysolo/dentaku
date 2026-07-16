@@ -21,7 +21,7 @@ module Dentaku
 
         l.public_send(operator, r)
       rescue ::ArgumentError, ::TypeError => e
-        raise Dentaku::ArgumentError.for(:incompatible_type, value: r, for: l.class), e.message
+        raise Dentaku::ArgumentError.for(:incompatible_type, actual: r, expected: l.class), e.message
       end
 
       private

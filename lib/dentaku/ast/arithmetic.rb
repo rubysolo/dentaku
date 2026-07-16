@@ -41,7 +41,7 @@ module Dentaku
         l.public_send(operator, r)
       rescue ::TypeError => e
         # Right cannot be converted to a suitable type for left. e.g. [] + 1
-        raise Dentaku::ArgumentError.for(:incompatible_type, value: r, for: l.class), e.message
+        raise Dentaku::ArgumentError.for(:incompatible_type, actual: r, expected: l.class), e.message
       end
 
       def cast(val)
@@ -104,7 +104,7 @@ module Dentaku
 
       def validate_format(string)
         unless Dentaku::NumericParser.match(string)
-          raise Dentaku::ArgumentError.for(:invalid_value, value: string, for: BigDecimal),
+          raise Dentaku::ArgumentError.for(:invalid_value, actual: string, expected: BigDecimal),
                 "String input '#{string}' is not coercible to numeric"
         end
       end

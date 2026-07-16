@@ -5,7 +5,7 @@ Dentaku::AST::Function.register(:or, :logical, lambda { |*args|
   if args.empty?
     raise Dentaku::ArgumentError.for(
       :too_few_arguments,
-      function_name: 'OR()', at_least: 1, given: 0
+      function_name: 'OR()', expected: 1.., actual: 0
     ), 'OR() requires at least one argument'
   end
 
@@ -18,7 +18,7 @@ Dentaku::AST::Function.register(:or, :logical, lambda { |*args|
     else
       raise Dentaku::ArgumentError.for(
         :incompatible_type,
-        function_name: 'OR()', expect: :logical, actual: arg.class
+        function_name: 'OR()', expected: :logical, actual: arg
       ), 'OR() requires arguments to be logical expressions'
     end
   end

@@ -20,7 +20,7 @@ module Dentaku
           change_datetime(@base, duration.unit, duration.value)
         end
       else
-        raise Dentaku::ArgumentError.for(:incompatible_type, value: duration, for: Numeric),
+        raise Dentaku::ArgumentError.for(:incompatible_type, actual: duration, expected: Numeric),
           "'#{duration || duration.class}' is not coercible for date arithmetic"
       end
     end
@@ -39,7 +39,7 @@ module Dentaku
       when Dentaku::TokenScanner::DATE_TIME_REGEXP
         @base - Time.parse(duration).to_datetime
       else
-        raise Dentaku::ArgumentError.for(:incompatible_type, value: duration, for: Numeric),
+        raise Dentaku::ArgumentError.for(:incompatible_type, actual: duration, expected: Numeric),
           "'#{duration || duration.class}' is not coercible for date arithmetic"
       end
     end

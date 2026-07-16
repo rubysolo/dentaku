@@ -54,7 +54,7 @@ module Dentaku
           return number if number
         end
 
-        raise Dentaku::ArgumentError.for(:incompatible_type, value: value, for: Numeric),
+        raise Dentaku::ArgumentError.for(:incompatible_type, actual: value, expected: Numeric),
           "'#{value || value.class}' is not coercible to numeric"
       end
 
