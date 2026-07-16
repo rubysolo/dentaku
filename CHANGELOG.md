@@ -11,6 +11,12 @@
 - add `Calculator#identifiers`, a purely syntactic listing of every
   identifier a formula could reference regardless of branching -- nothing
   is evaluated and stored variables are not subtracted (#197, #339)
+- operand type-mismatch parse errors now read as natural English: the parser
+  preserves the node-level message ("Dentaku::AST::Addition requires operands
+  that are numeric or compatible types, not string") instead of rebuilding a
+  misleading one ("requires incompatible operands, but got string"); the
+  metadata-derived fallback message says "compatible" rather than
+  "incompatible" (idea from #341, thanks @moskvin)
 
 ## [v4.0.0.pre] 2026-07-06
 BREAKING CHANGES

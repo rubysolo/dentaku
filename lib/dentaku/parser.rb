@@ -75,7 +75,7 @@ module Dentaku
     rescue ::ArgumentError => e
       raise Dentaku::ArgumentError, e.message
     rescue NodeError => e
-      fail! :node_invalid, operator: operator, child: e.child, expect: e.expect, actual: e.actual
+      raise ParseError.for(:node_invalid, operator: operator, child: e.child, expect: e.expect, actual: e.actual), e.message
     end
 
     def parse
