@@ -122,6 +122,21 @@ describe Dentaku::Parser do
       }.to raise_error(Dentaku::ParseError)
     end
 
+    it 'preserves the node-level message for incompatible operands' do
+      expect {
+        parse('"hello" + 1')
+      }.to raise_error(
+        Dentaku::ParseError,
+        /requires operands that are numeric or compatible types, not string/
+      )
+    end
+
+    it 'preserves the node-level message for non-logical combinator operands' do
+      expect {
+        parse('1 AND 2')
+      }.to raise_error(Dentaku::ParseError, /requires logical operands/)
+    end
+
     it 'raises a parse error for too many operands' do
       expect {
         parse("IF(1, 0, IF(1, 2, 3, 4))")

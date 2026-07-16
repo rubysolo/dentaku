@@ -39,6 +39,11 @@ describe Dentaku::ParseError do
     expect(described_class.for(:node_invalid).message).to eq('Node is invalid')
   end
 
+  it 'describes an :incompatible expectation as requiring compatible operands' do
+    exception = described_class.for(:node_invalid, operator: 'Dentaku::AST::Addition', expect: :incompatible, actual: :string)
+    expect(exception.message).to eq('Dentaku::AST::Addition requires compatible operands, but got string')
+  end
+
   it 'allows call sites to override the default message' do
     expect {
       raise described_class.for(:node_invalid), 'Case missing switch variable'

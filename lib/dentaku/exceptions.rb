@@ -69,7 +69,8 @@ module Dentaku
       case reason
       when :node_invalid
         if meta.key?(:operator)
-          "#{meta[:operator]} requires #{Array(meta[:expect]).join(', ')} operands, but got #{meta[:actual]}"
+          expected = Array(meta[:expect]).map { |e| e == :incompatible ? :compatible : e }
+          "#{meta[:operator]} requires #{expected.join(', ')} operands, but got #{meta[:actual]}"
         else
           "Node is invalid"
         end
