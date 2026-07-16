@@ -41,41 +41,41 @@ module Dentaku
     end
 
     def consume(count = 2)
-      operator = operations.pop
-      fail! :invalid_statement if operator.nil?
+      operation = operations.pop
+      fail! :invalid_statement if operation.nil?
 
       output_size = output.length
-      args_size = operator.arity || count
-      min_size = operator.arity || operator.min_param_count || count
-      max_size = operator.arity || operator.max_param_count || count
+      args_size = operation.arity || count
+      min_size = operation.arity || operation.min_param_count || count
+      max_size = operation.arity || operation.max_param_count || count
 
       if output_size < min_size || args_size < min_size
         expected = min_size == max_size ? min_size : min_size..max_size
-        fail! :too_few_operands, operator: operator, expected: expected, actual: output_size
+        fail! :too_few_operands, operation: operation, expected: expected, actual: output_size
       end
 
       if (output_size > max_size && operations.empty?) || args_size > max_size
         expected = min_size == max_size ? min_size : min_size..max_size
-        fail! :too_many_operands, operator: operator, expected: expected, actual: output_size
+        fail! :too_many_operands, operation: operation, expected: expected, actual: output_size
       end
 
       args = []
-      if operator == AST::Array && output.empty?
+      if operation == AST::Array && output.empty?
         # special case: empty array literal '{}'
-        output.push(operator.new)
+        output.push(operation.new)
       else
         fail! :invalid_statement if output_size < args_size
         args = Array.new(args_size) { output.pop }.reverse
-        output.push operator.new(*args)
+        output.push operation.new(*args)
       end
 
-      if operator.respond_to?(:callback) && !operator.callback.nil?
-        operator.callback.call(args)
+      if operation.respond_to?(:callback) && !operation.callback.nil?
+        operation.callback.call(args)
       end
     rescue ::ArgumentError => e
       raise Dentaku::ArgumentError, e.message
     rescue NodeError => e
-      raise ParseError.for(:node_invalid, operator: operator, child: e.child, expected: e.expected, actual: e.actual), e.message
+      raise ParseError.for(:node_invalid, operation: operation, operand: e.operand, expected: e.expected, actual: e.actual), e.message
     end
 
     def parse
