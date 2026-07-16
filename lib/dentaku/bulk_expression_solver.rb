@@ -78,7 +78,7 @@ module Dentaku
 
     def expression_with_exception_handler(var_name, &block)
       ->(_expr, ex) {
-        ex.recipient_variable = var_name
+        ex.assigned_to = var_name
         block.call(ex)
       }
     end
@@ -105,7 +105,7 @@ module Dentaku
             context.merge(results),
             &expression_with_exception_handler(var_name, &block)
           ).tap { |res|
-            res.recipient_variable = var_name if res.respond_to?(:recipient_variable=)
+            res.assigned_to = var_name if res.respond_to?(:assigned_to=)
             res
           }
         end
@@ -119,7 +119,7 @@ module Dentaku
     def with_rescues(var_name, results, block)
       yield
     rescue Dentaku::UnboundVariableError, Dentaku::ZeroDivisionError, Dentaku::ArgumentError => ex
-      ex.recipient_variable = var_name
+      ex.assigned_to = var_name
       results[var_name] = block.call(ex)
     ensure
       if results[var_name] == :undefined && calculator.memory.has_key?(var_name.downcase)

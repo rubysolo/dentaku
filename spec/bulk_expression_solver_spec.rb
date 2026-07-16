@@ -160,7 +160,7 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       described_class.new(expressions, calculator).solve do |ex|
         exception = ex
       end
-      expect(exception.recipient_variable).to eq('more_apples')
+      expect(exception.assigned_to).to eq('more_apples')
     end
 
     it 'stores the recipient variable on the exception when there is an unbound variable' do
@@ -169,14 +169,14 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       described_class.new(expressions, calculator).solve do |ex|
         exception = ex
       end
-      expect(exception.recipient_variable).to eq('more_apples')
+      expect(exception.assigned_to).to eq('more_apples')
     end
 
     it 'sets the recipient variable before the solve block is invoked' do
       expressions = {more_apples: "apples + 1"}
       seen = :unset
       described_class.new(expressions, calculator).solve do |ex|
-        seen = ex.recipient_variable
+        seen = ex.assigned_to
         :err
       end
       expect(seen).to eq('more_apples')
@@ -188,7 +188,7 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       described_class.new(expressions, calculator).solve do |ex|
         exception = ex
       end
-      expect(exception.recipient_variable).to eq('more_apples')
+      expect(exception.assigned_to).to eq('more_apples')
     end
 
     it 'safely handles argument errors' do

@@ -3,7 +3,7 @@ module Dentaku
   # everything the gem raises, including exceptions that subclass Ruby
   # built-ins (Dentaku::ArgumentError, Dentaku::ZeroDivisionError).
   module Error
-    attr_accessor :recipient_variable
+    attr_accessor :assigned_to
   end
 
   class BaseError < StandardError
