@@ -31,7 +31,7 @@ end
 
 describe Dentaku::ParseError do
   it 'builds a message from reason and metadata' do
-    exception = described_class.for(:too_few_operands, operator: 'Dentaku::AST::Addition', expected: 2, actual: 1)
+    exception = described_class.for(:too_few_operands, operation: Dentaku::AST::Addition, expected: 2, actual: 1)
     expect(exception.message).to eq('Dentaku::AST::Addition has too few operands (given 1, expected 2)')
   end
 
@@ -40,7 +40,7 @@ describe Dentaku::ParseError do
   end
 
   it 'describes an :incompatible expectation as requiring compatible operands' do
-    exception = described_class.for(:node_invalid, operator: 'Dentaku::AST::Addition', expected: :incompatible, actual: :string)
+    exception = described_class.for(:node_invalid, operation: Dentaku::AST::Addition, expected: :incompatible, actual: :string)
     expect(exception.message).to eq('Dentaku::AST::Addition requires compatible operands, but got string')
   end
 
