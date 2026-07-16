@@ -148,6 +148,7 @@ module Dentaku
     def initialize(reason, **meta)
       @reason = reason
       @meta = meta
+      super(default_message)
     end
 
     private_class_method :new
@@ -166,6 +167,38 @@ module Dentaku
       end
 
       new(reason, **meta)
+    end
+
+    private
+
+    def default_message
+      case reason
+      when :incompatible_type
+        if meta.key?(:function_name)
+          "#{meta[:function_name]}() requires #{meta[:expected]} arguments, but got #{meta[:actual].class}"
+        else
+          "#{meta[:actual].class} is not compatible with #{meta[:expected]}"
+        end
+      when :invalid_operator
+        "#{meta[:operation]} requires operands that respond to #{meta[:operator]}"
+      when :invalid_value
+        if meta.key?(:expected)
+          "'#{meta[:actual]}' is not a valid #{meta[:expected]}"
+        elsif meta.key?(:actual)
+          "'#{meta[:actual]}' is not a valid value"
+        else
+          "Invalid value"
+        end
+      when :too_few_arguments
+        "#{meta[:function_name]}() has too few arguments (given #{meta[:actual]}, expected #{expected_count})"
+      when :wrong_number_of_arguments
+        "#{meta[:function_name]}() has the wrong number of arguments (given #{meta[:actual]}, expected #{expected_count})"
+      end
+    end
+
+    def expected_count
+      expected = meta[:expected]
+      expected.is_a?(Range) && expected.end.nil? ? "at least #{expected.begin}" : expected
     end
   end
 

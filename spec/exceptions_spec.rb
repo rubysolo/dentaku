@@ -57,3 +57,40 @@ describe Dentaku::TokenizerError do
     expect(exception.message).to eq("parse error at: '$5'")
   end
 end
+
+describe Dentaku::ArgumentError do
+  it 'builds an incompatible_type message from a function context' do
+    exception = described_class.for(:incompatible_type, function_name: 'AND', expected: :logical, actual: 5)
+    expect(exception.message).to eq('AND() requires logical arguments, but got Integer')
+  end
+
+  it 'builds an incompatible_type message from expected and actual' do
+    exception = described_class.for(:incompatible_type, expected: Integer, actual: 2.5)
+    expect(exception.message).to eq('Float is not compatible with Integer')
+  end
+
+  it 'builds an invalid_operator message' do
+    exception = described_class.for(:invalid_operator, operation: Dentaku::AST::Addition, operator: :+)
+    expect(exception.message).to eq('Dentaku::AST::Addition requires operands that respond to +')
+  end
+
+  it 'describes an at-least arity as a range' do
+    exception = described_class.for(:too_few_arguments, function_name: 'SUM', expected: 1.., actual: 0)
+    expect(exception.message).to eq('SUM() has too few arguments (given 0, expected at least 1)')
+  end
+
+  it 'describes an exact arity as a count' do
+    exception = described_class.for(:wrong_number_of_arguments, function_name: 'INTERCEPT', expected: 2, actual: 4)
+    expect(exception.message).to eq('INTERCEPT() has the wrong number of arguments (given 4, expected 2)')
+  end
+
+  it 'constructs with sparse metadata' do
+    expect(described_class.for(:invalid_value).message).to eq('Invalid value')
+  end
+
+  it 'allows call sites to override the default message' do
+    expect {
+      raise described_class.for(:invalid_value), 'INTERCEPT() requires arrays of equal length'
+    }.to raise_error(described_class, 'INTERCEPT() requires arrays of equal length')
+  end
+end

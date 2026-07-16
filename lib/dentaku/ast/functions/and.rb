@@ -6,7 +6,7 @@ Dentaku::AST::Function.register(:and, :logical, lambda { |*args|
     raise Dentaku::ArgumentError.for(
       :too_few_arguments,
       function_name: 'AND', expected: 1.., actual: 0
-    ), 'AND() requires at least one argument'
+    )
   end
 
   args.all? do |arg|
@@ -19,7 +19,7 @@ Dentaku::AST::Function.register(:and, :logical, lambda { |*args|
       raise Dentaku::ArgumentError.for(
         :incompatible_type,
         function_name: 'AND', expected: :logical, actual: arg
-      ), 'AND() requires arguments to be logical expressions'
+      )
     end
   end
 })

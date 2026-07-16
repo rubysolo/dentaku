@@ -73,7 +73,8 @@ module Dentaku
         operation.callback.call(args)
       end
     rescue ::ArgumentError => e
-      raise Dentaku::ArgumentError, e.message
+      raise if e.is_a?(Dentaku::ArgumentError)
+      raise Dentaku::ArgumentError.for(:invalid_value), e.message
     rescue NodeError => e
       raise ParseError.for(:node_invalid, operation: operation, operand: e.operand, expected: e.expected, actual: e.actual), e.message
     end

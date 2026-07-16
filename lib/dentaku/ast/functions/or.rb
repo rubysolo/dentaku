@@ -6,7 +6,7 @@ Dentaku::AST::Function.register(:or, :logical, lambda { |*args|
     raise Dentaku::ArgumentError.for(
       :too_few_arguments,
       function_name: 'OR', expected: 1.., actual: 0
-    ), 'OR() requires at least one argument'
+    )
   end
 
   args.any? do |arg|
@@ -19,7 +19,7 @@ Dentaku::AST::Function.register(:or, :logical, lambda { |*args|
       raise Dentaku::ArgumentError.for(
         :incompatible_type,
         function_name: 'OR', expected: :logical, actual: arg
-      ), 'OR() requires arguments to be logical expressions'
+      )
     end
   end
 })
