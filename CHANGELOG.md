@@ -1,6 +1,25 @@
 # Change Log
 
 ## [Unreleased]
+BREAKING CHANGES
+- unify exception metadata naming: the "required vs. received" pair is now
+  `expected:` / `actual:` everywhere (previously a mix of `expect:`/`actual:`,
+  `for:`/`value:`, `at_least:`/`given:`, and `exact:`/`given:`); arity
+  expectations are an Integer or Range (`expected: 1..` means "at least one")
+  and `actual:` always carries the offending value itself, not its class
+- `meta[:operation]` is now always the AST class and `meta[:operator]` the
+  method symbol (previously `ParseError` used `:operator` for the class);
+  `NodeError#child` is renamed to `#operand` (it holds the failing operand's
+  position, `:left` / `:right` / `:node`) and `NodeError#expect` to `#expected`;
+  `function_name:` metadata carries bare names (`'AND'`, not `'AND()'`)
+- `Dentaku::Error#recipient_variable` is renamed to `#assigned_to`
+- bitwise operations on non-integer operands raise `:incompatible_type`
+  (previously `:invalid_operator`) with a descriptive message instead of a
+  bare "Dentaku::ArgumentError"
+
+OTHER CHANGES
+- `Dentaku::ArgumentError` builds default messages from reason and metadata,
+  like `ParseError` and `TokenizerError`
 - add `volatile:` option to `add_function` / `add_functions` / function
   registration for functions that read external state or return different
   values across calls; volatile functions are never executed during
