@@ -18,14 +18,6 @@ Gem::Specification.new do |s|
   s.add_dependency('concurrent-ruby')
   s.add_dependency('tsort')
 
-  s.add_development_dependency('pry')
-  s.add_development_dependency('pry-byebug')
-  s.add_development_dependency('pry-stack_explorer')
-  s.add_development_dependency('rake')
-  s.add_development_dependency('rspec')
-  s.add_development_dependency('rubocop')
-  s.add_development_dependency('simplecov')
-
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
