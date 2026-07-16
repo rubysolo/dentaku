@@ -284,35 +284,7 @@ module Dentaku
     end
 
     def fail!(reason, **meta)
-      message =
-        case reason
-        when :node_invalid
-          "#{meta.fetch(:operator)} requires #{meta.fetch(:expect).join(', ')} operands, but got #{meta.fetch(:actual)}"
-        when :too_few_operands
-          "#{meta.fetch(:operator)} has too few operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
-        when :too_many_operands
-          "#{meta.fetch(:operator)} has too many operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
-        when :undefined_function
-          "Undefined function #{meta.fetch(:function_name)}"
-        when :unprocessed_token
-          "Unprocessed token #{meta.fetch(:token_name)}"
-        when :unknown_case_token
-          "Unknown case token #{meta.fetch(:token_name)}"
-        when :unbalanced_bracket
-          "Unbalanced bracket"
-        when :unbalanced_parenthesis
-          "Unbalanced parenthesis"
-        when :unknown_grouping_token
-          "Unknown grouping token #{meta.fetch(:token_name)}"
-        when :not_implemented_token_category
-          "Not implemented for tokens of category #{meta.fetch(:token_category)}"
-        when :invalid_statement
-          "Invalid statement"
-        else
-          raise ::ArgumentError, "Unhandled #{reason}"
-        end
-
-      raise ParseError.for(reason, **meta), message
+      raise ParseError.for(reason, **meta)
     end
   end
 end

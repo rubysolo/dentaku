@@ -33,7 +33,8 @@ module Dentaku
   class ParseError < Error
     attr_reader :reason, :meta
 
-    def initialize(reason, **meta)
+    def initialize(reason, message = nil, **meta)
+      super(message || self.class.default_message(reason, meta))
       @reason = reason
       @meta = meta
     end
@@ -47,12 +48,62 @@ module Dentaku
       invalid_statement
     ].freeze
 
-    def self.for(reason, **meta)
+    def self.for(reason, message = nil, **meta)
       unless VALID_REASONS.include?(reason)
         raise ::ArgumentError, "Unhandled #{reason}"
       end
 
-      new(reason, **meta)
+      new(reason, message, **meta)
+    end
+
+    def self.default_message(reason, meta)
+      case reason
+      when :node_invalid
+        if meta.key?(:operator) && meta.key?(:expect) && meta.key?(:actual)
+          "#{meta.fetch(:operator)} requires #{expected_operand_description(meta.fetch(:expect))}, not #{formatted_actual(meta.fetch(:actual))}"
+        else
+          'Invalid node'
+        end
+      when :too_few_operands
+        "#{meta.fetch(:operator)} has too few operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
+      when :too_many_operands
+        "#{meta.fetch(:operator)} has too many operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
+      when :undefined_function
+        "Undefined function #{meta.fetch(:function_name)}"
+      when :unprocessed_token
+        "Unprocessed token #{meta.fetch(:token_name)}"
+      when :unknown_case_token
+        "Unknown case token #{meta.fetch(:token_name)}"
+      when :unbalanced_bracket
+        "Unbalanced bracket"
+      when :unbalanced_parenthesis
+        "Unbalanced parenthesis"
+      when :unknown_grouping_token
+        "Unknown grouping token #{meta.fetch(:token_name)}"
+      when :not_implemented_token_category
+        "Not implemented for tokens of category #{meta.fetch(:token_category)}"
+      when :invalid_statement
+        "Invalid statement"
+      else
+        raise ::ArgumentError, "Unhandled #{reason}"
+      end
+    end
+
+    def self.expected_operand_description(expectation)
+      expected = Array(expectation)
+      if expected.include?(:incompatible)
+        'operands that are numeric or compatible types'
+      elsif expected == [:numeric]
+        'numeric operands'
+      elsif expected == [:logical]
+        'logical operands'
+      else
+        "#{expected.join(', ')} operands"
+      end
+    end
+
+    def self.formatted_actual(actual)
+      actual.respond_to?(:to_sym) ? actual.to_sym : actual
     end
   end
 

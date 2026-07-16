@@ -111,6 +111,15 @@ describe Dentaku::Parser do
       }.to raise_error(Dentaku::ParseError)
     end
 
+    it 'raises a parse error with clearer operand compatibility wording' do
+      expect {
+        parse('"hello" + 1')
+      }.to raise_error(
+        Dentaku::ParseError,
+        /requires operands that are numeric or compatible types, not string/
+      )
+    end
+
     it 'raises a parse error for too many operands' do
       expect {
         parse("IF(1, 0, IF(1, 2, 3, 4))")
