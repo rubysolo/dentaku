@@ -97,8 +97,7 @@ module Dentaku
 
       def validate_operation(val)
         unless val.respond_to?(operator)
-          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator),
-                "#{ self.class } requires operands that respond to #{operator}"
+          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator)
         end
       end
 

@@ -34,8 +34,7 @@ module Dentaku
 
       def validate_value(value)
         unless value.respond_to?(operator)
-          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator),
-                "#{ self.class } requires operands that respond to #{operator}"
+          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator)
         end
 
         value
