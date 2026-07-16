@@ -75,15 +75,15 @@ module Dentaku
       when :unknown_case_token
         "Unknown case token #{meta.fetch(:token_name)}"
       when :unbalanced_bracket
-        "Unbalanced bracket"
+        'Unbalanced bracket'
       when :unbalanced_parenthesis
-        "Unbalanced parenthesis"
+        'Unbalanced parenthesis'
       when :unknown_grouping_token
         "Unknown grouping token #{meta.fetch(:token_name)}"
       when :not_implemented_token_category
         "Not implemented for tokens of category #{meta.fetch(:token_category)}"
       when :invalid_statement
-        "Invalid statement"
+        'Invalid statement'
       else
         raise ::ArgumentError, "Unhandled #{reason}"
       end
