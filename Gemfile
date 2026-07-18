@@ -10,5 +10,8 @@ group :development, :test do
   gem 'rake'
   gem 'rspec'
   gem 'rubocop'
-  gem 'simplecov', '~> 0.22'
+  # Stay on the 0.x line: simplecov 1.0 (2026-07) removed SimpleCov.running,
+  # which the RubyMine/IntelliJ coverage runner still relies on. Lift this
+  # once the IDE integration supports 1.0.
+  gem 'simplecov', '< 1.0'
 end
