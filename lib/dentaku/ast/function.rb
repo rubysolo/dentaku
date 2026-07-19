@@ -22,12 +22,19 @@ module Dentaku
              .flat_map { |a, _| a.dependencies(context) }
       end
 
+      # volatile functions may not be evaluated during dependency
+      # resolution; registry-generated classes override this per the
+      # volatile: option passed at registration
+      def self.volatile?
+        false
+      end
+
       def self.get(name)
         registry.get(name)
       end
 
-      def self.register(name, type, implementation)
-        registry.register(name, type, implementation)
+      def self.register(name, type, implementation, volatile: false)
+        registry.register(name, type, implementation, volatile: volatile)
       end
 
       def self.register_class(name, function_class)
@@ -36,6 +43,12 @@ module Dentaku
 
       def self.registry
         @registry ||= FunctionRegistry.new
+      end
+
+      private
+
+      def compute_pure?
+        !self.class.volatile? && args.all?(&:pure?)
       end
     end
   end

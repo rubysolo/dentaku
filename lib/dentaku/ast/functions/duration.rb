@@ -25,7 +25,7 @@ module Dentaku
           when /months?/ then :month
           when /days?/ then :day
           else
-            raise Dentaku::ArgumentError.for(:incompatible_type, value: unit, for: Duration),
+            raise Dentaku::ArgumentError.for(:incompatible_type, actual: unit, expected: Duration),
               "'#{unit || unit.class}' is not a valid duration unit"
           end
         end

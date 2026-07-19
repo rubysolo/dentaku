@@ -11,8 +11,8 @@ module Dentaku
         @calculator = calculator
       end
 
-      def evaluate(*args)
-        @calculator.evaluate!(*args)
+      def evaluate(*args, &block)
+        @calculator.evaluate!(*args, &block)
       end
     end
 
@@ -22,10 +22,9 @@ module Dentaku
         @block = block || ->(*) { :undefined }
       end
 
-      def evaluate(*args)
-        @calculator.evaluate(*args) { |expr, ex|
-          @block.call(ex)
-        }
+      def evaluate(*args, &block)
+        handler = block || ->(_expr, ex) { @block.call(ex) }
+        @calculator.evaluate(*args, &handler)
       end
     end
 
@@ -79,7 +78,7 @@ module Dentaku
 
     def expression_with_exception_handler(var_name, &block)
       ->(_expr, ex) {
-        ex.recipient_variable = var_name
+        ex.assigned_to = var_name
         block.call(ex)
       }
     end
@@ -106,7 +105,7 @@ module Dentaku
             context.merge(results),
             &expression_with_exception_handler(var_name, &block)
           ).tap { |res|
-            res.recipient_variable = var_name if res.respond_to?(:recipient_variable=)
+            res.assigned_to = var_name if res.respond_to?(:assigned_to=)
             res
           }
         end
@@ -120,7 +119,7 @@ module Dentaku
     def with_rescues(var_name, results, block)
       yield
     rescue Dentaku::UnboundVariableError, Dentaku::ZeroDivisionError, Dentaku::ArgumentError => ex
-      ex.recipient_variable = var_name
+      ex.assigned_to = var_name
       results[var_name] = block.call(ex)
     ensure
       if results[var_name] == :undefined && calculator.memory.has_key?(var_name.downcase)
@@ -150,7 +149,7 @@ module Dentaku
       cache_key = expressions.keys.map(&:to_s).sort.join("|")
       @ordered_deps ||= self.class.dependency_cache.fetch(cache_key) {
         DependencyResolver.find_resolve_order(dependencies).tap do |d|
-          self.class.dependency_cache[cache_key] = d if Dentaku.cache_dependency_order?
+          self.class.dependency_cache[cache_key] = d if calculator.cache_dependency_order?
         end
       }
     end

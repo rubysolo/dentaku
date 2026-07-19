@@ -16,8 +16,8 @@ module Dentaku
         if @args.empty?
           raise Dentaku::ArgumentError.for(
             :too_few_arguments,
-            function_name: 'XOR()', at_least: 1, given: 0
-          ), 'XOR() requires at least one argument'
+            function_name: 'XOR', expected: 1.., actual: 0
+          )
         end
 
         true_arg_count = 0
@@ -31,8 +31,8 @@ module Dentaku
           else
             raise Dentaku::ArgumentError.for(
               :incompatible_type,
-              function_name: 'XOR()', expect: :logical, actual: arg.class
-            ), 'XOR() requires arguments to be logical expressions'
+              function_name: 'XOR', expected: :logical, actual: arg
+            )
           end
         end
         true_arg_count == 1

@@ -94,21 +94,7 @@ module Dentaku
     end
 
     def fail!(reason, **meta)
-      message =
-        case reason
-        when :parse_error
-          "parse error at: '#{meta.fetch(:at)}'"
-        when :too_many_opening_parentheses
-          "too many opening parentheses"
-        when :too_many_closing_parentheses
-          "too many closing parentheses"
-        when :unexpected_zero_width_match
-          "unexpected zero-width match (:#{meta.fetch(:category)}) at '#{meta.fetch(:at)}'"
-        else
-          raise ::ArgumentError, "Unhandled #{reason}"
-        end
-
-      raise TokenizerError.for(reason, **meta), message
+      raise TokenizerError.for(reason, **meta)
     end
   end
 end

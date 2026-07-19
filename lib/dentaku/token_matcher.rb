@@ -93,46 +93,40 @@ module Dentaku
       @values.empty? || @values.key?(value)
     end
 
-    def self.datetime;       new(:datetime);                       end
-    def self.numeric;        new(:numeric);                        end
-    def self.string;         new(:string);                         end
-    def self.logical;        new(:logical);                        end
+    def self.datetime = new(:datetime)
+    def self.numeric = new(:numeric)
+    def self.string = new(:string)
+    def self.logical = new(:logical)
     def self.value
       new(:datetime) | new(:numeric) | new(:string) | new(:logical)
     end
 
-    def self.addsub;         new(:operator, [:add, :subtract]);    end
-    def self.subtract;       new(:operator, :subtract);            end
-    def self.anchored_minus; new(:operator, :subtract).caret;      end
-    def self.muldiv;         new(:operator, [:multiply, :divide]); end
-    def self.pow;            new(:operator, :pow);                 end
-    def self.mod;            new(:operator, :mod);                 end
-    def self.combinator;     new(:combinator);                     end
+    def self.addsub = new(:operator, [:add, :subtract])
+    def self.subtract = new(:operator, :subtract)
+    def self.anchored_minus = new(:operator, :subtract).caret
+    def self.muldiv = new(:operator, [:multiply, :divide])
+    def self.pow = new(:operator, :pow)
+    def self.mod = new(:operator, :mod)
+    def self.combinator = new(:combinator)
 
-    def self.comparator;     new(:comparator);                     end
-    def self.comp_gt;        new(:comparator, [:gt, :ge]);         end
-    def self.comp_lt;        new(:comparator, [:lt, :le]);         end
+    def self.comparator = new(:comparator)
+    def self.comp_gt = new(:comparator, [:gt, :ge])
+    def self.comp_lt = new(:comparator, [:lt, :le])
 
-    def self.open;           new(:grouping, :open);                end
-    def self.close;          new(:grouping, :close);               end
-    def self.comma;          new(:grouping, :comma);               end
-    def self.non_group;      new(:grouping).invert;                end
-    def self.non_group_star; new(:grouping).invert.star;           end
-    def self.non_close_plus; new(:grouping, :close).invert.plus;   end
-    def self.arguments;      (value | comma).plus;                 end
+    def self.open = new(:grouping, :open)
+    def self.close = new(:grouping, :close)
+    def self.comma = new(:grouping, :comma)
+    def self.non_group = new(:grouping).invert
+    def self.non_group_star = new(:grouping).invert.star
+    def self.non_close_plus = new(:grouping, :close).invert.plus
+    def self.arguments = (value | comma).plus
 
-    def self.if;             new(:function, :if);                  end
-    def self.round;          new(:function, :round);               end
-    def self.roundup;        new(:function, :roundup);             end
-    def self.rounddown;      new(:function, :rounddown);           end
-    def self.not;            new(:function, :not);                 end
+    def self.function(name) = new(:function, name)
 
-    def self.method_missing(name, *args, &block)
-      new(:function, name)
-    end
-
-    def self.respond_to_missing?(name, include_priv)
-      true
-    end
+    def self.if = function(:if)
+    def self.round = function(:round)
+    def self.roundup = function(:roundup)
+    def self.rounddown = function(:rounddown)
+    def self.not = function(:not)
   end
 end

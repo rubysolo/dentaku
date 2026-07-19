@@ -11,7 +11,7 @@ module Dentaku
         def negative_argument_failure(fun, arg = 'length')
           raise Dentaku::ArgumentError.for(
             :invalid_value,
-            function_name: "#{fun}()"
+            function_name: fun
           ), "#{fun}() requires #{arg} to be positive"
         end
       end

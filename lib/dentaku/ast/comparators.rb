@@ -21,7 +21,7 @@ module Dentaku
 
         l.public_send(operator, r)
       rescue ::ArgumentError, ::TypeError => e
-        raise Dentaku::ArgumentError.for(:incompatible_type, value: r, for: l.class), e.message
+        raise Dentaku::ArgumentError.for(:incompatible_type, actual: r, expected: l.class), e.message
       end
 
       private
@@ -34,8 +34,7 @@ module Dentaku
 
       def validate_value(value)
         unless value.respond_to?(operator)
-          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator),
-                "#{ self.class } requires operands that respond to #{operator}"
+          raise Dentaku::ArgumentError.for(:invalid_operator, operation: self.class, operator: operator)
         end
 
         value

@@ -13,6 +13,16 @@ language that allows run-time binding of values to variables referenced in the
 formulas.  It is intended to safely evaluate untrusted expressions without
 opening security holes.
 
+COMPATIBILITY
+-------------
+
+Dentaku supports Ruby 3.2 and newer, tracking Ruby's own maintenance policy:
+when a Ruby version reaches end-of-life, it may be dropped from the supported
+compatibility contract in the next major or minor release. Older Rubies may
+continue to work, but are not tested.
+
+New code should target the lowest supported Ruby version, currently Ruby 3.2.
+
 EXAMPLE
 -------
 
@@ -124,12 +134,70 @@ phases, so if performance is a concern, you can enable AST caching:
 Dentaku.enable_ast_cache!
 ```
 
+Caching can also be controlled per calculator, overriding the module-level
+setting:
+
+```ruby
+calculator = Dentaku::Calculator.new(cache_ast: true)
+```
+
 After this, Dentaku will cache the AST of each formula that it evaluates, so
 subsequent evaluations (even with different values for variables) will be much
 faster -- closer to 4x native Ruby speed.  As usual, these benchmarks should be
 considered rough estimates, and you should measure with representative formulas
 from your application.  Also, if new formulas are constantly introduced to your
 application, AST caching will consume more memory with each new formula.
+
+DEPENDENCY ANALYSIS AND SHORT-CIRCUITING
+----------------------------------------
+
+Dentaku treats formulas as pure: a subexpression may be evaluated zero, one,
+or more than one time (for example, a guard position may be evaluated once
+during dependency analysis and again during evaluation), so custom functions
+should not rely on side effects or call counts.  Functions that fall outside
+this contract -- reading external state, performing I/O, or returning
+different values across calls -- must be registered with `volatile: true`
+(see EXTERNAL FUNCTIONS below).  Volatile functions are never invoked during
+dependency analysis; in guard positions this means no branch can be pruned,
+so all branches count as dependencies and `evaluate!` requires variables
+from every branch to be bound.
+
+Logical constructs short-circuit.  `IF` and `CASE` only evaluate the branch
+that is taken, and `AND` / `OR` resolve as soon as one operand decides the
+result.  An unbound variable raises `Dentaku::UnboundVariableError` only when
+its value is actually needed:
+
+```ruby
+calculator.evaluate!('a OR b', a: true)   #=> true
+calculator.evaluate!('a OR b', a: false)  #=> raises Dentaku::UnboundVariableError
+```
+
+Two methods answer two different questions about a formula's inputs:
+
+`calculator.dependencies(expression, context)` reports the identifiers a
+formula still needs, given what is already known.  It is resolution-aware:
+guard positions (`IF` predicates, `CASE` switches, `AND` / `OR` operands)
+whose own dependencies are already satisfied are evaluated -- executing any
+(non-volatile) functions they contain -- in order to prune branches that
+cannot be taken.
+
+`calculator.identifiers(expression)` reports every identifier the formula
+could ever reference, regardless of branching.  It is purely syntactic:
+nothing is evaluated, no functions run (volatile or not), and stored
+variables are not subtracted.  Use it to statically list a formula's
+possible inputs, e.g. to tell users what values they may need to supply.
+
+```ruby
+calculator.dependencies('IF(x > 5, y, z)', x: 7)  #=> ["y"]
+calculator.identifiers('IF(x > 5, y, z)')         #=> ["x", "y", "z"]
+```
+
+Because unused operands are never checked at evaluation time, a misspelled
+identifier on a branch that is not taken will not be reported; use
+`identifiers` for static validation.
+
+Context keys prefixed with a double underscore (e.g. `__evaluation_mode`)
+are reserved for internal use.
 
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
@@ -278,6 +346,25 @@ function)
 
 Functions can be added individually using Calculator#add_function, or en masse
 using Calculator#add_functions.
+
+Dentaku assumes registered functions are pure (see DEPENDENCY ANALYSIS AND
+SHORT-CIRCUITING above).  A function that reads external state, performs
+I/O, or returns different values across calls must be declared volatile so
+that dependency analysis never executes it:
+
+```ruby
+> c = Dentaku::Calculator.new
+> c.add_function(:user_level, :numeric, -> { Current.user.level }, volatile: true)
+> c.identifiers('IF(user_level() > 50, high_rate, low_rate)')
+#=> ["high_rate", "low_rate"]
+```
+
+A volatile function in a guard position prevents branch pruning: both
+branches count as dependencies, and `evaluate!` requires variables from
+every branch (Dentaku cannot know in advance which branch will be taken).
+The predicate itself is then evaluated exactly once per `evaluate!` call,
+at evaluation time.  In `add_functions`, pass volatility as a fifth tuple
+element: `[:user_level, :numeric, -> { ... }, nil, true]`.
 
 FUNCTION ALIASES
 ----------------

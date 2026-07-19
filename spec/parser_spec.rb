@@ -84,6 +84,17 @@ describe Dentaku::Parser do
     expect(node.value("x" => 1, "y" => "A", "Y" => "B")).to eq(3)
   end
 
+  it 'evaluates a case statement with an unparenthesized operation as switch' do
+    node = parse('CASE a % 5 WHEN 0 THEN a ELSE b END')
+    expect(node.value("a" => 10, "b" => 1)).to eq(10)
+    expect(node.value("a" => 7, "b" => 1)).to eq(1)
+  end
+
+  it 'evaluates a case statement with a comparator as switch' do
+    node = parse('CASE a > 5 WHEN true THEN a ELSE b END')
+    expect(node.value("a" => 10, "b" => 1)).to eq(10)
+  end
+
   it 'evaluates arrays' do
     node = parse('{}')
     expect(node.value).to eq([])
@@ -109,6 +120,21 @@ describe Dentaku::Parser do
       expect {
         parse("TRUE AND")
       }.to raise_error(Dentaku::ParseError)
+    end
+
+    it 'preserves the node-level message for incompatible operands' do
+      expect {
+        parse('"hello" + 1')
+      }.to raise_error(
+        Dentaku::ParseError,
+        /requires operands that are numeric or compatible types, not string/
+      )
+    end
+
+    it 'preserves the node-level message for non-logical combinator operands' do
+      expect {
+        parse('1 AND 2')
+      }.to raise_error(Dentaku::ParseError, /requires logical operands/)
     end
 
     it 'raises a parse error for too many operands' do
@@ -165,6 +191,15 @@ describe Dentaku::Parser do
     it 'raises a parse error when trying to access an undefined function' do
       expect {
         parse("undefined()")
+      }.to raise_error(Dentaku::ParseError)
+    end
+
+    it 'raises a parse error for an unbalanced closing parenthesis' do
+      # the tokenizer catches unbalanced parentheses in a string expression,
+      # so exercise the parser directly with a hand-built token list
+      rparen = Dentaku::Token.new(:grouping, :close)
+      expect {
+        described_class.new([rparen]).parse
       }.to raise_error(Dentaku::ParseError)
     end
   end

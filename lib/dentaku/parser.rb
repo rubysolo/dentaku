@@ -41,41 +41,42 @@ module Dentaku
     end
 
     def consume(count = 2)
-      operator = operations.pop
-      fail! :invalid_statement if operator.nil?
+      operation = operations.pop
+      fail! :invalid_statement if operation.nil?
 
       output_size = output.length
-      args_size = operator.arity || count
-      min_size = operator.arity || operator.min_param_count || count
-      max_size = operator.arity || operator.max_param_count || count
+      args_size = operation.arity || count
+      min_size = operation.arity || operation.min_param_count || count
+      max_size = operation.arity || operation.max_param_count || count
 
       if output_size < min_size || args_size < min_size
-        expect = min_size == max_size ? min_size : min_size..max_size
-        fail! :too_few_operands, operator: operator, expect: expect, actual: output_size
+        expected = min_size == max_size ? min_size : min_size..max_size
+        fail! :too_few_operands, operation: operation, expected: expected, actual: output_size
       end
 
       if (output_size > max_size && operations.empty?) || args_size > max_size
-        expect = min_size == max_size ? min_size : min_size..max_size
-        fail! :too_many_operands, operator: operator, expect: expect, actual: output_size
+        expected = min_size == max_size ? min_size : min_size..max_size
+        fail! :too_many_operands, operation: operation, expected: expected, actual: output_size
       end
 
       args = []
-      if operator == AST::Array && output.empty?
+      if operation == AST::Array && output.empty?
         # special case: empty array literal '{}'
-        output.push(operator.new)
+        output.push(operation.new)
       else
         fail! :invalid_statement if output_size < args_size
         args = Array.new(args_size) { output.pop }.reverse
-        output.push operator.new(*args)
+        output.push operation.new(*args)
       end
 
-      if operator.respond_to?(:callback) && !operator.callback.nil?
-        operator.callback.call(args)
+      if operation.respond_to?(:callback) && !operation.callback.nil?
+        operation.callback.call(args)
       end
     rescue ::ArgumentError => e
-      raise Dentaku::ArgumentError, e.message
+      raise if e.is_a?(Dentaku::ArgumentError)
+      raise Dentaku::ArgumentError.for(:invalid_value), e.message
     rescue NodeError => e
-      fail! :node_invalid, operator: operator, child: e.child, expect: e.expect, actual: e.actual
+      raise ParseError.for(:node_invalid, operation: operation, operand: e.operand, expected: e.expected, actual: e.actual), e.message
     end
 
     def parse
@@ -190,8 +191,11 @@ module Dentaku
           operations.push(AST::CaseConditional)
           consume(2)
           arities[-1] += 1
-        elsif operations.last == AST::Case
-          # First WHEN: finalize switch variable expression.
+        elsif operations[token_index].nil? ||
+              (operations[token_index] != AST::CaseWhen && operations[token_index] < AST::Operation)
+          # First WHEN: fold any operators pending from an unparenthesized
+          # switch expression, then finalize the switch variable.
+          consume_until(AST::Case)
           operations.push(AST::CaseSwitchVariable)
           consume
         end
@@ -268,7 +272,7 @@ module Dentaku
       when :close
         consume while operations.any? && operations.last != AST::Grouping
         lparen = operations.pop
-        fail! :unbalanced_parenthesis, token unless lparen == AST::Grouping
+        fail! :unbalanced_parenthesis, token: token unless lparen == AST::Grouping
         if operations.last && operations.last < AST::Function
           consume(arities.pop.succ)
         end
@@ -284,35 +288,7 @@ module Dentaku
     end
 
     def fail!(reason, **meta)
-      message =
-        case reason
-        when :node_invalid
-          "#{meta.fetch(:operator)} requires #{meta.fetch(:expect).join(', ')} operands, but got #{meta.fetch(:actual)}"
-        when :too_few_operands
-          "#{meta.fetch(:operator)} has too few operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
-        when :too_many_operands
-          "#{meta.fetch(:operator)} has too many operands (given #{meta.fetch(:actual)}, expected #{meta.fetch(:expect)})"
-        when :undefined_function
-          "Undefined function #{meta.fetch(:function_name)}"
-        when :unprocessed_token
-          "Unprocessed token #{meta.fetch(:token_name)}"
-        when :unknown_case_token
-          "Unknown case token #{meta.fetch(:token_name)}"
-        when :unbalanced_bracket
-          "Unbalanced bracket"
-        when :unbalanced_parenthesis
-          "Unbalanced parenthesis"
-        when :unknown_grouping_token
-          "Unknown grouping token #{meta.fetch(:token_name)}"
-        when :not_implemented_token_category
-          "Not implemented for tokens of category #{meta.fetch(:token_category)}"
-        when :invalid_statement
-          "Invalid statement"
-        else
-          raise ::ArgumentError, "Unhandled #{reason}"
-        end
-
-      raise ParseError.for(reason, **meta), message
+      raise ParseError.for(reason, **meta)
     end
   end
 end

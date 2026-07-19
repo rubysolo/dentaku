@@ -80,5 +80,12 @@ describe Dentaku::AST::Case do
       node = described_class.new(switch, conditional1, conditional2, else2)
       expect(node.dependencies).to eq([:fruit, :tax, :fallback])
     end
+
+    it 'short-circuits to the matched branch when the switch is resolvable' do
+      node = described_class.new(switch, conditional1, conditional2, else2)
+      expect(node.dependencies(fruit: 'apple')).to eq([])
+      expect(node.dependencies(fruit: 'banana')).to eq([:tax])
+      expect(node.dependencies(fruit: 'orange')).to eq([:fallback])
+    end
   end
 end

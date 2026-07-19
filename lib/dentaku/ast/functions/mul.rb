@@ -4,8 +4,8 @@ Dentaku::AST::Function.register(:mul, :numeric, ->(*args) {
   if args.empty?
     raise Dentaku::ArgumentError.for(
         :too_few_arguments,
-        function_name: 'MUL()', at_least: 1, given: 0
-    ), 'MUL() requires at least one argument'
+        function_name: 'MUL', expected: 1.., actual: 0
+    )
   end
 
   args.flatten.map { |arg| Dentaku::NumericParser.ensure_numeric!(arg) }.reduce(1, :*)
