@@ -12,9 +12,9 @@ Gem::Specification.new do |s|
     Dentaku is a parser and evaluator for mathematical formulas
   DESC
 
-  s.add_dependency('bigdecimal')
-  s.add_dependency('concurrent-ruby')
-  s.add_dependency('tsort')
+  s.add_dependency('bigdecimal', '>= 3.1')
+  s.add_dependency('concurrent-ruby', '~> 1.1')
+  s.add_dependency('tsort', '>= 0.1.1')
 
   s.required_ruby_version = ">= 3.2"
 
