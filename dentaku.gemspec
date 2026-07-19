@@ -12,6 +12,14 @@ Gem::Specification.new do |s|
     Dentaku is a parser and evaluator for mathematical formulas
   DESC
 
+  s.metadata = {
+    "homepage_uri"          => s.homepage,
+    "source_code_uri"       => s.homepage,
+    "changelog_uri"         => "#{s.homepage}/blob/main/CHANGELOG.md",
+    "bug_tracker_uri"       => "#{s.homepage}/issues",
+    "rubygems_mfa_required" => "true",
+  }
+
   s.add_dependency('bigdecimal', '>= 3.1')
   s.add_dependency('concurrent-ruby', '~> 1.1')
   s.add_dependency('tsort', '>= 0.1.1')
