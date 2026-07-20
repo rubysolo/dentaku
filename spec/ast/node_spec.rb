@@ -21,10 +21,7 @@ describe Dentaku::AST::Node do
     expect(node.dependencies).to eq(['x', 'y', 'z'])
 
     node = make_node('if(x > 5, y, z)')
-    expect(node.dependencies('x' => 7)).to eq(['y'])
-
-    node = make_node('if(x > 5, y, z)')
-    expect(node.dependencies('x' => 2)).to eq(['z'])
+    expect(node.dependencies('x' => 7)).to eq(['y', 'z'])
 
     node = make_node('')
     expect(node.dependencies).to eq([])

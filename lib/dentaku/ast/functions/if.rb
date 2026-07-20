@@ -36,9 +36,7 @@ module Dentaku
       end
 
       def dependencies(context = {})
-        predicate.value(context) ? left.dependencies(context) : right.dependencies(context)
-      rescue Dentaku::Error, Dentaku::ArgumentError, Dentaku::ZeroDivisionError
-        args.flat_map { |arg| arg.dependencies(context) }.uniq
+        (predicate.dependencies(context) + left.dependencies(context) + right.dependencies(context)).uniq
       end
     end
   end
