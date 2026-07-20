@@ -134,21 +134,148 @@ application, AST caching will consume more memory with each new formula.
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
 
-Math: `+`, `-`, `*`, `/`, `%`, `^`, `|`, `&`, `<<`, `>>`
+Operator, function, and keyword names are case-insensitive, you can use `AND`, `and`, and `And`; `SUM`, `sum`, and `Sum`; `CASE`, `case`, and `Case`.
 
-Also, all functions from Ruby's Math module, including `SIN`, `COS`, `TAN`, etc.
+### Math operators
 
-Comparison: `<`, `>`, `<=`, `>=`, `<>`, `!=`, `=`,
+| Operator | Description         | Precedence | Examples                                                                                  |
+|----------|---------------------|:----------:|-------------------------------------------------------------------------------------------|
+| `+`      | Addition            |     10     | `1 + 2` => `3`<br>`{1} + {2}` => `[1, 2]`<br>`2022-02-24 + 3` => `2022-02-27`             |
+| `-`      | Subtraction         |     10     | `5 - 2` => `3`<br>`2022-02-24 - 3` => `2022-02-21`<br>`2026-02-24 - 2022-02-24` => `1461` |
+| `-`      | Unary negation      |     40     | `-x` negates `x`                                                                          |
+| `*`      | Multiplication      |     20     | `4 * 3` => `12`                                                                           |
+| `/`      | Division            |     20     | `9 / 3` => `3.0`<br>`10 / 4` => `2.5`                                                     |
+| `%`      | Modulo              |     20     | `7 % 3` => `1`                                                                            |
+| `%`      | Percentage          |     30     | `7 + 1%` => `7.01`                                                                        |
+| `^`      | Exponentiation      |     30     | `9 ^ 0.5` => `3.0`<br>`2 ^ 3 ^ 2` => `64`                                                 |
+| `&`      | Bitwise AND         |     0      | `6 & 3` => `2`                                                                            |
+| `\|`     | Bitwise OR          |     0      | `5 \| 2` => `7`                                                                           |
+| `<<`     | Bitwise shift left  |     0      | `1 << 4` => `16`                                                                          |
+| `>>`     | Bitwise shift right |     0      | `32 >> 2` => `8`                                                                          |
 
-Logic: `IF`, `AND`, `OR`, `XOR`, `NOT`, `SWITCH`
+### Numeric functions
 
-Numeric: `MIN`, `MAX`, `SUM`, `AVG`, `COUNT`, `ROUND`, `ROUNDDOWN`, `ROUNDUP`, `ABS`, `INTERCEPT`
+| Name        | Description                                                             | Examples                                                                                  |
+|-------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| `ABS`       | Absolute value                                                          | `ABS(-5)` => `5`<br>`ABS(5)` => `5`                                                       |
+| `AVG`       | Arithmetic mean of arguments                                            | `AVG(1, 2)` => `1.5`<br>`AVG({1, 2})` => `1.5`                                            |
+| `COUNT`     | Length of a single array/string argument, otherwise number of arguments | `COUNT(1, 2, 3)` => `3`<br>`COUNT({4, 5})` => `2`<br>`COUNT("foo")` => `3`                |
+| `INTERCEPT` | y-intercept of the linear regression of two equal-length arrays         | `INTERCEPT({1, 2, 3, 4, 5}, {3, 4, 6, 7, 9})` => `1.3`                                    |
+| `MAX`       | Largest argument                                                        | `MAX(3, 1, 2)` => `3`<br>`MAX({3, 1, 2})` => `3`                                          |
+| `MIN`       | Smallest argument                                                       | `MIN(3, 1, 2)` => `1`<br>`MIN({3, 1, 2})` => `1`                                          |
+| `ROUND`     | Round to 0 or specified number of decimals                              | `ROUND(1.5)` => `2`<br>`ROUND(-1.5)` => `-2`<br>`ROUND(3.14159, 3)` => `3.142`            |
+| `ROUNDDOWN` | Round down to 0 or specified number of decimals                         | `ROUNDDOWN(1.5)` => `1`<br>`ROUNDDOWN(-1.5)` => `-2`<br>`ROUNDDOWN(0.9999, 3)` => `0.999` |
+| `ROUNDUP`   | Round up to 0 or specified number of decimals                           | `ROUNDUP(1.5)` => `2`<br>`ROUNDUP(-1.5)` => `-1`<br>`ROUNDUP(1.0001, 3)` => `1.001`       |
+| `SUM`       | Sum of arguments                                                        | `SUM(1, 2, 3)` => `6`<br>`SUM({1, 2, 3})` => `6`                                          |
 
-Selections: `CASE` (syntax see [spec](https://github.com/rubysolo/dentaku/blob/main/lib/dentaku/ast/case.rb))
+### Math functions
 
-String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`, `CONTAINS`
+Every method from Ruby's `Math` module is available as a function. All angles are in radians.
 
-Collection: `MAP`, `FILTER`, `ALL`, `ANY`, `PLUCK`
+| Name     | Description                                           | Examples                                         |
+|----------|-------------------------------------------------------|--------------------------------------------------|
+| `ACOS`   | Arc cosine                                            | `ACOS(-1)` => `3.14159…`                         |
+| `ACOSH`  | Inverse hyperbolic cosine                             | `ACOSH(2)` => `1.31695…`                         |
+| `ASIN`   | Arc sine                                              | `ASIN(1)` => `1.57079…`                          |
+| `ASINH`  | Inverse hyperbolic sine                               | `ASINH(1)` => `0.88137…`                         |
+| `ATAN`   | Arc tangent                                           | `ATAN(1)` => `0.78539…`                          |
+| `ATAN2`  | Arc tangent of `y / x`                                | `ATAN2(1, 1)` => `0.78539…`                      |
+| `ATANH`  | Inverse hyperbolic tangent                            | `ATANH(0.5)` => `0.54930…`                       |
+| `CBRT`   | Cube root                                             | `CBRT(8)` => `2.0`                               |
+| `COS`    | Cosine                                                | `COS(1)` => `0.54030…`                           |
+| `COSH`   | Hyperbolic cosine                                     | `COSH(1)` => `1.54308…`                          |
+| `ERF`    | Gauss error function                                  | `ERF(1)` => `0.84270…`                           |
+| `ERFC`   | Complementary error function (`1 - ERF`)              | `ERFC(1)` => `0.15729…`                          |
+| `EXP`    | e raised to the given power                           | `EXP(1)` => `2.71828…`                           |
+| `FREXP`  | Normalized signed float fraction and integer exponent | `FREXP(8)` => `[0.5, 4]`                         |
+| `GAMMA`  | Gamma function                                        | `GAMMA(5)` => `24.0`                             |
+| `HYPOT`  | Hypotenuse (`√(x² + y²)`)                             | `HYPOT(3, 4)` => `5.0`                           |
+| `LDEXP`  | Inverse of `FREXP`                                    | `LDEXP(0.5, 4)` => `8.0`                         |
+| `LGAMMA` | Log gamma and its sign                                | `LGAMMA(1)` => `[0.0, 1]`                        |
+| `LOG`    | Natural logarithm, or to a given base                 | `LOG(81)` => `4.39444…`<br>`LOG(81, 3)` => `4.0` |
+| `LOG2`   | Base-2 logarithm                                      | `LOG2(8)` => `3.0`                               |
+| `LOG10`  | Base-10 logarithm                                     | `LOG10(1000)` => `3.0`                           |
+| `SIN`    | Sine                                                  | `SIN(1)` => `0.84147…`                           |
+| `SINH`   | Hyperbolic sine                                       | `SINH(1)` => `1.17520…`                          |
+| `SQRT`   | Square root                                           | `SQRT(16)` => `4.0`                              |
+| `TAN`    | Tangent                                               | `TAN(1)` => `1.55740…`                           |
+| `TANH`   | Hyperbolic tangent                                    | `TANH(1)` => `0.76159…`                          |
+
+### Comparison operators
+
+| Operator     | Description           | Precedence | Examples                                  |
+|--------------|-----------------------|:----------:|-------------------------------------------|
+| `<`          | Less than             |     5      | `1 < 2` => `true`<br>`2 < 2` => `false`   |
+| `>`          | Greater than          |     5      | `2 > 1` => `true`<br>`2 > 2` => `false`   |
+| `<=`         | Less than or equal    |     5      | `2 <= 2` => `true`<br>`3 <= 2` => `false` |
+| `>=`         | Greater than or equal |     5      | `2 >= 2` => `true`<br>`2 >= 3` => `false` |
+| `<>` or `!=` | Not equal             |     5      | `1 != 2` => `true`<br>`1 != 1` => `false` |
+| `=` or `==`  | Equal                 |     5      | `2 = 2` => `true`<br>`2 = 1` => `false`   |
+
+### Logical operators and functions
+
+`AND` and `OR` are available both as operators and functions. `XOR` and `NOT` are functions only. All arguments must be logical or `null`.
+
+| Name           | Description                               | Examples                                                                                                         |
+|----------------|-------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| `AND` or `&&`  | True when all operands/arguments are true | `true && true && false` => `false`<br>`AND(true, true, true)` => `true`                                          |
+| `NOT`          | Logical negation                          | `NOT(true)` => `false`<br>`NOT(false)` => `true`                                                                 |
+| `OR` or `\|\|` | True when any operand/argument is true    | `false \|\| false \|\| true` => `true`<br>`OR(false, false, false)` => `false`                                   |
+| `XOR`          | True when exactly one argument is true    | `XOR(true, false, false)` => `true`<br>`XOR(true, false, true)` => `false`<br>`XOR(true, true, true)` => `false` |
+
+### Conditionals
+
+`IF(condition, when_true, when_false)` returns one of two branches based on a boolean condition:
+
+`IF(1 > 2, 123, 456)` => `456`
+
+`IF(2 > 1, "big", "small")` => `"big"`
+
+`SWITCH(value, candidate1, result1, candidate2, result2, ..., default)` compares `value` against each candidate and returns the matching result, or the trailing `default` (`nil` if omitted and nothing matches):
+
+`SWITCH("banana", "apple", 1, "banana", 2, 3)` => `2`
+
+`SWITCH(4, 1, "a", 2, "b", "c")` => `"c"`
+
+`CASE` provides similar behaviour using keyword form. If no branch matches and there is no `ELSE`, it raises an error:
+
+`CASE "banana" WHEN "apple" THEN 1 WHEN "banana" THEN 2 ELSE 3 END` => `2`
+
+`CASE 4 WHEN 1 THEN "a" WHEN 2 THEN "b" ELSE "c" END` => `"c"`
+
+### String functions
+
+`FIND` and `SUBSTITUTE` also accept a regular expression from a variable.
+
+| Name         | Description                                           | Examples                                                                       |
+|--------------|-------------------------------------------------------|--------------------------------------------------------------------------------|
+| `CONCAT`     | Concatenates all arguments                            | `CONCAT("ABC", "DEF", "G", "HI")` => `"ABCDEFGHI"`                             |
+| `CONTAINS`   | True when the substring is in the string              | `CONTAINS("app", "apple")` => `true`<br>`CONTAINS("app", "orange")` => `false` |
+| `FIND`       | 1-based position of the substring, or `nil` if absent | `FIND("DE", "ABCDEFG")` => `4`<br>`FIND("X", "ABCDEFG")` => `nil`              |
+| `LEFT`       | First count characters                                | `LEFT("ABCDEFG", 4)` => `"ABCD"`<br>`LEFT("AB", 4)` => `"AB"`                  |
+| `LEN`        | Number of characters                                  | `LEN("ABCDEFG")` => `7`                                                        |
+| `MID`        | Starting at 1-based offset take count characters      | `MID("ABCDEFG", 4, 2)` => `"DE"`                                               |
+| `RIGHT`      | Last count characters                                 | `RIGHT("ABCDEFG", 4)` => `"DEFG"`<br>`RIGHT("AB", 4)` => `"AB"`                |
+| `SUBSTITUTE` | Replace the first occurrence of the substring         | `SUBSTITUTE("ABCDEFG", "ABC", "x")` => `"xDEFG"`                               |
+
+### Date functions
+
+| Name       | Description                     | Examples                                                                                                                                                   |
+|------------|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `DURATION` | Amount of days, months or years | `2022-02-24 + DURATION(3, days)` => `2022-02-27`<br>`2022-02-24 - DURATION(1, month)` => `2022-01-24`<br>`2022-02-24 + DURATION(4, years)` => `2026-02-24` |
+
+### Arrays and collection functions
+
+| Name     | Description                                                                           | Examples                                                                                                                                  |
+|----------|---------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `{}`     | Create array                                                                          | `{10, 20, 30}` => `[10, 20, 30]`<br>`{"a", "b"}` => `["a", "b"]`<br>`{{1, 2}, {3, 4}}` => `[[1, 2], [3, 4]]`                              |
+| `[]`     | Get array element at index (0-based, negative - -1 based from the end) or hash at key | `{10, 20, 30}[0]` => `10`<br>`{10, 20, 30}[-1]` => `30`<br>`hash["b"]` => `42`<br>`hash[1]` => `"a"`<br>`hash` is `{1 => "a", "b" => 42}` |
+| `ALL`    | True if the expression is true for every element                                      | `ALL({1, 2, 3}, x, x > 0)` => `true`                                                                                                      |
+| `ANY`    | True if the expression is true for any element                                        | `ANY({1, 2, 3}, x, x > 2)` => `true`                                                                                                      |
+| `FILTER` | Get elements for which the expression is true                                         | `FILTER({1, 2, 3, 4}, x, x % 2 = 0)` => `[2, 4]`                                                                                          |
+| `MAP`    | Apply the expression to every element                                                 | `MAP({1, 2, 3}, x, x ^ 3)` => `[1, 8, 27]`                                                                                                |
+| `PLUCK`  | Collect one key from an array of hashes with optional default                         | `PLUCK(hashes, a)` => `[30, 40]`<br>`PLUCK(hashes, b, -1)` => `[42, -1]`<br>`hashes` is `[{a: 30, b: 42}, {a: 40}]`                       |
+| `REDUCE` | Fold elements into an accumulator with optional initial value                         | `REDUCE({1, 2, 3, 4}, acc, x, acc + x, 0)` => `10`                                                                                        |
 
 RESOLVING DEPENDENCIES
 ----------------------
