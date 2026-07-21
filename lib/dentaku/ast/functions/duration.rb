@@ -21,9 +21,9 @@ module Dentaku
 
         def validate_unit(unit)
           case unit.downcase
-          when /years?/ then :year
-          when /months?/ then :month
-          when /days?/ then :day
+          when /\Ayears?\z/ then :year
+          when /\Amonths?\z/ then :month
+          when /\Adays?\z/ then :day
           else
             raise Dentaku::ArgumentError.for(:incompatible_type, value: unit, for: Duration),
               "'#{unit || unit.class}' is not a valid duration unit"

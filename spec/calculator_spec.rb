@@ -541,6 +541,14 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('value2 - value', { value: value, value2: value2 })).to eq(value2 - value)
       expect(calculator.evaluate!('value - 7200', { value: value })).to eq(Time.local(2023, 7, 13, 8, 42, 11))
     end
+
+    it 'does not accept unknown durations' do
+      expect { calculator.evaluate!('duration(1, foo)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, ay)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, daysy)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, ayear)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, dayofmonthofyear)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+    end
   end
 
   describe 'functions' do
