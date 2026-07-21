@@ -131,6 +131,24 @@ considered rough estimates, and you should measure with representative formulas
 from your application.  Also, if new formulas are constantly introduced to your
 application, AST caching will consume more memory with each new formula.
 
+LITERALS
+--------
+
+Literal keywords are case-insensitive, all following are valid: `null`, `TRUE`, `False`.
+
+Date/time literals take an optional time (separated by a space, `T` or `|`), optional fractional seconds, and an optional timezone (`Z` or `±HH:MM`). Pass `raw_date_literals: false` to disable them.
+
+String literals don't support escape sequences.
+
+| Type      | Syntax                                                        | Examples                                                                                                     |
+|-----------|---------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| Number    | Integer, decimal, scientific or hexadecimal                   | `42`<br>`3.14`<br>`1.5e3`<br>`.1`<br>`0xff` => `255`                                                         |
+| String    | Single or double quotes                                       | `"hello"`<br>`'world'`                                                                                       |
+| Boolean   | `true` / `false`                                              | `true`<br>`false`                                                                                            |
+| Null      | `null` — evaluates to Ruby `nil`                              | `null`                                                                                                       |
+| Date/time | ISO-style date with optional time and zone, on by default     | `2020-01-01`<br>`20-1-1`<br>`2020-01-01T13:00:00`<br>`2020-01-01\|13:00:00Z`<br>`2020-01-01 13:00:00 +02:00` |
+| Array     | Braces, comma-separated (see Arrays and collection functions) | `{1, 2, 3}`<br>`{{1, 2}, {3, 4}}`                                                                            |
+
 BUILT-IN OPERATORS AND FUNCTIONS
 ---------------------------------
 
