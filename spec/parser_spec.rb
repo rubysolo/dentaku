@@ -69,6 +69,11 @@ describe Dentaku::Parser do
     expect(node.value("a" => [1, 2, 3])).to eq(2)
   end
 
+  it 'evaluates access directly on array literal' do
+    expect(parse('{10, 20, 30}[0]').value).to eq(10)
+    expect(parse('{10, 20, 30}[-1]').value).to eq(30)
+  end
+
   it 'evaluates boolean expressions' do
     node = parse('true AND false')
     expect(node.value).to eq(false)
@@ -96,6 +101,9 @@ describe Dentaku::Parser do
 
     node = parse('{1, 2, 3} - {2,3}')
     expect(node.value).to eq([1])
+
+    node = parse('{{1, 2}, {3, 4}}')
+    expect(node.value).to eq([[1, 2], [3, 4]])
   end
 
   context 'invalid expression' do
