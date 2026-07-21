@@ -101,6 +101,9 @@ describe Dentaku::Parser do
 
     node = parse('{1, 2, 3} - {2,3}')
     expect(node.value).to eq([1])
+
+    node = parse('{{1, 2}, {3, 4}}')
+    expect(node.value).to eq([[1, 2], [3, 4]])
   end
 
   context 'invalid expression' do
