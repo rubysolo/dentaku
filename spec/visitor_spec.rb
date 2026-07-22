@@ -118,7 +118,6 @@ describe TestVisitor do
     visit_nodes('ANY(vals, val, val > 1)')
     visit_nodes('COUNT({1, 2, 3})')
     visit_nodes('PLUCK(users, age)')
-    visit_nodes('XOR(false, false)')
     visit_nodes('duration(1, day)')
     visit_nodes('MAP(vals, val, val + 1)')
     visit_nodes('FILTER(vals, val, val > 1)')

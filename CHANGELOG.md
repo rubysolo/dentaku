@@ -3,6 +3,7 @@
 ## [UNRELEASED]
 - unify numeric matching and parsing
 - fix frozen-string-literal warning
+- fix XOR to mean exclusive OR for all arguments, instead of having single true value
 
 ## [v3.5.7] 2025-12-16
 - fix misclassification of unary minus as subtraction

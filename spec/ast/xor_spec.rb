@@ -15,9 +15,14 @@ describe 'Dentaku::AST::Xor' do
     expect(result).to eq(true)
   end
 
-  it 'returns false if more than one of the arguments is true' do
+  it 'returns false if an even number of the arguments are true' do
     result = Dentaku('XOR(false, true, true)')
     expect(result).to eq(false)
+  end
+
+  it 'returns true if an odd number of the arguments are true' do
+    result = Dentaku('XOR(true, true, true)')
+    expect(result).to eq(true)
   end
 
   it 'supports nested expressions' do
@@ -26,7 +31,7 @@ describe 'Dentaku::AST::Xor' do
   end
 
   it 'raises an error if no arguments are passed' do
-    expect { calculator.evaluate!('XOR()') }.to raise_error(Dentaku::ParseError)
+    expect { calculator.evaluate!('XOR()') }.to raise_error(Dentaku::ArgumentError)
   end
 
   it 'raises an error if a non logical argument is passed' do
