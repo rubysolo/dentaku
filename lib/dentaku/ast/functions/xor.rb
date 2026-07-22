@@ -25,7 +25,6 @@ module Dentaku
           case arg.value(context)
           when TrueClass
             true_arg_count += 1
-            break if true_arg_count > 1
           when FalseClass, nil
             next
           else
@@ -35,7 +34,7 @@ module Dentaku
             ), 'XOR() requires arguments to be logical expressions'
           end
         end
-        true_arg_count == 1
+        true_arg_count.odd?
       end
     end
   end
