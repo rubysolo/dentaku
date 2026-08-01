@@ -3,6 +3,7 @@
 ## [UNRELEASED]
 - unify numeric matching and parsing
 - fix frozen-string-literal warning
+- fix dependency resolution order for mixed-case variables in case-sensitive bulk expressions
 
 ## [v3.5.7] 2025-12-16
 - fix misclassification of unary minus as subtraction
