@@ -1001,6 +1001,39 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'logical operators whose short-circuit probe raises' do
+    it 'falls back to the dependencies of both operands' do
+      expect(calculator.dependencies('a / b > 1 OR c', 'a' => 1, 'b' => 0)).to eq(['c'])
+      expect(calculator.dependencies('a <= 1 OR c', 'a' => nil)).to eq(['c'])
+    end
+
+    it 'still prunes when the probe is decisive' do
+      expect(calculator.dependencies('1 > 2 AND a')).to eq([])
+      expect(calculator.dependencies('1 < 2 OR a')).to eq([])
+      expect(calculator.dependencies('a AND 1 > 2')).to eq([])
+      expect(calculator.dependencies('a OR 1 < 2')).to eq([])
+    end
+
+    it 'still reports the other operand when the probe is not decisive' do
+      expect(calculator.dependencies('1 < 2 AND a')).to eq(['a'])
+      expect(calculator.dependencies('1 > 2 OR a')).to eq(['a'])
+    end
+
+    # Regression: the raising branch used to re-derive the dependency union via
+    # `super`, walking both subtrees a second time at every level of the chain.
+    # Twelve terms probed 2048 times instead of 12.
+    it 'probes each operand of a chain once rather than exponentially' do
+      call_count = { count: 0 }
+      calculator.add_function(:blank, :numeric, -> { call_count[:count] += 1; nil })
+
+      terms = 12
+      formula = (1..terms).map { |i| "(blank() <= #{i})" }.join(' OR ')
+
+      expect(calculator.evaluate(formula)).to be_nil
+      expect(call_count[:count]).to eq(terms)
+    end
+  end
+
   describe 'aliases' do
     it 'accepts aliases as instance option' do
       expect(with_aliases.evaluate('rrround(5.1)')).to eq(5)
