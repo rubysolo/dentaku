@@ -1001,6 +1001,60 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'guards probed during dependency resolution' do
+    let(:calls) { Hash.new(0) }
+
+    before do
+      counter = calls
+      calculator.add_function(:probe, :numeric, ->(x) { counter[x] += 1; x })
+    end
+
+    def chain(n, &term)
+      (1..n).map(&term).join(' AND ')
+    end
+
+    it 'evaluates each operand of an AND chain once per evaluate!' do
+      expect(calculator.evaluate!(chain(12) { |i| "probe(#{i}) > 0" })).to eq(true)
+      expect(calls.size).to eq(12)
+      expect(calls.values).to all(eq(1))
+    end
+
+    it 'evaluates each predicate of an IF chain once per evaluate!' do
+      expect(calculator.evaluate!(chain(12) { |i| "IF(probe(#{i}) > 0, true, false)" })).to eq(true)
+      expect(calls.values).to all(eq(1))
+    end
+
+    it 'evaluates each switch of a CASE chain once per evaluate!' do
+      expect(calculator.evaluate!(chain(12) { |i| "CASE probe(#{i}) WHEN 0 THEN false ELSE x > 0 END" }, x: 1)).to eq(true)
+      expect(calls.values).to all(eq(1))
+    end
+
+    it 'probes each operand once when reporting dependencies' do
+      expect(calculator.dependencies(chain(12) { |i| "probe(#{i}) > 0" })).to eq([])
+      expect(calls.values).to all(eq(1))
+    end
+
+    it 'does not run a guard that decided the result again during evaluation' do
+      expect(calculator.evaluate!('probe(1) > 0 OR y')).to eq(true)
+      expect(calls[1]).to eq(1)
+    end
+
+    it 'leaves a branch that fails to evaluate for evaluation to raise' do
+      expect { calculator.evaluate!('IF(x > 1, a / b, y)', x: 2, a: 1, b: 0) }
+        .to raise_error(Dentaku::ZeroDivisionError)
+    end
+
+    it 'keeps the probe cache out of memory once evaluation returns' do
+      calculator.evaluate!('probe(1) > 0 AND probe(2) > 0')
+      expect(calculator.memory).not_to have_key(Dentaku::AST::Node::PROBE_CACHE_KEY)
+    end
+
+    it 'does not reuse a value settled from a variable a loop shadows' do
+      expect(calculator.evaluate!('ALL(items, i, i > 0 AND flag)', items: [1, -1], i: 5, flag: true)).to eq(false)
+      expect(calculator.evaluate!('REDUCE(items, m, i, m + IF(flag, 0, i), 0)', items: [1, 2], i: 5, flag: false)).to eq(3)
+    end
+  end
+
   describe 'aliases' do
     it 'accepts aliases as instance option' do
       expect(with_aliases.evaluate('rrround(5.1)')).to eq(5)

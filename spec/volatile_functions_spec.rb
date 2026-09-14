@@ -92,6 +92,12 @@ describe Dentaku::Calculator do
         expect(call_count[:count]).to eq(1)
       end
 
+      it 'runs a volatile left operand even when the bound right operand decides' do
+        register_counter(volatile: true)
+        expect(calculator.evaluate!('vol(1) > 0 OR true')).to eq(true)
+        expect(call_count[:count]).to eq(1)
+      end
+
       it 'requires variables from both branches when the predicate is volatile' do
         register_counter(volatile: true)
         expect {

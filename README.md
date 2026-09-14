@@ -152,8 +152,8 @@ DEPENDENCY ANALYSIS AND SHORT-CIRCUITING
 ----------------------------------------
 
 Dentaku treats formulas as pure: a subexpression may be evaluated zero, one,
-or more than one time (for example, a guard position may be evaluated once
-during dependency analysis and again during evaluation), so custom functions
+or more than one time (dependency analysis evaluates guard positions it can
+settle, and evaluation runs whatever analysis could not), so custom functions
 should not rely on side effects or call counts.  Functions that fall outside
 this contract -- reading external state, performing I/O, or returning
 different values across calls -- must be registered with `volatile: true`
