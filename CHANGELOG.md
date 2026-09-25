@@ -1,5 +1,23 @@
 # Change Log
 
+## [UNRELEASED]
+- case sensitivity is no longer shared between calculator instances. The
+  identifier scanner applied casing rules with `standardize_case`, which read
+  `@case_sensitive` from the `Dentaku::TokenScanner` class rather than from any
+  calculator, and `Tokenizer#tokenize` rewrote that ivar on every call. Two
+  instances configured with different settings therefore overwrote each other
+  whenever they tokenized at the same time: the winning mode was whichever
+  thread reached `TokenScanner.scanners` last, so identifiers folded to the
+  other calculator's casing. Under load this surfaced as intermittent wrong
+  values rather than an `UnboundVariableError`, because only the identifiers
+  scanned while the flag was flipped were affected. Identifier casing is
+  already applied by `AST::Identifier`, which is handed the setting of the
+  calculator that owns the parse, so the tokenizer's pass and the state behind
+  it (`TokenScanner.case_sensitive` and its `StringCasing` extension) are gone
+  and casing is decided in exactly one place. Token streams now keep the
+  source casing of identifiers instead of folding them at tokenize time;
+  resolution is unchanged. Same class of bug as #353.
+
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
   worked on Ruby 3.4+. Ruby 3.2 and 3.3 do not raise for an oversized
