@@ -1,5 +1,10 @@
 # Change Log
 
+## Unreleased
+- key the bulk-solver dependency-order cache by the resolved dependency graph,
+  so changing formulas or stored context cannot reuse an incompatible order
+  from another solve with the same variable names.
+
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
   worked on Ruby 3.4+. Ruby 3.2 and 3.3 do not raise for an oversized

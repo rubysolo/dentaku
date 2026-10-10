@@ -153,12 +153,15 @@ module Dentaku
     end
 
     def variables_in_resolve_order
-      cache_key = "#{!!calculator.case_sensitive}|#{expressions.keys.map(&:to_s).sort.join("|")}"
-      @ordered_deps ||= self.class.dependency_cache.fetch(cache_key) {
-        DependencyResolver.find_resolve_order(dependencies, calculator.case_sensitive).tap do |d|
-          self.class.dependency_cache[cache_key] = d if calculator.cache_dependency_order?
-        end
-      }
+      @ordered_deps ||= begin
+        dependency_graph = dependencies
+        cache_key = [!!calculator.case_sensitive, dependency_graph]
+        self.class.dependency_cache.fetch(cache_key) {
+          DependencyResolver.find_resolve_order(dependency_graph, calculator.case_sensitive).tap do |d|
+            self.class.dependency_cache[cache_key] = d if calculator.cache_dependency_order?
+          end
+        }
+      end
     end
   end
 end
