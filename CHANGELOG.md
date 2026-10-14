@@ -6,6 +6,12 @@
   which made the regex compilation the single largest cost of evaluating a
   typical condition: `country = 'US'` evaluated 30k times drops from 0.47s
   to 0.07s
+- fix dependency analysis of `AND` / `OR` chains taking exponential time
+  when a short-circuit probe raises (e.g. a zero denominator), a 4.0.0
+  regression on the normal `evaluate!` path (#355)
+- `duration()` only accepts exact unit names (`day`, `days`, `month`,
+  `months`, `year`, `years`); units merely containing one, such as
+  `dayofmonth`, are now rejected
 
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
