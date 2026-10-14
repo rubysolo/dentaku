@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+- `NumericParser` compiles its regular expressions once instead of on every
+  call. `Comparator#cast` runs one per string operand of every comparison,
+  which made the regex compilation the single largest cost of evaluating a
+  typical condition: `country = 'US'` evaluated 30k times drops from 0.47s
+  to 0.07s
+
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
   worked on Ruby 3.4+. Ruby 3.2 and 3.3 do not raise for an oversized
