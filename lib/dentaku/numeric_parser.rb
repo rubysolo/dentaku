@@ -5,20 +5,21 @@ module Dentaku
     HEXADECIMAL_PATTERN = '(0x[0-9a-f]+)\b'.freeze
     # e.g:  [0x1A3F]
 
+    NUMERIC_OR_HEXADECIMAL_REGEX = %r{\A(-?(#{ NUMERIC_PATTERN }|#{ HEXADECIMAL_PATTERN }))\z}i
+    NUMERIC_REGEX = %r{\A(#{ NUMERIC_PATTERN })\z}i
+    HEXADECIMAL_REGEX = %r{\A(#{ HEXADECIMAL_PATTERN })\z}i
+
     class << self
       def match(string)
-        regex = %r{\A(-?(#{ NUMERIC_PATTERN }|#{ HEXADECIMAL_PATTERN }))\z}i
-        string.match(regex)
+        string.match(NUMERIC_OR_HEXADECIMAL_REGEX)
       end
 
       def match_numeric(string)
-        regex = %r{\A(#{ NUMERIC_PATTERN })\z}i
-        string.match(regex)
+        string.match(NUMERIC_REGEX)
       end
 
       def match_hexadecimal(string)
-        regex = %r{\A(#{ HEXADECIMAL_PATTERN })\z}i
-        string.match(regex)
+        string.match(HEXADECIMAL_REGEX)
       end
 
       def parse_numeric_string(raw)

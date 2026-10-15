@@ -21,17 +21,35 @@ module Dentaku
         :logical
       end
 
+      # A short-circuit probe that raises tells us nothing about which operands are
+      # referenced, so fall back to the union of both sides. It has to be the union we
+      # already computed rather than `super`: `super` re-derives it by walking both
+      # subtrees again, and because the probe raises at every level of a chain, each
+      # level would walk its subtree twice -- making analysis exponential in the
+      # length of the chain.
       def dependencies(context = {})
         return super if static_mode?(context)
 
         left_deps = left.dependencies(context)
         right_deps = right.dependencies(context)
-        return [] if left_deps.empty? && left.pure? && decisive?(left.value(context))
-        return [] if right_deps.empty? && right.pure? && decisive?(right.value(context))
+
+        if left_deps.empty? && left.pure?
+          begin
+            return [] if decisive?(left.value(context))
+          rescue Dentaku::Error
+            return (left_deps + right_deps).uniq
+          end
+        end
+
+        if right_deps.empty? && right.pure?
+          begin
+            return [] if decisive?(right.value(context))
+          rescue Dentaku::Error
+            return (left_deps + right_deps).uniq
+          end
+        end
 
         (left_deps + right_deps).uniq
-      rescue Dentaku::Error
-        super
       end
 
       def value(context = {})

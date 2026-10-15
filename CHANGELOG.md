@@ -1,22 +1,24 @@
 # Change Log
 
-## [UNRELEASED]
-- case sensitivity is no longer shared between calculator instances. The
-  identifier scanner applied casing rules with `standardize_case`, which read
-  `@case_sensitive` from the `Dentaku::TokenScanner` class rather than from any
-  calculator, and `Tokenizer#tokenize` rewrote that ivar on every call. Two
-  instances configured with different settings therefore overwrote each other
-  whenever they tokenized at the same time: the winning mode was whichever
-  thread reached `TokenScanner.scanners` last, so identifiers folded to the
-  other calculator's casing. Under load this surfaced as intermittent wrong
-  values rather than an `UnboundVariableError`, because only the identifiers
-  scanned while the flag was flipped were affected. Identifier casing is
-  already applied by `AST::Identifier`, which is handed the setting of the
-  calculator that owns the parse, so the tokenizer's pass and the state behind
-  it (`TokenScanner.case_sensitive` and its `StringCasing` extension) are gone
-  and casing is decided in exactly one place. Token streams now keep the
-  source casing of identifiers instead of folding them at tokenize time;
-  resolution is unchanged. Same class of bug as #353.
+## Unreleased
+- `NumericParser` compiles its regular expressions once instead of on every
+  call. `Comparator#cast` runs one per string operand of every comparison,
+  which made the regex compilation the single largest cost of evaluating a
+  typical condition: `country = 'US'` evaluated 30k times drops from 0.47s
+  to 0.07s
+- fix dependency analysis of `AND` / `OR` chains taking exponential time
+  when a short-circuit probe raises (e.g. a zero denominator), a 4.0.0
+  regression on the normal `evaluate!` path (#355)
+- `duration()` only accepts exact unit names (`day`, `days`, `month`,
+  `months`, `year`, `years`); units merely containing one, such as
+  `dayofmonth`, are now rejected
+- `case_sensitive` is no longer shared between calculator instances. The
+  tokenizer read the setting from a class-level variable that every
+  calculator overwrote, so calculators with different settings running in
+  parallel threads could silently fold identifiers to the wrong case and
+  return wrong results. Casing is now applied only by the calculator's own
+  parser; `Tokenizer#tokenize` keeps identifiers' source casing and
+  `TokenScanner.case_sensitive` is removed
 
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
