@@ -19,6 +19,9 @@
   return wrong results. Casing is now applied only by the calculator's own
   parser; `Tokenizer#tokenize` keeps identifiers' source casing and
   `TokenScanner.case_sensitive` is removed
+- key the bulk-solver dependency-order cache by the resolved dependency graph,
+  so changing formulas or stored context cannot reuse an incompatible order
+  from another solve with the same variable names.
 
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only

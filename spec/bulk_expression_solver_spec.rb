@@ -8,6 +8,28 @@ RSpec.describe Dentaku::BulkExpressionSolver do
   let(:calculator) { Dentaku::Calculator.new }
 
   describe "#solve!" do
+    it 'does not reuse a cached order after formulas change with the same variable names' do
+      calculator = Dentaku::Calculator.new(cache_dependency_order: true)
+      calculator.store(seed: 1)
+      expect(calculator.solve!(a: 'b + 1', b: 'seed + 1')).to eq(a: 3, b: 2)
+      expect(calculator.solve!(a: 'seed + 1', b: 'a + 1')).to eq(a: 2, b: 3)
+    end
+
+    it 'does not share a cached order with a calculator using different dependencies' do
+      first = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 1)
+      second = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 10)
+      expect(first.solve!(left: 'right + 1', right: 'seed + 1')).to eq(left: 3, right: 2)
+      expect(second.solve!(left: 'seed + 1', right: 'left + 1')).to eq(left: 11, right: 12)
+    end
+
+    it 'includes memory-dependent edges in the cached order' do
+      first = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 1, base: 5)
+      second = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 1)
+      formulas = { result: 'base + 1', base: 'seed + 1' }
+      expect(first.solve!(formulas)).to eq(result: 6, base: 2)
+      expect(second.solve!(formulas)).to eq(result: 3, base: 2)
+    end
+
     it "evaluates properly with variables, even if some in memory" do
       expressions = {
         weekly_fruit_budget: "weekly_apple_budget + pear * 4",
