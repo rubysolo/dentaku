@@ -22,6 +22,11 @@
 - key the bulk-solver dependency-order cache by the resolved dependency graph,
   so changing formulas or stored context cannot reuse an incompatible order
   from another solve with the same variable names.
+- **behavior change:** `XOR` with three or more arguments is now the
+  exclusive OR of all of them (true when an odd number are true), matching
+  Excel and `XOR(XOR(a, b), c)`. It previously returned true only when
+  exactly one argument was true, so `XOR(true, true, true)` changes from
+  `false` to `true`. Results with one or two arguments are unchanged (#349)
 
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
