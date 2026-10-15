@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [v4.1.0] 2026-10-14
 - `NumericParser` compiles its regular expressions once instead of on every
   call. `Comparator#cast` runs one per string operand of every comparison,
   which made the regex compilation the single largest cost of evaluating a
