@@ -17,7 +17,6 @@ module Dentaku
       input    = replace_aliases(input)
 
       scanner_options = {
-        case_sensitive: options.fetch(:case_sensitive, false),
         raw_date_literals: options.fetch(:raw_date_literals, true)
       }
 

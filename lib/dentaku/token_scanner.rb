@@ -1,13 +1,10 @@
 require 'bigdecimal'
 require 'time'
-require 'dentaku/string_casing'
 require 'dentaku/token'
 require 'dentaku/numeric_parser'
 
 module Dentaku
   class TokenScanner
-    extend StringCasing
-
     DATE_TIME_REGEXP = /\d{2}\d{2}?-\d{1,2}-\d{1,2}([ |T]\d{1,2}:\d{1,2}:\d{1,2}(\.\d*)?)? ?(Z|((\+|\-)\d{2}\:?\d{2}))?(?!\d)/.freeze
 
     def initialize(category, regexp, converter = nil, condition = nil)
@@ -31,8 +28,6 @@ module Dentaku
     end
 
     class << self
-      attr_reader :case_sensitive
-
       def available_scanners
         [
           :null,
@@ -76,7 +71,6 @@ module Dentaku
       end
 
       def scanners(options = {})
-        @case_sensitive = options.fetch(:case_sensitive, false)
         raw_date_literals = options.fetch(:raw_date_literals, true)
 
         @scanners.select { |k, _| raw_date_literals || k != :datetime }.values
@@ -180,7 +174,7 @@ module Dentaku
       end
 
       def identifier
-        new(:identifier, '[[[:word:]]\.]+\b', lambda { |raw| standardize_case(raw.strip) })
+        new(:identifier, '[[[:word:]]\.]+\b', lambda { |raw| raw.strip })
       end
 
       def quoted_identifier

@@ -12,6 +12,13 @@
 - `duration()` only accepts exact unit names (`day`, `days`, `month`,
   `months`, `year`, `years`); units merely containing one, such as
   `dayofmonth`, are now rejected
+- `case_sensitive` is no longer shared between calculator instances. The
+  tokenizer read the setting from a class-level variable that every
+  calculator overwrote, so calculators with different settings running in
+  parallel threads could silently fold identifiers to the wrong case and
+  return wrong results. Casing is now applied only by the calculator's own
+  parser; `Tokenizer#tokenize` keeps identifiers' source casing and
+  `TokenScanner.case_sensitive` is removed
 
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
