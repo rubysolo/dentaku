@@ -1,6 +1,24 @@
 # Change Log
 
 ## Unreleased
+- `NumericParser` compiles its regular expressions once instead of on every
+  call. `Comparator#cast` runs one per string operand of every comparison,
+  which made the regex compilation the single largest cost of evaluating a
+  typical condition: `country = 'US'` evaluated 30k times drops from 0.47s
+  to 0.07s
+- fix dependency analysis of `AND` / `OR` chains taking exponential time
+  when a short-circuit probe raises (e.g. a zero denominator), a 4.0.0
+  regression on the normal `evaluate!` path (#355)
+- `duration()` only accepts exact unit names (`day`, `days`, `month`,
+  `months`, `year`, `years`); units merely containing one, such as
+  `dayofmonth`, are now rejected
+- `case_sensitive` is no longer shared between calculator instances. The
+  tokenizer read the setting from a class-level variable that every
+  calculator overwrote, so calculators with different settings running in
+  parallel threads could silently fold identifiers to the wrong case and
+  return wrong results. Casing is now applied only by the calculator's own
+  parser; `Tokenizer#tokenize` keeps identifiers' source casing and
+  `TokenScanner.case_sensitive` is removed
 - key the bulk-solver dependency-order cache by the resolved dependency graph,
   so changing formulas or stored context cannot reuse an incompatible order
   from another solve with the same variable names.
