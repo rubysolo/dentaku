@@ -184,6 +184,11 @@ describe Dentaku::HumanizeVisitor do
     expect(humanize('HYPOT(a, b)')).to eq('hypotenuse of a and b')
   end
 
+  it 'keeps member access in operands' do
+    expect(humanize('users[0].age >= 18')).to eq('users[0].age is greater than or equal to 18')
+    expect(humanize('(a + b).c = 1')).to eq('(a plus b).c equals 1')
+  end
+
   it 'is exposed via Calculator#humanize' do
     result = calculator.humanize('days >= min and days <= max', min: 5, max: 20)
     expect(result).to eq('days is greater than or equal to 5 and days is less than or equal to 20')

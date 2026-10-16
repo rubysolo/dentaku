@@ -44,6 +44,17 @@ describe Dentaku::PrintVisitor do
     expect(repr).to eq('IF(a[0] = NULL, "five", "seven")')
   end
 
+  it 'handles member access' do
+    expect(roundtrip('a[0].b.c + 1')).to eq('a[0].b.c + 1')
+    expect(roundtrip('FILTER(xs, x, x.y > 1)[0].y')).to eq('FILTER(xs, x, x.y > 1)[0].y')
+  end
+
+  it 'groups operations before member access' do
+    repr = roundtrip('(a + b).c')
+    expect(repr).to eq('(a + b).c')
+    expect(roundtrip(repr)).to eq(repr)
+  end
+
   it 'handles a case statement' do
     repr = roundtrip('case (a % 5) when 0 then a else b end')
     expect(repr).to eq('CASE a % 5 WHEN 0 THEN a ELSE b END')

@@ -73,6 +73,11 @@ class TestVisitor
     node.index.accept(self)
   end
 
+  def visit_member_access(node)
+    mark_visited(node)
+    node.structure.accept(self)
+  end
+
   def visit_literal(node)
     mark_visited(node)
   end
@@ -111,6 +116,7 @@ describe TestVisitor do
     visit_nodes('(1 + 7) * (8 ^ 2) / - 3.0 - apples * 5%')
     visit_nodes('1 < 2 and 3 <= 4 or 5 > 6 AND 7 >= 8 OR 9 != 10 and true')
     visit_nodes('IF(a[0] = NULL, "five", \'seven\')')
+    visit_nodes('a[0].b')
     visit_nodes('case (a % 5) when 0 then a else b end')
     visit_nodes('0xCAFE & (0xDECAF << 3) | (0xBEEF >> 5)')
     visit_nodes('2017-12-24 23:59:59')
