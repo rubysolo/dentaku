@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+- **behavior change:** when a key passed to `solve` / `solve!` is also stored
+  in the calculator's memory, other formulas now see the solved value, no
+  matter what order the keys are in. Previously they could read the stored
+  value instead, depending on hash order (#256). Stored values still break
+  cycles, so self-referential formulas such as `x: "x + 1"` work as before
+
 ## [v4.1.0] 2026-10-14
 - `NumericParser` compiles its regular expressions once instead of on every
   call. `Comparator#cast` runs one per string operand of every comparison,
