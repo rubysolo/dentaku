@@ -43,6 +43,7 @@ module Dentaku
           :grouping,
           :array,
           :access,
+          :member_access,
           :case_statement,
           :comparator,
           :boolean,
@@ -138,6 +139,18 @@ module Dentaku
       def access
         names = { lbracket: '[', rbracket: ']' }.invert
         new(:access, '\[|\]', lambda { |raw| names[raw] })
+      end
+
+      # `.name` directly after `]`, `)` or another member access; anywhere
+      # else a dot is part of an identifier (`item.name`)
+      def member_access
+        new(:member_access, '\.[[:alpha:]_][[:word:]]*', lambda { |raw| raw[1..] }, lambda { |last_token|
+          next false if last_token.nil?
+
+          last_token.is?(:member_access) ||
+            (last_token.is?(:access) && last_token.value == :rbracket) ||
+            (last_token.is?(:grouping) && last_token.value == :close)
+        })
       end
 
       def case_statement

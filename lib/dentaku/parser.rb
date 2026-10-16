@@ -133,6 +133,8 @@ module Dentaku
         handle_case(token)
       when :access
         handle_access(token)
+      when :member_access
+        handle_member_access(token)
       when :array
         handle_array(token)
       when :grouping
@@ -241,6 +243,14 @@ module Dentaku
         fail! :unbalanced_bracket, token: token unless operations.last == AST::Access
         consume
       end
+    end
+
+    # the tokenizer only emits a member access after a complete operand, so
+    # the operand it applies to is on top of the output stack
+    def handle_member_access(token)
+      fail! :invalid_statement if output.empty?
+
+      output << AST::MemberAccess.new(output.pop, token.value, case_sensitive: case_sensitive)
     end
 
     def handle_array(token)
