@@ -12,6 +12,18 @@
   matter what order the keys are in. Previously they could read the stored
   value instead, depending on hash order (#256). Stored values still break
   cycles, so self-referential formulas such as `x: "x + 1"` work as before
+- add member access: `.name` directly after `]`, `)` or another member
+  access reads a hash value by name, so `FILTER(users, u, u.age > 20)[0].name`
+  and `users[0].account.year` work (#208, #346). String and symbol keys are
+  accepted (case-insensitively unless `case_sensitive: true`); a missing key
+  or a non-hash operand raises `Dentaku::ArgumentError`. Member names must
+  look like identifiers, whitespace before the dot is not allowed, and dotted
+  identifiers such as `user.age` are unchanged. Custom visitors need a
+  `visit_member_access` method to walk formulas that use it
+- **behavior change:** accessing into `NULL` now returns `NULL` instead of
+  raising, for both `a[0]` and `a.name`, so `FILTER(...)[0][0]` and
+  `FILTER(...)[0].name` are `NULL` when nothing matches. Indexing into other
+  non-indexable values (numbers, booleans) still raises
 
 ## [v4.1.0] 2026-10-14
 - `NumericParser` compiles its regular expressions once instead of on every

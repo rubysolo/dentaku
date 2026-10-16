@@ -224,6 +224,25 @@ describe Dentaku::Tokenizer do
     expect(tokens.map(&:value)).to eq(['a', :lbracket, 1, :rbracket])
   end
 
+  it 'tokenizes member access after brackets and parentheses' do
+    tokens = tokenizer.tokenize('a[0].b.c + (d).e')
+    expect(tokens.map(&:category)).to eq(
+      %i(identifier access numeric access member_access member_access operator grouping identifier grouping member_access)
+    )
+    expect(tokens.map(&:value)).to eq(['a', :lbracket, 0, :rbracket, 'b', 'c', :add, :open, 'd', :close, 'e'])
+  end
+
+  it 'rejects whitespace before member access' do
+    expect { tokenizer.tokenize('a[0] .b') }.to raise_error(Dentaku::TokenizerError, /parse error at: '.b'/)
+    expect(tokenizer.tokenize('a[0].b + c').map(&:category)).to eq(%i(identifier access numeric access member_access operator identifier))
+  end
+
+  it 'keeps dots inside identifiers' do
+    tokens = tokenizer.tokenize('a.b.c')
+    expect(tokens.map(&:category)).to eq(%i(identifier))
+    expect(tokens.map(&:value)).to eq(['a.b.c'])
+  end
+
   it 'detects unbalanced parentheses' do
     expect { tokenizer.tokenize('(5+3') }.to raise_error(Dentaku::TokenizerError, /too many opening parentheses/)
     expect { tokenizer.tokenize(')')    }.to raise_error(Dentaku::TokenizerError, /too many closing parentheses/)

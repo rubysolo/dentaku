@@ -202,8 +202,13 @@ describe Dentaku::Calculator do
 
     it 'raises an argument error when accessing into a non-indexable value' do
       expect { calculator.evaluate!('a[0]', a: 5) }.to raise_error(Dentaku::ArgumentError)
-      expect { calculator.evaluate!('a[0]', a: nil) }.to raise_error(Dentaku::ArgumentError)
       expect { calculator.evaluate!('a[0]', a: true) }.to raise_error(Dentaku::ArgumentError)
+    end
+
+    it 'returns nil when accessing into nil' do
+      expect(calculator.evaluate!('a[0]', a: nil)).to be_nil
+      expect(calculator.evaluate!('a[0][1]', a: [nil])).to be_nil
+      expect(calculator.evaluate!('FILTER(a, x, x > 9)[0][0]', a: [1])).to be_nil
     end
 
     it 'raises an argument error when the index type is incompatible' do
