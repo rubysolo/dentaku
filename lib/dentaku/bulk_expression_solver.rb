@@ -152,9 +152,38 @@ module Dentaku
       end
     end
 
+    # Stored memory can satisfy a formula's reference to another key being
+    # solved, which hides that edge from `dependencies`. Order those keys first
+    # anyway so the formula sees the solved value rather than the stored one,
+    # unless the edge would close a cycle -- then the stored value is what
+    # breaks it, as for self-referential formulas.
+    def resolve_order_graph
+      graph = dependencies
+      keys = expressions.keys.map { |k| normalized_name(k) }
+
+      hidden = expressions.to_h do |var, expr|
+        own = normalized_name(var)
+        visible = graph.fetch(var, []).map { |d| normalized_name(d) }
+        all = Array(calculator.dependencies(expr, nil)).map { |d| normalized_name(d) }
+        [var, (all & keys) - visible - [own]]
+      end
+      return graph if hidden.values.all?(&:empty?)
+
+      with_hidden = graph.merge(hidden) { |_, deps, extra| deps + extra }
+      cycle_of = {}
+      DependencyResolver.cycles(with_hidden, calculator.case_sensitive).each_with_index do |cycle, i|
+        cycle.each { |name| cycle_of[name] = i }
+      end
+
+      graph.merge(hidden) do |var, deps, extra|
+        cycle = cycle_of[normalized_name(var)]
+        deps + extra.reject { |e| cycle && cycle_of[e] == cycle }
+      end
+    end
+
     def variables_in_resolve_order
       @ordered_deps ||= begin
-        dependency_graph = dependencies
+        dependency_graph = resolve_order_graph
         cache_key = [!!calculator.case_sensitive, dependency_graph]
         self.class.dependency_cache.fetch(cache_key) {
           DependencyResolver.find_resolve_order(dependency_graph, calculator.case_sensitive).tap do |d|

@@ -23,11 +23,13 @@ RSpec.describe Dentaku::BulkExpressionSolver do
     end
 
     it 'includes memory-dependent edges in the cached order' do
-      first = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 1, base: 5)
-      second = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 1)
-      formulas = { result: 'base + 1', base: 'seed + 1' }
-      expect(first.solve!(formulas)).to eq(result: 6, base: 2)
-      expect(second.solve!(formulas)).to eq(result: 3, base: 2)
+      # the stored value decides where the cycle is broken, so each calculator
+      # needs a different order for the same formulas
+      first = Dentaku::Calculator.new(cache_dependency_order: true).store(x: 5)
+      second = Dentaku::Calculator.new(cache_dependency_order: true).store(y: 3)
+      formulas = { x: 'y + 3', y: 'x * 2' }
+      expect(first.solve!(formulas)).to eq(x: 13, y: 10)
+      expect(second.solve!(formulas)).to eq(x: 6, y: 12)
     end
 
     it "evaluates properly with variables, even if some in memory" do
@@ -83,6 +85,51 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expressions = { x: "y + 3", y: "x * 2" }
       solver = described_class.new(expressions, calculator.store(x: 5, y: 3))
       expect(solver.solve!).to eq(x: 6, y: 12) # x = 6 by the time y is calculated
+    end
+
+    describe "when a key being solved is also stored in memory" do
+      it "gives formulas the solved value regardless of key order" do
+        calculator.store(discount: 20, foo: 20)
+        expected = { discount: 50, discount_not_applicable: true }
+
+        expect(calculator.solve!(
+          discount: "foo + 30",
+          discount_not_applicable: "IF(discount > 30, true, false)"
+        )).to eq(expected)
+
+        expect(calculator.solve!(
+          discount_not_applicable: "IF(discount > 30, true, false)",
+          discount: "foo + 30"
+        )).to eq(expected)
+      end
+
+      it "follows the solved value through a chain of formulas" do
+        calculator.store(seed: 1, middle: 100)
+        expect(calculator.solve!(
+          top: "middle * 2",
+          middle: "bottom + 1",
+          bottom: "seed + 1"
+        )).to eq(top: 6, middle: 3, bottom: 2)
+      end
+
+      it "still uses the stored value to break a cycle elsewhere in the system" do
+        calculator.store(x: 5, y: 3, d: 20, foo: 1)
+        expect(calculator.solve!(
+          z: "d + 1",
+          x: "y + 3",
+          y: "x * 2",
+          d: "foo + 1"
+        )).to eq(z: 3, x: 6, y: 12, d: 2)
+      end
+
+      it "does not change the reported dependencies" do
+        calculator.store(discount: 20, foo: 20)
+        solver = described_class.new(
+          { discount_not_applicable: "IF(discount > 30, true, false)", discount: "foo + 30" },
+          calculator
+        )
+        expect(solver.dependencies).to eq("discount_not_applicable" => [], "discount" => [])
+      end
     end
 
     it "does not execute functions unnecessarily" do
