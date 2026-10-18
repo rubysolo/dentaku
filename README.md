@@ -249,6 +249,7 @@ Operator, function, and keyword names are case-insensitive, you can use `AND`, `
 | `INTERCEPT` | y-intercept of the linear regression of two equal-length arrays         | `INTERCEPT({1, 2, 3, 4, 5}, {3, 4, 6, 7, 9})` => `1.3`                                    |
 | `MAX`       | Largest argument                                                        | `MAX(3, 1, 2)` => `3`<br>`MAX({3, 1, 2})` => `3`                                          |
 | `MIN`       | Smallest argument                                                       | `MIN(3, 1, 2)` => `1`<br>`MIN({3, 1, 2})` => `1`                                          |
+| `MUL`       | Product of arguments                                                    | `MUL(2, 3, 4)` => `24`<br>`MUL({2, 3, 4})` => `24`                                        |
 | `ROUND`     | Round to 0 or specified number of decimals                              | `ROUND(1.5)` => `2`<br>`ROUND(-1.5)` => `-2`<br>`ROUND(3.14159, 3)` => `3.142`            |
 | `ROUNDDOWN` | Round down to 0 or specified number of decimals                         | `ROUNDDOWN(1.5)` => `1`<br>`ROUNDDOWN(-1.5)` => `-2`<br>`ROUNDDOWN(0.9999, 3)` => `0.999` |
 | `ROUNDUP`   | Round up to 0 or specified number of decimals                           | `ROUNDUP(1.5)` => `2`<br>`ROUNDUP(-1.5)` => `-1`<br>`ROUNDUP(1.0001, 3)` => `1.001`       |
