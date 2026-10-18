@@ -307,7 +307,7 @@ Every method from Ruby's `Math` module is available as a function. All angles ar
 | `AND` or `&&`  | True when all operands/arguments are true | `true && true && false` => `false`<br>`AND(true, true, true)` => `true`                                          |
 | `NOT`          | Logical negation                          | `NOT(true)` => `false`<br>`NOT(false)` => `true`                                                                 |
 | `OR` or `\|\|` | True when any operand/argument is true    | `false \|\| false \|\| true` => `true`<br>`OR(false, false, false)` => `false`                                   |
-| `XOR`          | True when exactly one argument is true    | `XOR(true, false, false)` => `true`<br>`XOR(true, false, true)` => `false`<br>`XOR(true, true, true)` => `false` |
+| `XOR`          | True for an odd number of true arguments  | `XOR(true, false, false)` => `true`<br>`XOR(true, false, true)` => `false`<br>`XOR(true, true, true)` => `true`  |
 
 ### Conditionals
 
@@ -356,6 +356,7 @@ Every method from Ruby's `Math` module is available as a function. All angles ar
 |----------|---------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | `{}`     | Create array                                                                          | `{10, 20, 30}` => `[10, 20, 30]`<br>`{"a", "b"}` => `["a", "b"]`<br>`{{1, 2}, {3, 4}}` => `[[1, 2], [3, 4]]`                              |
 | `[]`     | Get array element at index (0-based, negative - -1 based from the end) or hash at key | `{10, 20, 30}[0]` => `10`<br>`{10, 20, 30}[-1]` => `30`<br>`hash["b"]` => `42`<br>`hash[1]` => `"a"`<br>`hash` is `{1 => "a", "b" => 42}` |
+| `.name`  | Get hash value by name, after an index, function call or `)` (see below)              | `hashes[0].a` => `30`<br>`FILTER(hashes, h, h.a > 35)[0].a` => `40`                                                                       |
 | `ALL`    | True if the expression is true for every element                                      | `ALL({1, 2, 3}, x, x > 0)` => `true`                                                                                                      |
 | `ANY`    | True if the expression is true for any element                                        | `ANY({1, 2, 3}, x, x > 2)` => `true`                                                                                                      |
 | `FILTER` | Get elements for which the expression is true                                         | `FILTER({1, 2, 3, 4}, x, x % 2 = 0)` => `[2, 4]`                                                                                          |
@@ -363,14 +364,7 @@ Every method from Ruby's `Math` module is available as a function. All angles ar
 | `PLUCK`  | Collect one key from an array of hashes with optional default                         | `PLUCK(hashes, a)` => `[30, 40]`<br>`PLUCK(hashes, b, -1)` => `[42, -1]`<br>`hashes` is `[{a: 30, b: 42}, {a: 40}]`                       |
 | `REDUCE` | Fold elements into an accumulator with optional initial value                         | `REDUCE({1, 2, 3, 4}, acc, x, acc + x, 0)` => `10`                                                                                        |
 
-Access: `[index]` reads an array element or hash value, and `.name` reads a
-hash value by name from the result of an index, a function call or a
-parenthesized expression:
-
-```ruby
-calculator.evaluate!('FILTER(users, u, u.age > 20)[0].name', users: [{ age: 20, name: 'Ann' }, { age: 21, name: 'Bob' }])
-#=> "Bob"
-```
+#### Member access
 
 Member access accepts string or symbol keys (case-insensitively unless the
 calculator is case-sensitive), and raises if the key is missing or the value
@@ -379,8 +373,8 @@ is not a hash. Member names must look like identifiers, so a key such as
 before the dot, and a dotted name on its own, such as `user.age`, is still a
 single nested variable.
 
-Both forms are nil-safe: accessing into `NULL` gives `NULL`, so
-`FILTER(users, u, u.age > 99)[0].name` is `NULL` when nothing matches.
+Both `[]` and `.name` are nil-safe: accessing into `NULL` gives `NULL`, so
+`FILTER(users, u, u.age > 99)[0].name` returns `NULL` when nothing matches.
 
 RESOLVING DEPENDENCIES
 ----------------------
