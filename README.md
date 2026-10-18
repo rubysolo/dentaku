@@ -218,6 +218,25 @@ String: `LEFT`, `RIGHT`, `MID`, `LEN`, `FIND`, `SUBSTITUTE`, `CONCAT`, `CONTAINS
 
 Collection: `MAP`, `FILTER`, `ALL`, `ANY`, `PLUCK`
 
+Access: `[index]` reads an array element or hash value, and `.name` reads a
+hash value by name from the result of an index, a function call or a
+parenthesized expression:
+
+```ruby
+calculator.evaluate!('FILTER(users, u, u.age > 20)[0].name', users: [{ age: 20, name: 'Ann' }, { age: 21, name: 'Bob' }])
+#=> "Bob"
+```
+
+Member access accepts string or symbol keys (case-insensitively unless the
+calculator is case-sensitive), and raises if the key is missing or the value
+is not a hash. Member names must look like identifiers, so a key such as
+`'a.b'` or `'2fa'` needs brackets: `users[0]["a.b"]`. There is no whitespace
+before the dot, and a dotted name on its own, such as `user.age`, is still a
+single nested variable.
+
+Both forms are nil-safe: accessing into `NULL` gives `NULL`, so
+`FILTER(users, u, u.age > 99)[0].name` is `NULL` when nothing matches.
+
 RESOLVING DEPENDENCIES
 ----------------------
 

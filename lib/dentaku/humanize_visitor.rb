@@ -150,6 +150,11 @@ module Dentaku
       @output << 'null'
     end
 
+    # `IF(a, b, c).d` would otherwise read as `... else c.d`
+    def group_member_structure?(node)
+      super || node.is_a?(Dentaku::AST::Function)
+    end
+
     def visit_identifier(node)
       if @values.key?(node.identifier)
         value = @values[node.identifier]
