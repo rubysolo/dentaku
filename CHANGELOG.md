@@ -1,6 +1,10 @@
 # Change Log
 
 ## Unreleased
+- `Calculator#store` skips nested-hash flattening when no value is a Hash,
+  and remembers the standardized name of each Symbol key. Storing the same
+  flat 124-key hash drops from 54µs / 998 allocations to 12µs / 129
+  allocations
 - add `Calculator#humanize` and `HumanizeVisitor`, which render a formula as
   plain English: `humanize('IF(tenure >= 2, base * 1.1, base)')` returns
   `"if tenure is greater than or equal to 2 then base times 1.1 else base"`.

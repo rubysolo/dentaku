@@ -163,6 +163,13 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('second')).to eq(2)
     end
 
+    it 'replaces values when the same symbol keys are stored again' do
+      calculator.store(Apples: 1)
+      calculator.store(Apples: 2)
+      expect(calculator.memory).to eq("apples" => 2)
+      expect(with_case_sensitivity.store(Apples: 1).memory).to eq("Apples" => 1)
+    end
+
     it 'stores formulas' do
       calculator.store_formula('area', 'length * width')
       expect(calculator.evaluate!('area', length: 5, width: 5)).to eq(25)
