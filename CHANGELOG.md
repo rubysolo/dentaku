@@ -1,6 +1,12 @@
 # Change Log
 
 ## Unreleased
+- add `Calculator#humanize` and `HumanizeVisitor`, which render a formula as
+  plain English: `humanize('IF(tenure >= 2, base * 1.1, base)')` returns
+  `"if tenure is greater than or equal to 2 then base times 1.1 else base"`.
+  Values passed as the second argument replace their variables in the
+  output. Nodes without a phrase (e.g. custom functions) fall back to
+  `PrintVisitor` (#338)
 - **behavior change:** when a key passed to `solve` / `solve!` is also stored
   in the calculator's memory, other formulas now see the solved value, no
   matter what order the keys are in. Previously they could read the stored
