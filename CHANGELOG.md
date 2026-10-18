@@ -3,6 +3,9 @@
 ## Unreleased
 - `MUL` works: it was added in 3.2.0 (#158) but never loaded, so every call
   raised "Undefined function mul". `MUL(2, 3, 4)` now returns `24`
+- remove `lib/dentaku/token_matchers.rb`, unused since the 2015 parser
+  rewrite. `require 'dentaku'` never loaded it, so this only affects code that
+  required `dentaku/token_matchers` itself
 - add `Calculator#humanize` and `HumanizeVisitor`, which render a formula as
   plain English: `humanize('IF(tenure >= 2, base * 1.1, base)')` returns
   `"if tenure is greater than or equal to 2 then base times 1.1 else base"`.
