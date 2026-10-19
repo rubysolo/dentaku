@@ -163,11 +163,21 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('second')).to eq(2)
     end
 
-    it 'replaces values when the same symbol keys are stored again' do
+    it 'collapses differently cased symbol keys unless case sensitive' do
       calculator.store(Apples: 1)
-      calculator.store(Apples: 2)
+      calculator.store(apples: 2)
       expect(calculator.memory).to eq("apples" => 2)
       expect(with_case_sensitivity.store(Apples: 1).memory).to eq("Apples" => 1)
+    end
+
+    it 'flattens a hash that mixes flat and nested values' do
+      calculator.store(a: 1, b: {c: 2})
+      expect(calculator.memory).to eq("a" => 1, "b" => {c: 2}, "b.c" => 2)
+    end
+
+    it 'stores nested values as-is without nested data support' do
+      without_nested_data.store(a: 1, b: {c: 2})
+      expect(without_nested_data.memory).to eq("a" => 1, "b" => {c: 2})
     end
 
     it 'stores formulas' do

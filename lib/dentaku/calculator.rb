@@ -27,7 +27,6 @@ module Dentaku
       @cache_dependency_order = cache_dependency_order
       @disable_ast_cache = false
       @function_registry = Dentaku::AST::FunctionRegistry.new
-      @memory_keys = {}
     end
 
     # explicitly configured aliases win; otherwise the module-level default is
@@ -223,17 +222,14 @@ module Dentaku
     end
 
     private def nested?(hash)
-      hash.each_value.any?(Hash)
+      hash.each_value { |v| return true if v.is_a?(Hash) }
+      false
     end
 
-    # callers tend to store the same symbol-keyed hash over and over, so
-    # remember each symbol's standardized name instead of rebuilding it on
-    # every call; strings aren't cached because arbitrary string keys would
-    # grow the cache without bound
+    # Symbol#name returns the symbol's interned string, so symbol keys skip
+    # the extra String that to_s would allocate
     private def memory_key(key)
-      return standardize_case(key.to_s) unless key.is_a?(Symbol)
-
-      @memory_keys[key] ||= standardize_case(key.name).freeze
+      key.is_a?(Symbol) ? standardize_case(key).name : standardize_case(key.to_s)
     end
 
     def store_formula(key, formula)
