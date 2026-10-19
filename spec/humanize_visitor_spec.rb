@@ -195,6 +195,15 @@ describe Dentaku::HumanizeVisitor do
       .to eq('(filter u in users where u.age is greater than 20).name')
   end
 
+  it 'groups function calls and operations before an index' do
+    expect(humanize('FILTER(users, u, u.age > 20)[0]'))
+      .to eq('(filter u in users where u.age is greater than 20)[0]')
+    expect(humanize('FILTER(users, u, u.age > 20)[0].name'))
+      .to eq('(filter u in users where u.age is greater than 20)[0].name')
+    expect(humanize('(a + b)[0] = 1')).to eq('(a plus b)[0] equals 1')
+    expect(humanize('users[0]')).to eq('users[0]')
+  end
+
   it 'is exposed via Calculator#humanize' do
     result = calculator.humanize('days >= min and days <= max', min: 5, max: 20)
     expect(result).to eq('days is greater than or equal to 5 and days is less than or equal to 20')

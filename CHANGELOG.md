@@ -1,6 +1,13 @@
 # Change Log
 
 ## Unreleased
+- `PrintVisitor` keeps the parentheses an index needs, as #268 and #316 did
+  for operators: `(a + b)[0]` printed as `a + b[0]`, which indexes only `b`.
+  `HumanizeVisitor` also groups function calls before an index, so
+  `FILTER(...)[0]` no longer reads as `... greater than 20[0]`
+- `PrintVisitor` prints array literals as written, e.g. `{a, 1 + 2}`.
+  It printed the evaluated Ruby array, so `{1, 2}` became `[1, 2]`, which does
+  not parse, and an array of variables raised `UnboundVariableError`
 - `MUL` works: it was added in 3.2.0 (#158) but never loaded, so every call
   raised "Undefined function mul". `MUL(2, 3, 4)` now returns `24`
 - remove `lib/dentaku/token_matchers.rb`, unused since the 2015 parser

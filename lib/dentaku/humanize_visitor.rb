@@ -150,7 +150,12 @@ module Dentaku
       @output << 'null'
     end
 
-    # `IF(a, b, c).d` would otherwise read as `... else c.d`
+    # in English a function call loses its brackets, so `IF(a, b, c).d` would
+    # read as `if a then b else c.d`; group calls before `[...]` and `.name`
+    def group_access_structure?(node)
+      super || node.is_a?(Dentaku::AST::Function)
+    end
+
     def group_member_structure?(node)
       super || node.is_a?(Dentaku::AST::Function)
     end

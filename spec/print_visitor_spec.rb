@@ -64,6 +64,37 @@ describe Dentaku::PrintVisitor do
     end
   end
 
+  it 'groups anything but variables, arrays, accesses and function calls before an index' do
+    [
+      '(a + b)[0]',
+      '(-(a))[0]',
+      '("abc")[0]',
+      '(CASE 1 WHEN 1 THEN a END)[0]',
+      'a[0]',
+      'a[0][1]',
+      'a[b[0]]',
+      'FILTER(a, x, x > 1)[0]',
+      '{10, 20, 30}[0]',
+      'users[0].name[0]'
+    ].each do |formula|
+      expect(roundtrip(formula)).to eq(formula)
+      expect(roundtrip(roundtrip(formula))).to eq(formula)
+    end
+  end
+
+  it 'keeps the meaning of a grouped index' do
+    calculator = Dentaku::Calculator.new
+    data = { a: [5, 6], b: [1, 2] }
+    printed = described_class.new(calculator.ast('(a + b)[0]')).to_s
+    expect(calculator.evaluate!(printed, data)).to eq(calculator.evaluate!('(a + b)[0]', data))
+  end
+
+  it 'prints array literals as they are written' do
+    ['{1, 2}', '{}', '{a, b}', '{{1}, {2, 3}}', '{"x", 1 + 2}', 'SUM({1, 2, x})'].each do |formula|
+      expect(roundtrip(formula)).to eq(formula)
+    end
+  end
+
   it 'keeps the lookup rules when grouping a variable' do
     calculator = Dentaku::Calculator.new
     data = { user: { 'Name' => 'y', 'name' => 'x' } }
