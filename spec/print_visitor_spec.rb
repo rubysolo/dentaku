@@ -44,6 +44,33 @@ describe Dentaku::PrintVisitor do
     expect(repr).to eq('IF(a[0] = NULL, "five", "seven")')
   end
 
+  it 'handles member access' do
+    expect(roundtrip('a[0].b.c + 1')).to eq('a[0].b.c + 1')
+    expect(roundtrip('FILTER(xs, x, x.y > 1)[0].y')).to eq('FILTER(xs, x, x.y > 1)[0].y')
+  end
+
+  it 'groups anything but accesses and function calls before member access' do
+    [
+      '(a + b).c',
+      '(user).Name',
+      '("abc").x',
+      '(1).x',
+      '(CASE 1 WHEN 1 THEN users[0] END).name',
+      'IF(a, b, c).d',
+      'a[0].b.c'
+    ].each do |formula|
+      expect(roundtrip(formula)).to eq(formula)
+      expect(roundtrip(roundtrip(formula))).to eq(formula)
+    end
+  end
+
+  it 'keeps the lookup rules when grouping a variable' do
+    calculator = Dentaku::Calculator.new
+    data = { user: { 'Name' => 'y', 'name' => 'x' } }
+    printed = described_class.new(calculator.ast('(user).Name')).to_s
+    expect(calculator.evaluate!(printed, data)).to eq(calculator.evaluate!('(user).Name', data))
+  end
+
   it 'handles a case statement' do
     repr = roundtrip('case (a % 5) when 0 then a else b end')
     expect(repr).to eq('CASE a % 5 WHEN 0 THEN a ELSE b END')

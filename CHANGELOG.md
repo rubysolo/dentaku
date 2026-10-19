@@ -4,6 +4,11 @@
 - `Calculator#store` skips nested-hash flattening when no value is a Hash,
   and builds Symbol keys' names from `Symbol#name`. Storing a flat 124-key
   hash drops from 51µs / 998 allocations to 16µs / 250 allocations
+- `MUL` works: it was added in 3.2.0 (#158) but never loaded, so every call
+  raised "Undefined function mul". `MUL(2, 3, 4)` now returns `24`
+- remove `lib/dentaku/token_matchers.rb`, unused since the 2015 parser
+  rewrite. `require 'dentaku'` never loaded it, so this only affects code that
+  required `dentaku/token_matchers` itself
 - add `Calculator#humanize` and `HumanizeVisitor`, which render a formula as
   plain English: `humanize('IF(tenure >= 2, base * 1.1, base)')` returns
   `"if tenure is greater than or equal to 2 then base times 1.1 else base"`.
@@ -15,6 +20,18 @@
   matter what order the keys are in. Previously they could read the stored
   value instead, depending on hash order (#256). Stored values still break
   cycles, so self-referential formulas such as `x: "x + 1"` work as before
+- add member access: `.name` directly after `]`, `)` or another member
+  access reads a hash value by name, so `FILTER(users, u, u.age > 20)[0].name`
+  and `users[0].account.year` work (#208, #346). String and symbol keys are
+  accepted (case-insensitively unless `case_sensitive: true`); a missing key
+  or a non-hash operand raises `Dentaku::ArgumentError`. Member names must
+  look like identifiers, whitespace before the dot is not allowed, and dotted
+  identifiers such as `user.age` are unchanged. Custom visitors need a
+  `visit_member_access` method to walk formulas that use it
+- **behavior change:** accessing into `NULL` now returns `NULL` instead of
+  raising, for both `a[0]` and `a.name`, so `FILTER(...)[0][0]` and
+  `FILTER(...)[0].name` are `NULL` when nothing matches. Indexing into other
+  non-indexable values (numbers, booleans) still raises
 
 ## [v4.1.0] 2026-10-14
 - `NumericParser` compiles its regular expressions once instead of on every

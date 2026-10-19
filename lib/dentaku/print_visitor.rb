@@ -90,6 +90,20 @@ module Dentaku
       @output << "]"
     end
 
+    def visit_member_access(node)
+      grouped = group_member_structure?(node.structure)
+      @output << "(" if grouped
+      node.structure.accept(self)
+      @output << ")" if grouped
+      @output << "." << node.member
+    end
+
+    # anything else would re-parse differently, e.g. `(user).name` as the
+    # variable `user.name`
+    def group_member_structure?(node)
+      !(node.is_a?(Dentaku::AST::Access) || node.is_a?(Dentaku::AST::Function))
+    end
+
     def visit_literal(node)
       @output << node.quoted
     end

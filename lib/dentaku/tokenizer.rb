@@ -12,6 +12,7 @@ module Dentaku
     def tokenize(string, options = {})
       @nesting = 0
       @tokens  = []
+      @after_whitespace = false
       @aliases = options.fetch(:aliases, global_aliases)
       input    = strip_comments(string.to_s.dup)
       input    = replace_aliases(input)
@@ -52,7 +53,11 @@ module Dentaku
           @nesting -= 1 if RPAREN == token
           fail! :too_many_closing_parentheses if @nesting < 0
 
-          @tokens << token unless token.is?(:whitespace)
+          # `a[0] .name` is rejected like `a .name`
+          fail! :parse_error, at: string if token.is?(:member_access) && @after_whitespace
+
+          @after_whitespace = token.is?(:whitespace)
+          @tokens << token unless @after_whitespace
         end
 
         match_length = tokens.map(&:length).reduce(:+)
