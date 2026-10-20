@@ -40,6 +40,12 @@ describe Dentaku::HumanizeVisitor do
     expect(humanize('a < 0 or a > 100')).to eq('a is less than 0 or a is greater than 100')
   end
 
+  it 'verbalizes XOR and NOT operators' do
+    expect(humanize('a XOR b')).to eq('a exclusive-or b')
+    expect(humanize('NOT a > 5')).to eq('not a is greater than 5')
+    expect(humanize('!(a OR b)')).to eq('not (a or b)')
+  end
+
   it 'verbalizes negation' do
     expect(humanize('-a')).to eq('negative a')
   end

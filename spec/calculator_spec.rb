@@ -1053,6 +1053,101 @@ describe Dentaku::Calculator do
     end
   end
 
+  describe 'XOR operator' do
+    it 'is true when exactly one operand is true' do
+      expect(calculator.evaluate!('true XOR false')).to eq(true)
+      expect(calculator.evaluate!('a xor b', a: true, b: true)).to eq(false)
+      expect(calculator.evaluate!('a XOR b', a: false, b: false)).to eq(false)
+      expect(calculator.evaluate!('1 > 2 XOR 3 < 4')).to eq(true)
+    end
+
+    it 'treats null as false, like the XOR function' do
+      expect(calculator.evaluate!('a XOR true', a: nil)).to eq(true)
+    end
+
+    it 'needs both operands' do
+      expect { calculator.evaluate!('a XOR b', a: true) }
+        .to raise_error(Dentaku::UnboundVariableError)
+      expect(calculator.dependencies('a XOR b', a: true)).to eq(['b'])
+    end
+
+    it 'shares precedence with AND and OR, left to right' do
+      expect(calculator.evaluate!('true XOR true OR true')).to eq(true)
+      expect(calculator.evaluate!('true OR true XOR true')).to eq(false)
+    end
+
+    it 'requires logical operands' do
+      expect { calculator.ast('1 XOR true') }.to raise_error(Dentaku::ParseError, /logical/)
+    end
+
+    it 'is still a function when followed by parentheses' do
+      expect(calculator.evaluate!('XOR(true, false, true)')).to eq(false)
+      expect(calculator.evaluate!('XOR (true, false)')).to eq(true)
+    end
+  end
+
+  describe 'NOT operator' do
+    it 'negates its operand' do
+      expect(calculator.evaluate!('NOT true')).to eq(false)
+      expect(calculator.evaluate!('not a', a: false)).to eq(true)
+      expect(calculator.evaluate!('NOT NOT true')).to eq(true)
+    end
+
+    it 'is aliased as !' do
+      expect(calculator.evaluate!('!true')).to eq(false)
+      expect(calculator.evaluate!('! a', a: true)).to eq(false)
+      expect(calculator.evaluate!('!!a', a: true)).to eq(true)
+      expect(calculator.evaluate!('!(1 > 2)')).to eq(true)
+    end
+
+    it 'leaves != alone' do
+      expect(calculator.evaluate!('a != 1', a: 2)).to eq(true)
+      expect(calculator.evaluate!('!a != true', a: true)).to eq(true)
+    end
+
+    it 'binds looser than comparisons and tighter than AND, OR and XOR' do
+      expect(calculator.evaluate!('NOT a > 5', a: 3)).to eq(true)
+      expect(calculator.evaluate!('!a = b', a: 1, b: 1)).to eq(false)
+      expect(calculator.evaluate!('NOT a AND b', a: true, b: true)).to eq(false)
+      expect(calculator.evaluate!('NOT a OR b', a: true, b: true)).to eq(true)
+      expect(calculator.evaluate!('a AND NOT b', a: true, b: false)).to eq(true)
+      expect(calculator.evaluate!('x = NOT a', x: false, a: true)).to eq(true)
+    end
+
+    it 'works inside function arguments and case statements' do
+      expect(calculator.evaluate!('IF(NOT a, 1, 2)', a: false)).to eq(1)
+      expect(calculator.evaluate!('CASE x WHEN 1 THEN NOT a ELSE !b END', x: 2, a: true, b: false)).to eq(true)
+    end
+
+    it 'requires a logical operand' do
+      expect { calculator.ast('NOT 1') }.to raise_error(Dentaku::ParseError, /logical/)
+    end
+
+    it 'reports the dependencies of its operand' do
+      expect(calculator.dependencies('NOT a')).to eq(['a'])
+    end
+
+    it 'is still a function when followed by parentheses' do
+      expect(calculator.evaluate!('NOT(true)')).to eq(false)
+      expect(calculator.evaluate!('NOT (a) = b', a: true, b: false)).to eq(true)
+    end
+  end
+
+  describe 'AND and OR followed by parentheses without a left operand' do
+    it 'are functions' do
+      expect(calculator.evaluate!('AND (true, false)')).to eq(false)
+      expect(calculator.evaluate!('OR (true, false)')).to eq(true)
+    end
+  end
+
+  describe 'negation after case keywords' do
+    it 'negates' do
+      expect(calculator.evaluate!('CASE x WHEN 1 THEN -1 ELSE -2 END', x: 1)).to eq(-1)
+      expect(calculator.evaluate!('CASE x WHEN -1 THEN 2 END', x: -1)).to eq(2)
+      expect(calculator.evaluate!('CASE -x WHEN -1 THEN 2 END', x: 1)).to eq(2)
+    end
+  end
+
   describe 'logical operators whose short-circuit probe raises' do
     it 'falls back to the dependencies of both operands' do
       expect(calculator.dependencies('a / b > 1 OR c', 'a' => 1, 'b' => 0)).to eq(['c'])

@@ -1,6 +1,15 @@
 # Change Log
 
 ## Unreleased
+- `XOR` works as an operator, like `AND` and `OR`: `a XOR b` (#344). It
+  shares their precedence and treats `null` as false, as the function does
+- `NOT` works as a prefix operator, aliased as `!`: `NOT a`, `!(a > 5)`
+  (#345). It binds looser than comparisons, so `NOT a > 5` is
+  `NOT (a > 5)`. `NOT(...)` and `NOT (...)` are still the function
+- `AND (a, b)` and `OR (a, b)` with a space before the parenthesis call the
+  functions, as `XOR (a, b)` already did, instead of failing to parse
+- `-` right after `CASE`, `WHEN`, `THEN` or `ELSE` is a negation:
+  `CASE x WHEN 1 THEN -1 END` failed to parse
 - `ROUNDUP` and `ROUNDDOWN` round the number as written. They scaled by a
   Float power of ten, so `ROUNDDOWN(x, 2)` with `x = 0.29` returned `0.28`
   and `ROUNDUP(x, 2)` with `x = 0.07` returned `0.08`. Like `ROUND`, they now

@@ -25,7 +25,8 @@ module Dentaku
 
       and:      AST::And,
       or:       AST::Or,
-      xor:      AST::Xor,
+      xor:      AST::ExclusiveOr,
+      not:      AST::Not,
     }.freeze
 
     attr_reader :input, :output, :operations, :arities, :case_sensitive
@@ -146,7 +147,9 @@ module Dentaku
 
     def handle_operator(token, lookahead)
       op_class = operation(token).resolve_class(lookahead)
-      if op_class.right_associative?
+      if op_class.prefix?
+        # nothing to fold: the operand comes after
+      elsif op_class.right_associative?
         consume while operations.last && operations.last < AST::Operation && op_class.precedence < operations.last.precedence
       else
         consume while operations.last && operations.last < AST::Operation && op_class.precedence <= operations.last.precedence

@@ -301,14 +301,20 @@ Every method from Ruby's `Math` module is available as a function. All angles ar
 
 ### Logical operators and functions
 
-`AND` and `OR` are available both as operators and functions. `XOR` and `NOT` are functions only. All arguments must be logical or `null`.
+`AND`, `OR`, `XOR` and `NOT` are available both as operators and functions. All arguments must be logical or `null`; `XOR` and `NOT` treat `null` as false.
 
-| Name           | Description                               | Examples                                                                                                         |
-|----------------|-------------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| `AND` or `&&`  | True when all operands/arguments are true | `true && true && false` => `false`<br>`AND(true, true, true)` => `true`                                          |
-| `NOT`          | Logical negation                          | `NOT(true)` => `false`<br>`NOT(false)` => `true`                                                                 |
-| `OR` or `\|\|` | True when any operand/argument is true    | `false \|\| false \|\| true` => `true`<br>`OR(false, false, false)` => `false`                                   |
-| `XOR`          | True for an odd number of true arguments  | `XOR(true, false, false)` => `true`<br>`XOR(true, false, true)` => `false`<br>`XOR(true, true, true)` => `true`  |
+| Name           | Description                               | Precedence | Examples                                                                                                         |
+|----------------|-------------------------------------------|:----------:|------------------------------------------------------------------------------------------------------------------|
+| `NOT` or `!`   | Logical negation                          |     3      | `NOT true` => `false`<br>`!(1 > 2)` => `true`<br>`NOT(false)` => `true`                                          |
+| `AND` or `&&`  | True when all operands/arguments are true |     0      | `true && true && false` => `false`<br>`AND(true, true, true)` => `true`                                          |
+| `OR` or `\|\|` | True when any operand/argument is true    |     0      | `false \|\| false \|\| true` => `true`<br>`OR(false, false, false)` => `false`                                   |
+| `XOR`          | True for an odd number of true arguments  |     0      | `true XOR false` => `true`<br>`XOR(true, false, true)` => `false`<br>`XOR(true, true, true)` => `true`           |
+
+`NOT` binds looser than comparisons and tighter than `AND`, `OR` and `XOR`, so
+`NOT a > 5 AND b` means `(NOT (a > 5)) AND b`. `AND`, `OR` and `XOR` share a
+precedence and group left to right: `a OR b AND c` means `(a OR b) AND c`.
+`NOT` directly followed by parentheses is the function, so `NOT (a) = b` means
+`NOT(a) = b`; write `!(a) = b` for the operator.
 
 ### Conditionals
 
