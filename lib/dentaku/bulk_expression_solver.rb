@@ -90,7 +90,7 @@ module Dentaku
 
       evaluated_facts = facts.to_h.each_with_object({}) do |(var_name, ast), h|
         with_rescues(var_name, h, block) do
-          h[var_name] = ast.is_a?(Array) ? ast.map(&:value) : ast.value
+          h[var_name] = fact_value(ast)
         end
       end
 
@@ -114,6 +114,15 @@ module Dentaku
     rescue TSort::Cyclic => ex
       block.call(ex)
       {}
+    end
+
+    # facts can be arrays and hashes nested to any depth, e.g. [{ a: 1 }]
+    def fact_value(ast)
+      case ast
+      when Array then ast.map { |a| fact_value(a) }
+      when Hash then ast.transform_values { |a| fact_value(a) }
+      else ast.value
+      end
     end
 
     def with_rescues(var_name, results, block)

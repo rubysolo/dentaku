@@ -180,6 +180,25 @@ RSpec.describe Dentaku::BulkExpressionSolver do
         discounts: [0.8, 0.6]
       )
     end
+
+    it "solves arrays of hashes" do
+      calculator.store(bonus: 5)
+      expressions = {
+        percents: [{ percent: 75 }, { percent: "30 + bonus" }],
+        average: "(percents[0].percent + percents[1].percent) / 2",
+      }
+
+      expect(calculator.solve!(expressions)).to eq(
+        percents: [{ percent: 75 }, { percent: 35 }],
+        average: 55
+      )
+    end
+
+    it "solves nested arrays" do
+      expect(calculator.solve!(grid: [[1, "1 + 1"], [{ cell: "1 + 2" }]])).to eq(
+        grid: [[1, 2], [{ cell: 3 }]]
+      )
+    end
   end
 
   describe "#solve" do

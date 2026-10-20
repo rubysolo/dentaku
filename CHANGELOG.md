@@ -1,6 +1,11 @@
 # Change Log
 
 ## Unreleased
+- `solve` and `solve!` accept arrays of hashes and nested arrays, e.g.
+  `percents: [{ percent: 75 }, { percent: "30 + bonus" }]`. They raised a
+  `TokenizerError` because each hash was parsed as a formula string (#208).
+  `evaluate` and `evaluate!` also take a hash, solving each of its values.
+  A formula still can't reference another element of its own array
 - `PrintVisitor` keeps the parentheses an index needs, as #268 and #316 did
   for operators: `(a + b)[0]` printed as `a + b[0]`, which indexes only `b`.
   `HumanizeVisitor` also groups function calls before an index, so
