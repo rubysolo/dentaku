@@ -26,6 +26,12 @@ module Dentaku
         false
       end
 
+      # a prefix operator has no left operand, so it never folds the
+      # operators before it
+      def self.prefix?
+        false
+      end
+
       def accept(visitor)
         visitor.visit_operation(self)
       end

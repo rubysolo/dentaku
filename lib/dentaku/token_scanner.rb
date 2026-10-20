@@ -39,6 +39,7 @@ module Dentaku
           :single_quoted_string,
           :negate,
           :combinator,
+          :logical_not,
           :operator,
           :grouping,
           :array,
@@ -106,17 +107,22 @@ module Dentaku
         new(:string, "'[^']*'", lambda { |raw| raw.gsub(/^'|'$/, '') })
       end
 
+      # whether the next token starts an operand, which makes `-` a negation
+      # and `not` the prefix operator rather than a binary one
+      def operand_expected?(last_token)
+        last_token.nil?               ||
+        last_token.is?(:operator)     ||
+        last_token.is?(:comparator)   ||
+        last_token.is?(:combinator)   ||
+        (last_token.is?(:case) && last_token.value != :close) ||
+        last_token.value == :open     ||
+        last_token.value == :comma    ||
+        last_token.value == :lbracket ||
+        last_token.value == :array_start
+      end
+
       def negate
-        new(:operator, '-', lambda { |raw| :negate }, lambda { |last_token|
-          last_token.nil?               ||
-          last_token.is?(:operator)     ||
-          last_token.is?(:comparator)   ||
-          last_token.is?(:combinator)   ||
-          last_token.value == :open     ||
-          last_token.value == :comma    ||
-          last_token.value == :lbracket ||
-          last_token.value == :array_start
-        })
+        new(:operator, '-', lambda { |raw| :negate }, lambda { |last_token| operand_expected?(last_token) })
       end
 
       def operator
@@ -162,12 +168,19 @@ module Dentaku
         new(:comparator, '<=|>=|!=|<>|<|>|==|=', lambda { |raw| names[raw] || alternate[raw] })
       end
 
+      # binary, so only after an operand: elsewhere `xor (a, b)` is a call
       def combinator
         names = { and: '&&', or: '||' }.invert
-        new(:combinator, '(and|or|&&|\|\|)\s', lambda { |raw|
+        new(:combinator, '(and|or|xor|&&|\|\|)\s', lambda { |raw|
           norm = raw.strip.downcase
           names.fetch(norm) { norm.to_sym }
-        })
+        }, lambda { |last_token| !operand_expected?(last_token) })
+      end
+
+      # `not` followed by `(`, with or without whitespace, stays the NOT
+      # function; `!` must not start `!=`
+      def logical_not
+        new(:combinator, 'not(?=\s)(?!\s*\()|!(?!=)', lambda { |raw| :not }, lambda { |last_token| operand_expected?(last_token) })
       end
 
       def boolean

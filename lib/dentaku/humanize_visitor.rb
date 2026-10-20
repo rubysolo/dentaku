@@ -17,6 +17,8 @@ module Dentaku
       Dentaku::AST::GreaterThanOrEqual => 'is greater than or equal to',
       Dentaku::AST::And                => 'and',
       Dentaku::AST::Or                 => 'or',
+      Dentaku::AST::ExclusiveOr        => 'exclusive-or',
+      Dentaku::AST::Not                => 'not',
       Dentaku::AST::BitwiseAnd         => 'bitwise and',
       Dentaku::AST::BitwiseOr          => 'bitwise or',
       Dentaku::AST::BitwiseShiftLeft   => 'shifted left by',

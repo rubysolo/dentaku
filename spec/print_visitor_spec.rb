@@ -122,6 +122,14 @@ describe Dentaku::PrintVisitor do
     expect(repr).to eq('2017-12-24 23:59:59')
   end
 
+  it 'handles XOR and NOT operators' do
+    expect(roundtrip('a XOR b')).to eq('a xor b')
+    expect(roundtrip('!a AND NOT b')).to eq('not a and not b')
+    expect(roundtrip('!(a AND b)')).to eq('not (a and b)')
+    expect(roundtrip('NOT a = b')).to eq('not a = b')
+    expect(roundtrip('NOT NOT a')).to eq('not (not a)')
+  end
+
   it 'handles a percentage in a formula' do
     repr = roundtrip('((3*4%) * 0.001)')
     expect(repr).to eq('3 * 4% * 0.001')
