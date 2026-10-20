@@ -63,6 +63,7 @@ module Dentaku
     def evaluate(expression, data = {}, &block)
       context = evaluation_context(data, :permissive)
       return evaluate_array(expression, context, &block) if expression.is_a?(Array)
+      return expression.transform_values { |e| evaluate(e, context, &block) } if expression.is_a?(Hash)
 
       evaluate!(expression, context)
     rescue Dentaku::Error => ex
@@ -76,6 +77,7 @@ module Dentaku
     def evaluate!(expression, data = {}, &block)
       context = evaluation_context(data, :strict)
       return evaluate_array!(expression, context, &block) if expression.is_a? Array
+      return expression.transform_values { |e| evaluate!(e, context, &block) } if expression.is_a? Hash
 
       store(context) do
         node = ast(expression)
@@ -112,6 +114,8 @@ module Dentaku
         expression.dependencies(test_context)
       when Array
         expression.flat_map { |e| dependencies(e, context) }
+      when Hash
+        expression.values.flat_map { |e| dependencies(e, context) }
       else
         ast(expression).dependencies(test_context)
       end
@@ -126,6 +130,8 @@ module Dentaku
         expression.dependencies(AST::Node::STATIC_CONTEXT).uniq
       when Array
         expression.flat_map { |e| identifiers(e) }.uniq
+      when Hash
+        expression.values.flat_map { |e| identifiers(e) }.uniq
       else
         ast(expression).dependencies(AST::Node::STATIC_CONTEXT).uniq
       end
@@ -138,6 +144,7 @@ module Dentaku
     def ast(expression)
       return expression if expression.is_a?(AST::Node)
       return expression.map { |e| ast(e) } if expression.is_a? Array
+      return expression.transform_values { |e| ast(e) } if expression.is_a? Hash
 
       @ast_cache.fetch(expression) {
         options = {
