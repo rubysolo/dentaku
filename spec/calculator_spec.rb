@@ -729,6 +729,17 @@ describe Dentaku::Calculator do
       it 'should accept second precision argument like in Office formula' do
         expect(calculator.evaluate('roundup(1.234, 2)')).to eq(1.24)
       end
+
+      it 'does not round up a float that is already exact' do
+        expect(calculator.evaluate('roundup(x, 1)', x: 0.7)).to eq(0.7)
+        expect(calculator.evaluate('roundup(x, 2)', x: 0.07)).to eq(0.07)
+      end
+
+      it 'returns the same type as its input, like round' do
+        expect(calculator.evaluate('roundup(1.2341, 3)')).to eql(BigDecimal('1.235'))
+        expect(calculator.evaluate('roundup(x, 3)', x: 1.2341)).to eql(1.235)
+        expect(calculator.evaluate('roundup(x, -1)', x: 1234.5)).to eql(1240)
+      end
     end
 
     describe 'rounddown' do
@@ -738,6 +749,17 @@ describe Dentaku::Calculator do
 
       it 'should accept second precision argument like in Office formula' do
         expect(calculator.evaluate('rounddown(1.234, 2)')).to eq(1.23)
+      end
+
+      it 'does not round down a float that is already exact' do
+        expect(calculator.evaluate('rounddown(x, 2)', x: 0.29)).to eq(0.29)
+        expect(calculator.evaluate('rounddown(x, 2)', x: 1.15)).to eq(1.15)
+      end
+
+      it 'returns the same type as its input, like round' do
+        expect(calculator.evaluate('rounddown(1.2349, 3)')).to eql(BigDecimal('1.234'))
+        expect(calculator.evaluate('rounddown(x, 3)', x: 1.2349)).to eql(1.234)
+        expect(calculator.evaluate('rounddown(x, -1)', x: 1234.5)).to eql(1230)
       end
     end
   end
