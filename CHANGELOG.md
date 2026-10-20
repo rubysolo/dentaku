@@ -1,6 +1,11 @@
 # Change Log
 
 ## Unreleased
+- `ROUNDUP` and `ROUNDDOWN` round the number as written. They scaled by a
+  Float power of ten, so `ROUNDDOWN(x, 2)` with `x = 0.29` returned `0.28`
+  and `ROUNDUP(x, 2)` with `x = 0.07` returned `0.08`. Like `ROUND`, they now
+  return the input's type: a decimal literal gives a BigDecimal rather than a
+  Float (#172)
 - `solve` and `solve!` accept arrays of hashes and nested arrays, e.g.
   `percents: [{ percent: 75 }, { percent: "30 + bonus" }]`. They raised a
   `TokenizerError` because each hash was parsed as a formula string (#208).
