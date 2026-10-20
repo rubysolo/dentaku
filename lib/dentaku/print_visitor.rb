@@ -84,24 +84,27 @@ module Dentaku
     end
 
     def visit_access(node)
-      node.structure.accept(self)
+      visit_accessed(node.structure, group_access_structure?(node.structure))
       @output << "["
       node.index.accept(self)
       @output << "]"
     end
 
     def visit_member_access(node)
-      grouped = group_member_structure?(node.structure)
-      @output << "(" if grouped
-      node.structure.accept(self)
-      @output << ")" if grouped
+      visit_accessed(node.structure, group_member_structure?(node.structure))
       @output << "." << node.member
+    end
+
+    # `[...]` can directly follow a variable, an array literal, another
+    # access or a function call; anything else is grouped, e.g. `(a + b)[0]`
+    def group_access_structure?(node)
+      !(node.is_a?(Dentaku::AST::Identifier) || node.is_a?(Dentaku::AST::Array) || chainable?(node))
     end
 
     # anything else would re-parse differently, e.g. `(user).name` as the
     # variable `user.name`
     def group_member_structure?(node)
-      !(node.is_a?(Dentaku::AST::Access) || node.is_a?(Dentaku::AST::Function))
+      !chainable?(node)
     end
 
     def visit_literal(node)
@@ -117,11 +120,30 @@ module Dentaku
     end
 
     def visit_array(node)
-      @output << node.value.to_s
+      @output << "{"
+      element_count = node.elements.length
+      node.elements.each_with_index do |element, index|
+        element.accept(self)
+        @output << ", " unless index >= element_count - 1
+      end
+      @output << "}"
     end
 
     def to_s
       @output
+    end
+
+    private
+
+    def visit_accessed(node, grouped)
+      @output << "(" if grouped
+      node.accept(self)
+      @output << ")" if grouped
+    end
+
+    # `[...]` and `.name` can follow these without grouping
+    def chainable?(node)
+      node.is_a?(Dentaku::AST::Access) || node.is_a?(Dentaku::AST::Function)
     end
   end
 end

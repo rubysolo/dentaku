@@ -1,6 +1,13 @@
 # Change Log
 
 ## Unreleased
+- `PrintVisitor` keeps the parentheses an index needs, as #268 and #316 did
+  for operators: `(a + b)[0]` printed as `a + b[0]`, which indexes only `b`.
+  `HumanizeVisitor` also groups function calls before an index, so
+  `FILTER(...)[0]` no longer reads as `... greater than 20[0]`
+- `PrintVisitor` prints array literals as written, e.g. `{a, 1 + 2}`.
+  It printed the evaluated Ruby array, so `{1, 2}` became `[1, 2]`, which does
+  not parse, and an array of variables raised `UnboundVariableError`
 - `Calculator#store` skips nested-hash flattening when no value is a Hash,
   and builds Symbol keys' names from `Symbol#name`. Storing a flat 124-key
   hash drops from 51µs / 998 allocations to 16µs / 250 allocations
