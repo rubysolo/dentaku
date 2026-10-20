@@ -1,6 +1,9 @@
 # Change Log
 
 ## Unreleased
+- `Calculator#store` skips nested-hash flattening when no value is a Hash,
+  and builds Symbol keys' names from `Symbol#name`. Storing a flat 124-key
+  hash drops from 51µs / 998 allocations to 16µs / 250 allocations
 - `MUL` works: it was added in 3.2.0 (#158) but never loaded, so every call
   raised "Undefined function mul". `MUL(2, 3, 4)` now returns `24`
 - remove `lib/dentaku/token_matchers.rb`, unused since the 2015 parser

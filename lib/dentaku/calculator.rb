@@ -214,11 +214,22 @@ module Dentaku
 
     private def pairs_to_store(key_or_hash, value)
       if value.nil?
-        key_or_hash = FlatHash.from_hash_with_intermediates(key_or_hash) if nested_data_support
-        key_or_hash.map { |key, val| [standardize_case(key.to_s), val] }
+        key_or_hash = FlatHash.from_hash_with_intermediates(key_or_hash) if nested_data_support && nested?(key_or_hash)
+        key_or_hash.map { |key, val| [memory_key(key), val] }
       else
-        [[standardize_case(key_or_hash.to_s), value]]
+        [[memory_key(key_or_hash), value]]
       end
+    end
+
+    private def nested?(hash)
+      hash.each_value { |v| return true if v.is_a?(Hash) }
+      false
+    end
+
+    # Symbol#name returns the symbol's interned string, so symbol keys skip
+    # the extra String that to_s would allocate
+    private def memory_key(key)
+      key.is_a?(Symbol) ? standardize_case(key).name : standardize_case(key.to_s)
     end
 
     def store_formula(key, formula)
