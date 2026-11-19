@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [v4.2.0] 2026-11-18
 - `XOR` works as an operator, like `AND` and `OR`: `a XOR b` (#344). It
   shares their precedence and treats `null` as false, as the function does
 - `NOT` works as a prefix operator, aliased as `!`: `NOT a`, `!(a > 5)`
