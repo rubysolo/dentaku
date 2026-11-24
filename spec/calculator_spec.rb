@@ -753,8 +753,9 @@ describe Dentaku::Calculator do
         expect(calculator.evaluate!('roundup(x, -1000000000)', x: -7.5)).to eql(0)
       end
 
-      it 'rejects a very negative precision that would round away from zero' do
-        expect { calculator.evaluate!('roundup(7, -1000)') }.to raise_error(Dentaku::ArgumentError, /precision/)
+      it 'rejects a very negative precision when the result would be too long' do
+        expect(calculator.evaluate!('roundup(7, -9999)')).to eq(10**9999)
+        expect { calculator.evaluate!('roundup(7, -10000)') }.to raise_error(Dentaku::ArgumentError, /more than 10000 digits/)
         expect { calculator.evaluate!('roundup(7.5, -1000000000)') }.to raise_error(Dentaku::ArgumentError)
       end
     end
@@ -790,8 +791,9 @@ describe Dentaku::Calculator do
         expect(calculator.evaluate!('rounddown(x, -1000000000)', x: 7.5)).to eql(0)
       end
 
-      it 'rejects a very negative precision that would round away from zero' do
-        expect { calculator.evaluate!('rounddown(-7, -1000)') }.to raise_error(Dentaku::ArgumentError, /precision/)
+      it 'rejects a very negative precision when the result would be too long' do
+        expect(calculator.evaluate!('rounddown(-7, -9999)')).to eq(-10**9999)
+        expect { calculator.evaluate!('rounddown(-7, -10000)') }.to raise_error(Dentaku::ArgumentError, /more than 10000 digits/)
         expect { calculator.evaluate!('rounddown(-7.5, -1000000000)') }.to raise_error(Dentaku::ArgumentError)
       end
     end

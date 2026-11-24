@@ -29,10 +29,13 @@ module Dentaku
       end
 
       def check!(value)
-        size = digits(value)
-        raise too_long(value) if size > MAX_DIGITS
-
+        check_digits!(digits(value), value.class)
         value
+      end
+
+      # For callers that know a result's size before building it
+      def check_digits!(count, type = ::Integer)
+        raise too_long(type) if count > MAX_DIGITS
       end
 
       # base ** exponent has about |exponent| times as many digits as base
@@ -42,21 +45,21 @@ module Dentaku
         return if base.zero? || base.abs == 1
 
         magnitude = base.is_a?(::Integer) ? Math.log10(base.abs) : digits(base)
-        raise too_long(base) if magnitude * exponent.abs > MAX_DIGITS
+        check_digits!(magnitude * exponent.abs, base.class)
       end
 
       def check_shift!(value, bits)
         return unless value.is_a?(::Integer) && bits.is_a?(::Integer)
         return if value.zero? || bits <= 0
 
-        raise too_long(value) if ((value.bit_length + bits) * LOG10_2) > MAX_DIGITS
+        check_digits!((value.bit_length + bits) * LOG10_2)
       end
 
       private
 
       # Carries only the class: printing a huge value is itself slow
-      def too_long(value)
-        Dentaku::ArgumentError.for(:invalid_value, actual: value.class)
+      def too_long(type)
+        Dentaku::ArgumentError.for(:invalid_value, actual: type)
           .exception("Number has more than #{MAX_DIGITS} digits")
       end
     end
