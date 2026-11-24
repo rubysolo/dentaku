@@ -1,19 +1,20 @@
 # Change Log
 
-## [Unreleased]
+## [v4.2.1] 2026-11-23
 - `ROUNDUP` and `ROUNDDOWN` no longer hang on a very negative precision.
   Since 4.2.0, `ROUNDUP(7, -1000000000)` built a billion-digit power of ten
   in a single C call that `Timeout` can't interrupt, so one short formula
   could tie up a thread. A precision past the number's digits now returns
   `0` when rounding toward zero, and raises `Dentaku::ArgumentError` when
   rounding away from zero would need more than 10,000 digits
-- Numbers are limited to 10,000 digits (`Dentaku::NumericLimits::MAX_DIGITS`).
-  Ruby does bignum arithmetic in single C calls that `Timeout` can't
-  interrupt, so `7 ^ 100000000`, `1 << 10000000000`, `ROUND(1e100000000)` or
-  `LEFT("abc", 1e100000000)` could tie up a thread for hours. `^` and `<<`
-  are checked before they run, arithmetic, bitwise and `MUL` results are
-  checked after, and function arguments are checked when coerced. Past the
-  limit they raise `Dentaku::ArgumentError` (`evaluate` returns `nil`)
+- **behavior change:** numbers are limited to 10,000 digits
+  (`Dentaku::NumericLimits::MAX_DIGITS`). Ruby does bignum arithmetic in
+  single C calls that `Timeout` can't interrupt, so `7 ^ 100000000`,
+  `1 << 10000000000`, `ROUND(1e100000000)` or `LEFT("abc", 1e100000000)`
+  could tie up a thread for hours. `^` and `<<` are checked before they run,
+  arithmetic, bitwise and `MUL` results are checked after, and function
+  arguments are checked when coerced. Past the limit they raise
+  `Dentaku::ArgumentError` (`evaluate` returns `nil`)
 
 ## [v4.2.0] 2026-11-18
 - `XOR` works as an operator, like `AND` and `OR`: `a XOR b` (#344). It
