@@ -740,6 +740,23 @@ describe Dentaku::Calculator do
         expect(calculator.evaluate('roundup(x, 3)', x: 1.2341)).to eql(1.235)
         expect(calculator.evaluate('roundup(x, -1)', x: 1234.5)).to eql(1240)
       end
+
+      it 'rounds to a power of ten past the number of digits' do
+        expect(calculator.evaluate('roundup(7, -2)')).to eql(100)
+        expect(calculator.evaluate('roundup(x, -3)', x: 7.5)).to eql(1000)
+        expect(calculator.evaluate('roundup(-7, -2)')).to eql(0)
+        expect(calculator.evaluate('roundup(0, -2)')).to eql(0)
+      end
+
+      it 'returns zero for a very negative precision without computing the power of ten' do
+        expect(calculator.evaluate!('roundup(-7, -1000000000)')).to eql(0)
+        expect(calculator.evaluate!('roundup(x, -1000000000)', x: -7.5)).to eql(0)
+      end
+
+      it 'rejects a very negative precision that would round away from zero' do
+        expect { calculator.evaluate!('roundup(7, -1000)') }.to raise_error(Dentaku::ArgumentError, /precision/)
+        expect { calculator.evaluate!('roundup(7.5, -1000000000)') }.to raise_error(Dentaku::ArgumentError)
+      end
     end
 
     describe 'rounddown' do
@@ -760,6 +777,22 @@ describe Dentaku::Calculator do
         expect(calculator.evaluate('rounddown(1.2349, 3)')).to eql(BigDecimal('1.234'))
         expect(calculator.evaluate('rounddown(x, 3)', x: 1.2349)).to eql(1.234)
         expect(calculator.evaluate('rounddown(x, -1)', x: 1234.5)).to eql(1230)
+      end
+
+      it 'rounds to a power of ten past the number of digits' do
+        expect(calculator.evaluate('rounddown(7, -2)')).to eql(0)
+        expect(calculator.evaluate('rounddown(-7, -2)')).to eql(-100)
+        expect(calculator.evaluate('rounddown(x, -3)', x: -7.5)).to eql(-1000)
+      end
+
+      it 'returns zero for a very negative precision without computing the power of ten' do
+        expect(calculator.evaluate!('rounddown(7, -1000000000)')).to eql(0)
+        expect(calculator.evaluate!('rounddown(x, -1000000000)', x: 7.5)).to eql(0)
+      end
+
+      it 'rejects a very negative precision that would round away from zero' do
+        expect { calculator.evaluate!('rounddown(-7, -1000)') }.to raise_error(Dentaku::ArgumentError, /precision/)
+        expect { calculator.evaluate!('rounddown(-7.5, -1000000000)') }.to raise_error(Dentaku::ArgumentError)
       end
     end
   end

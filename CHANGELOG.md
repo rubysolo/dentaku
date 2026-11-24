@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased]
+- `ROUNDUP` and `ROUNDDOWN` no longer hang on a very negative precision.
+  Since 4.2.0, `ROUNDUP(7, -1000000000)` built a billion-digit power of ten
+  in a single C call that `Timeout` can't interrupt, so one short formula
+  could tie up a thread. A precision past the number's digits now returns
+  `0` when rounding toward zero, and raises `Dentaku::ArgumentError` beyond
+  308 places when rounding away from zero, as 4.1.0 failed there too
+
 ## [v4.2.0] 2026-11-18
 - `XOR` works as an operator, like `AND` and `OR`: `a XOR b` (#344). It
   shares their precedence and treats `null` as false, as the function does
