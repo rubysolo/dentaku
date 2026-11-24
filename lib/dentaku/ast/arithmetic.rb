@@ -1,5 +1,6 @@
 require_relative './operation'
 require_relative '../date_arithmetic'
+require_relative '../numeric_limits'
 require 'bigdecimal'
 require 'bigdecimal/util'
 
@@ -37,6 +38,7 @@ module Dentaku
       def calculate(left_value, right_value)
         l = cast(left_value)
         r = cast(right_value)
+        check_operands!(l, r)
 
         result = begin
           l.public_send(operator, r)
@@ -65,6 +67,7 @@ module Dentaku
       # as the same rejection newer Rubies raise -- otherwise Infinity leaks
       # out of Calculator#evaluate, which promises nil on failure (#332).
       def validate_result(result, l, r)
+        Dentaku::NumericLimits.check!(result)
         return result unless nonfinite?(result)
         return result if nonfinite?(l) || nonfinite?(r)
 
@@ -76,9 +79,16 @@ module Dentaku
         val.is_a?(::Numeric) && val.respond_to?(:finite?) && !val.finite?
       end
 
+      # Hook for operators that can build a huge number from small operands
+      def check_operands!(_l, _r); end
+
       def cast(val)
         validate_value(val)
-        Dentaku::NumericParser.ensure_numeric(val) || val
+        # strings here already match the numeric format; ensure_numeric! also
+        # rejects numbers past NumericLimits::MAX_DIGITS
+        return Dentaku::NumericParser.ensure_numeric!(val) if val.is_a?(::Numeric) || val.is_a?(::String)
+
+        val
       end
 
       def decimal(val)
@@ -284,6 +294,12 @@ module Dentaku
 
       def self.precedence
         30
+      end
+
+      private
+
+      def check_operands!(l, r)
+        Dentaku::NumericLimits.check_power!(l, r)
       end
     end
   end
