@@ -1,3 +1,5 @@
+require_relative './numeric_limits'
+
 module Dentaku
   module NumericParser
     NUMERIC_PATTERN = '((?:\d+(\.\d+)?|\.\d+)(?:(e|E)(\+|-)?\d+)?)\b'.freeze
@@ -46,13 +48,14 @@ module Dentaku
       end
 
       # @return [Numeric] where possible it returns an Integer otherwise a BigDecimal.
-      # An Exception will be raised if a value is passed that cannot be cast to a Number.
+      # An Exception will be raised if a value is passed that cannot be cast to a Number,
+      # or that has more than NumericLimits::MAX_DIGITS digits.
       def ensure_numeric!(value)
-        return value if value.is_a?(::Numeric)
+        return NumericLimits.check!(value) if value.is_a?(::Numeric)
 
         if value.is_a?(::String)
           number = parse_string(value)
-          return number if number
+          return NumericLimits.check!(number) if number
         end
 
         raise Dentaku::ArgumentError.for(:incompatible_type, actual: value, expected: Numeric),
