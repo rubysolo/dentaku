@@ -1,13 +1,10 @@
 require 'bigdecimal'
 require 'time'
-require 'dentaku/string_casing'
 require 'dentaku/token'
 require 'dentaku/numeric_parser'
 
 module Dentaku
   class TokenScanner
-    extend StringCasing
-
     DATE_TIME_REGEXP = /\d{2}\d{2}?-\d{1,2}-\d{1,2}([ |T]\d{1,2}:\d{1,2}:\d{1,2}(\.\d*)?)? ?(Z|((\+|\-)\d{2}\:?\d{2}))?(?!\d)/.freeze
 
     def initialize(category, regexp, converter = nil, condition = nil)
@@ -31,8 +28,6 @@ module Dentaku
     end
 
     class << self
-      attr_reader :case_sensitive
-
       def available_scanners
         [
           :null,
@@ -44,10 +39,12 @@ module Dentaku
           :single_quoted_string,
           :negate,
           :combinator,
+          :logical_not,
           :operator,
           :grouping,
           :array,
           :access,
+          :member_access,
           :case_statement,
           :comparator,
           :boolean,
@@ -76,7 +73,6 @@ module Dentaku
       end
 
       def scanners(options = {})
-        @case_sensitive = options.fetch(:case_sensitive, false)
         raw_date_literals = options.fetch(:raw_date_literals, true)
 
         @scanners.select { |k, _| raw_date_literals || k != :datetime }.values
@@ -111,17 +107,22 @@ module Dentaku
         new(:string, "'[^']*'", lambda { |raw| raw.gsub(/^'|'$/, '') })
       end
 
+      # whether the next token starts an operand, which makes `-` a negation
+      # and `not` the prefix operator rather than a binary one
+      def operand_expected?(last_token)
+        last_token.nil?               ||
+        last_token.is?(:operator)     ||
+        last_token.is?(:comparator)   ||
+        last_token.is?(:combinator)   ||
+        (last_token.is?(:case) && last_token.value != :close) ||
+        last_token.value == :open     ||
+        last_token.value == :comma    ||
+        last_token.value == :lbracket ||
+        last_token.value == :array_start
+      end
+
       def negate
-        new(:operator, '-', lambda { |raw| :negate }, lambda { |last_token|
-          last_token.nil?               ||
-          last_token.is?(:operator)     ||
-          last_token.is?(:comparator)   ||
-          last_token.is?(:combinator)   ||
-          last_token.value == :open     ||
-          last_token.value == :comma    ||
-          last_token.value == :lbracket ||
-          last_token.value == :array_start
-        })
+        new(:operator, '-', lambda { |raw| :negate }, lambda { |last_token| operand_expected?(last_token) })
       end
 
       def operator
@@ -146,6 +147,16 @@ module Dentaku
         new(:access, '\[|\]', lambda { |raw| names[raw] })
       end
 
+      # `.name` after `]`, `)` or another `.name`; elsewhere a dot is part of
+      # an identifier (`item.name`)
+      def member_access
+        new(:member_access, '\.[[:alpha:]_][[:word:]]*', lambda { |raw| raw[1..] }, lambda { |last_token|
+          last_token&.is?(:member_access) ||
+          last_token&.value == :rbracket  ||
+          last_token&.close?
+        })
+      end
+
       def case_statement
         names = { open: 'case', close: 'end', then: 'then', when: 'when', else: 'else' }.invert
         new(:case, '(case|end|then|when|else)\b', lambda { |raw| names[raw.downcase] })
@@ -157,12 +168,19 @@ module Dentaku
         new(:comparator, '<=|>=|!=|<>|<|>|==|=', lambda { |raw| names[raw] || alternate[raw] })
       end
 
+      # binary, so only after an operand: elsewhere `xor (a, b)` is a call
       def combinator
         names = { and: '&&', or: '||' }.invert
-        new(:combinator, '(and|or|&&|\|\|)\s', lambda { |raw|
+        new(:combinator, '(and|or|xor|&&|\|\|)\s', lambda { |raw|
           norm = raw.strip.downcase
           names.fetch(norm) { norm.to_sym }
-        })
+        }, lambda { |last_token| !operand_expected?(last_token) })
+      end
+
+      # `not` followed by `(`, with or without whitespace, stays the NOT
+      # function; `!` must not start `!=`
+      def logical_not
+        new(:combinator, 'not(?=\s)(?!\s*\()|!(?!=)', lambda { |raw| :not }, lambda { |last_token| operand_expected?(last_token) })
       end
 
       def boolean
@@ -180,7 +198,7 @@ module Dentaku
       end
 
       def identifier
-        new(:identifier, '[[[:word:]]\.]+\b', lambda { |raw| standardize_case(raw.strip) })
+        new(:identifier, '[[[:word:]]\.]+\b', lambda { |raw| raw.strip })
       end
 
       def quoted_identifier

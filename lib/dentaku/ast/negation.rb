@@ -32,6 +32,10 @@ module Dentaku
         true
       end
 
+      def self.prefix?
+        true
+      end
+
       def self.precedence
         40
       end

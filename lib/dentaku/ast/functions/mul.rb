@@ -8,5 +8,6 @@ Dentaku::AST::Function.register(:mul, :numeric, ->(*args) {
     )
   end
 
-  args.flatten.map { |arg| Dentaku::NumericParser.ensure_numeric!(arg) }.reduce(1, :*)
+  args.flatten.map { |arg| Dentaku::NumericParser.ensure_numeric!(arg) }
+    .reduce(1) { |product, arg| Dentaku::NumericLimits.check!(product * arg) }
 })

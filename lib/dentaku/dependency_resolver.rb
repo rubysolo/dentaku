@@ -8,6 +8,14 @@ module Dentaku
       self.new(vars_to_dependencies_hash, case_sensitive).sort
     end
 
+    # normalized names of the variables that sit on a cycle, grouped by cycle
+    def self.cycles(vars_to_dependencies_hash, case_sensitive = false)
+      resolver = self.new(vars_to_dependencies_hash, case_sensitive)
+      resolver.strongly_connected_components.select do |component|
+        component.size > 1 || resolver.depends_on_itself?(component.first)
+      end
+    end
+
     def initialize(vars_to_dependencies_hash, case_sensitive = false)
       @case_sensitive = case_sensitive
       @key_mapping = Hash[vars_to_dependencies_hash.keys.map { |k| [normalized_name(k), k] }]
@@ -25,6 +33,10 @@ module Dentaku
 
     def tsort_each_child(node, &block)
       @vars_to_deps.fetch(node.to_s, []).each(&block)
+    end
+
+    def depends_on_itself?(node)
+      @vars_to_deps.fetch(node.to_s, []).include?(node.to_s)
     end
 
     private

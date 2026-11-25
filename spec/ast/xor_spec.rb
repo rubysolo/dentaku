@@ -15,9 +15,22 @@ describe 'Dentaku::AST::Xor' do
     expect(result).to eq(true)
   end
 
-  it 'returns false if more than one of the arguments is true' do
-    result = Dentaku('XOR(false, true, true)')
-    expect(result).to eq(false)
+  it 'returns false if an even number of the arguments are true' do
+    expect(Dentaku('XOR(false, true, true)')).to eq(false)
+    expect(Dentaku('XOR(true, true, true, true)')).to eq(false)
+  end
+
+  it 'returns true if an odd number of the arguments are true' do
+    expect(Dentaku('XOR(true, true, true)')).to eq(true)
+    expect(Dentaku('XOR(true, false, true, true)')).to eq(true)
+  end
+
+  it 'matches XOR applied pairwise' do
+    [true, false].repeated_permutation(4).each do |a, b, c, d|
+      context = { a: a, b: b, c: c, d: d }
+      expect(Dentaku('XOR(a, b, c, d)', context))
+        .to eq(Dentaku('XOR(XOR(a, b), XOR(c, d))', context))
+    end
   end
 
   it 'supports nested expressions' do

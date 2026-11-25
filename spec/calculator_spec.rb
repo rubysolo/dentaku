@@ -163,6 +163,23 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('second')).to eq(2)
     end
 
+    it 'collapses differently cased symbol keys unless case sensitive' do
+      calculator.store(Apples: 1)
+      calculator.store(apples: 2)
+      expect(calculator.memory).to eq("apples" => 2)
+      expect(with_case_sensitivity.store(Apples: 1).memory).to eq("Apples" => 1)
+    end
+
+    it 'flattens a hash that mixes flat and nested values' do
+      calculator.store(a: 1, b: {c: 2})
+      expect(calculator.memory).to eq("a" => 1, "b" => {c: 2}, "b.c" => 2)
+    end
+
+    it 'stores nested values as-is without nested data support' do
+      without_nested_data.store(a: 1, b: {c: 2})
+      expect(without_nested_data.memory).to eq("a" => 1, "b" => {c: 2})
+    end
+
     it 'stores formulas' do
       calculator.store_formula('area', 'length * width')
       expect(calculator.evaluate!('area', length: 5, width: 5)).to eq(25)
@@ -202,8 +219,13 @@ describe Dentaku::Calculator do
 
     it 'raises an argument error when accessing into a non-indexable value' do
       expect { calculator.evaluate!('a[0]', a: 5) }.to raise_error(Dentaku::ArgumentError)
-      expect { calculator.evaluate!('a[0]', a: nil) }.to raise_error(Dentaku::ArgumentError)
       expect { calculator.evaluate!('a[0]', a: true) }.to raise_error(Dentaku::ArgumentError)
+    end
+
+    it 'returns nil when accessing into nil' do
+      expect(calculator.evaluate!('a[0]', a: nil)).to be_nil
+      expect(calculator.evaluate!('a[0][1]', a: [nil])).to be_nil
+      expect(calculator.evaluate!('FILTER(a, x, x > 9)[0][0]', a: [1])).to be_nil
     end
 
     it 'raises an argument error when the index type is incompatible' do
@@ -556,6 +578,14 @@ describe Dentaku::Calculator do
       expect(calculator.evaluate!('value2 - value', { value: value, value2: value2 })).to eq(value2 - value)
       expect(calculator.evaluate!('value - 7200', { value: value })).to eq(Time.local(2023, 7, 13, 8, 42, 11))
     end
+
+    it 'does not accept unknown durations' do
+      expect { calculator.evaluate!('duration(1, foo)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, ay)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, daysy)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, ayear)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+      expect { calculator.evaluate!('duration(1, dayofmonthofyear)') }.to raise_error(Dentaku::ArgumentError, /is not a valid duration unit/)
+    end
   end
 
   describe 'functions' do
@@ -699,6 +729,35 @@ describe Dentaku::Calculator do
       it 'should accept second precision argument like in Office formula' do
         expect(calculator.evaluate('roundup(1.234, 2)')).to eq(1.24)
       end
+
+      it 'does not round up a float that is already exact' do
+        expect(calculator.evaluate('roundup(x, 1)', x: 0.7)).to eq(0.7)
+        expect(calculator.evaluate('roundup(x, 2)', x: 0.07)).to eq(0.07)
+      end
+
+      it 'returns the same type as its input, like round' do
+        expect(calculator.evaluate('roundup(1.2341, 3)')).to eql(BigDecimal('1.235'))
+        expect(calculator.evaluate('roundup(x, 3)', x: 1.2341)).to eql(1.235)
+        expect(calculator.evaluate('roundup(x, -1)', x: 1234.5)).to eql(1240)
+      end
+
+      it 'rounds to a power of ten past the number of digits' do
+        expect(calculator.evaluate('roundup(7, -2)')).to eql(100)
+        expect(calculator.evaluate('roundup(x, -3)', x: 7.5)).to eql(1000)
+        expect(calculator.evaluate('roundup(-7, -2)')).to eql(0)
+        expect(calculator.evaluate('roundup(0, -2)')).to eql(0)
+      end
+
+      it 'returns zero for a very negative precision without computing the power of ten' do
+        expect(calculator.evaluate!('roundup(-7, -1000000000)')).to eql(0)
+        expect(calculator.evaluate!('roundup(x, -1000000000)', x: -7.5)).to eql(0)
+      end
+
+      it 'rejects a very negative precision when the result would be too long' do
+        expect(calculator.evaluate!('roundup(7, -9999)')).to eq(10**9999)
+        expect { calculator.evaluate!('roundup(7, -10000)') }.to raise_error(Dentaku::ArgumentError, /more than 10000 digits/)
+        expect { calculator.evaluate!('roundup(7.5, -1000000000)') }.to raise_error(Dentaku::ArgumentError)
+      end
     end
 
     describe 'rounddown' do
@@ -708,6 +767,34 @@ describe Dentaku::Calculator do
 
       it 'should accept second precision argument like in Office formula' do
         expect(calculator.evaluate('rounddown(1.234, 2)')).to eq(1.23)
+      end
+
+      it 'does not round down a float that is already exact' do
+        expect(calculator.evaluate('rounddown(x, 2)', x: 0.29)).to eq(0.29)
+        expect(calculator.evaluate('rounddown(x, 2)', x: 1.15)).to eq(1.15)
+      end
+
+      it 'returns the same type as its input, like round' do
+        expect(calculator.evaluate('rounddown(1.2349, 3)')).to eql(BigDecimal('1.234'))
+        expect(calculator.evaluate('rounddown(x, 3)', x: 1.2349)).to eql(1.234)
+        expect(calculator.evaluate('rounddown(x, -1)', x: 1234.5)).to eql(1230)
+      end
+
+      it 'rounds to a power of ten past the number of digits' do
+        expect(calculator.evaluate('rounddown(7, -2)')).to eql(0)
+        expect(calculator.evaluate('rounddown(-7, -2)')).to eql(-100)
+        expect(calculator.evaluate('rounddown(x, -3)', x: -7.5)).to eql(-1000)
+      end
+
+      it 'returns zero for a very negative precision without computing the power of ten' do
+        expect(calculator.evaluate!('rounddown(7, -1000000000)')).to eql(0)
+        expect(calculator.evaluate!('rounddown(x, -1000000000)', x: 7.5)).to eql(0)
+      end
+
+      it 'rejects a very negative precision when the result would be too long' do
+        expect(calculator.evaluate!('rounddown(-7, -9999)')).to eq(-10**9999)
+        expect { calculator.evaluate!('rounddown(-7, -10000)') }.to raise_error(Dentaku::ArgumentError, /more than 10000 digits/)
+        expect { calculator.evaluate!('rounddown(-7.5, -1000000000)') }.to raise_error(Dentaku::ArgumentError)
       end
     end
   end
@@ -1034,6 +1121,11 @@ describe Dentaku::Calculator do
       expect(calls.values).to all(eq(1))
     end
 
+    it 'evaluates each operand of an XOR once per evaluate!' do
+      expect(calculator.evaluate!('probe(1) > 0 XOR probe(2) > 0')).to eq(false)
+      expect(calls.values).to all(eq(1))
+    end
+
     it 'does not run a guard that decided the result again during evaluation' do
       expect(calculator.evaluate!('probe(1) > 0 OR y')).to eq(true)
       expect(calls[1]).to eq(1)
@@ -1052,6 +1144,134 @@ describe Dentaku::Calculator do
     it 'does not reuse a value settled from a variable a loop shadows' do
       expect(calculator.evaluate!('ALL(items, i, i > 0 AND flag)', items: [1, -1], i: 5, flag: true)).to eq(false)
       expect(calculator.evaluate!('REDUCE(items, m, i, m + IF(flag, 0, i), 0)', items: [1, 2], i: 5, flag: false)).to eq(3)
+    end
+  end
+
+  describe 'XOR operator' do
+    it 'is true when exactly one operand is true' do
+      expect(calculator.evaluate!('true XOR false')).to eq(true)
+      expect(calculator.evaluate!('a xor b', a: true, b: true)).to eq(false)
+      expect(calculator.evaluate!('a XOR b', a: false, b: false)).to eq(false)
+      expect(calculator.evaluate!('1 > 2 XOR 3 < 4')).to eq(true)
+    end
+
+    it 'treats null as false, like the XOR function' do
+      expect(calculator.evaluate!('a XOR true', a: nil)).to eq(true)
+    end
+
+    it 'needs both operands' do
+      expect { calculator.evaluate!('a XOR b', a: true) }
+        .to raise_error(Dentaku::UnboundVariableError)
+      expect(calculator.dependencies('a XOR b', a: true)).to eq(['b'])
+    end
+
+    it 'shares precedence with AND and OR, left to right' do
+      expect(calculator.evaluate!('true XOR true OR true')).to eq(true)
+      expect(calculator.evaluate!('true OR true XOR true')).to eq(false)
+    end
+
+    it 'requires logical operands' do
+      expect { calculator.ast('1 XOR true') }.to raise_error(Dentaku::ParseError, /logical/)
+    end
+
+    it 'is still a function when followed by parentheses' do
+      expect(calculator.evaluate!('XOR(true, false, true)')).to eq(false)
+      expect(calculator.evaluate!('XOR (true, false)')).to eq(true)
+    end
+  end
+
+  describe 'NOT operator' do
+    it 'negates its operand' do
+      expect(calculator.evaluate!('NOT true')).to eq(false)
+      expect(calculator.evaluate!('not a', a: false)).to eq(true)
+      expect(calculator.evaluate!('NOT NOT true')).to eq(true)
+    end
+
+    it 'is aliased as !' do
+      expect(calculator.evaluate!('!true')).to eq(false)
+      expect(calculator.evaluate!('! a', a: true)).to eq(false)
+      expect(calculator.evaluate!('!!a', a: true)).to eq(true)
+      expect(calculator.evaluate!('!(1 > 2)')).to eq(true)
+    end
+
+    it 'leaves != alone' do
+      expect(calculator.evaluate!('a != 1', a: 2)).to eq(true)
+      expect(calculator.evaluate!('!a != true', a: true)).to eq(true)
+    end
+
+    it 'binds looser than comparisons and tighter than AND, OR and XOR' do
+      expect(calculator.evaluate!('NOT a > 5', a: 3)).to eq(true)
+      expect(calculator.evaluate!('!a = b', a: 1, b: 1)).to eq(false)
+      expect(calculator.evaluate!('NOT a AND b', a: true, b: true)).to eq(false)
+      expect(calculator.evaluate!('NOT a OR b', a: true, b: true)).to eq(true)
+      expect(calculator.evaluate!('a AND NOT b', a: true, b: false)).to eq(true)
+      expect(calculator.evaluate!('x = NOT a', x: false, a: true)).to eq(true)
+    end
+
+    it 'works inside function arguments and case statements' do
+      expect(calculator.evaluate!('IF(NOT a, 1, 2)', a: false)).to eq(1)
+      expect(calculator.evaluate!('CASE x WHEN 1 THEN NOT a ELSE !b END', x: 2, a: true, b: false)).to eq(true)
+    end
+
+    it 'requires a logical operand' do
+      expect { calculator.ast('NOT 1') }.to raise_error(Dentaku::ParseError, /logical/)
+    end
+
+    it 'reports the dependencies of its operand' do
+      expect(calculator.dependencies('NOT a')).to eq(['a'])
+    end
+
+    it 'is still a function when followed by parentheses' do
+      expect(calculator.evaluate!('NOT(true)')).to eq(false)
+      expect(calculator.evaluate!('NOT (a) = b', a: true, b: false)).to eq(true)
+    end
+  end
+
+  describe 'AND and OR followed by parentheses without a left operand' do
+    it 'are functions' do
+      expect(calculator.evaluate!('AND (true, false)')).to eq(false)
+      expect(calculator.evaluate!('OR (true, false)')).to eq(true)
+    end
+  end
+
+  describe 'negation after case keywords' do
+    it 'negates' do
+      expect(calculator.evaluate!('CASE x WHEN 1 THEN -1 ELSE -2 END', x: 1)).to eq(-1)
+      expect(calculator.evaluate!('CASE x WHEN -1 THEN 2 END', x: -1)).to eq(2)
+      expect(calculator.evaluate!('CASE -x WHEN -1 THEN 2 END', x: 1)).to eq(2)
+    end
+  end
+
+  describe 'logical operators whose short-circuit probe raises' do
+    it 'falls back to the dependencies of both operands' do
+      expect(calculator.dependencies('a / b > 1 OR c', 'a' => 1, 'b' => 0)).to eq(['c'])
+      expect(calculator.dependencies('a <= 1 OR c', 'a' => nil)).to eq(['c'])
+    end
+
+    it 'still prunes when the probe is decisive' do
+      expect(calculator.dependencies('1 > 2 AND a')).to eq([])
+      expect(calculator.dependencies('1 < 2 OR a')).to eq([])
+      expect(calculator.dependencies('a AND 1 > 2')).to eq([])
+      expect(calculator.dependencies('a OR 1 < 2')).to eq([])
+    end
+
+    it 'still reports the other operand when the probe is not decisive' do
+      expect(calculator.dependencies('1 < 2 AND a')).to eq(['a'])
+      expect(calculator.dependencies('1 > 2 OR a')).to eq(['a'])
+    end
+
+    # Regression: the raising branch used to re-derive the dependency union via
+    # `super`, walking both subtrees a second time at every level of the chain.
+    # Twelve terms probed 2048 times instead of 12.
+    it 'probes each operand of a chain once rather than exponentially' do
+      call_count = { count: 0 }
+      calculator.add_function(:blank, :numeric, -> { call_count[:count] += 1; nil })
+
+      terms = 12
+      formula = (1..terms).map { |i| "(blank() <= #{i})" }.join(' OR ')
+
+      expect(calculator.evaluate(formula)).to be_nil
+      expect(call_count[:count]).to eq(terms)
     end
   end
 

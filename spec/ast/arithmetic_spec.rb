@@ -182,7 +182,7 @@ describe Dentaku::AST::Arithmetic do
       # non-finite result guard turns into the equivalent Dentaku error.
       expect {
         Dentaku::Calculator.new.evaluate!(oversized)
-      }.to raise_error(Dentaku::ArgumentError, /exponent is too large|is not a finite number/)
+      }.to raise_error(Dentaku::ArgumentError, /more than \d+ digits|exponent is too large|is not a finite number/)
     end
 
     it 'is rescuable as Dentaku::Error' do

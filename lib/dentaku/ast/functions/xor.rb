@@ -20,14 +20,14 @@ module Dentaku
           )
         end
 
-        true_arg_count = 0
-        @args.each do |arg|
+        # exclusive OR of all arguments: true when an odd number are true, so
+        # XOR(a, b, c) == XOR(XOR(a, b), c)
+        true_arg_count = @args.count do |arg|
           case arg.value(context)
           when TrueClass
-            true_arg_count += 1
-            break if true_arg_count > 1
+            true
           when FalseClass, nil
-            next
+            false
           else
             raise Dentaku::ArgumentError.for(
               :incompatible_type,
@@ -35,7 +35,7 @@ module Dentaku
             )
           end
         end
-        true_arg_count == 1
+        true_arg_count.odd?
       end
     end
   end

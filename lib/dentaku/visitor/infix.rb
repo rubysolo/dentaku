@@ -70,6 +70,10 @@ module Dentaku
         process(node)
       end
 
+      def visit_member_access(node)
+        process(node)
+      end
+
       def visit_literal(node)
         process(node)
       end

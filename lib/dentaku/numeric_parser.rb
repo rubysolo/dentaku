@@ -1,3 +1,5 @@
+require_relative './numeric_limits'
+
 module Dentaku
   module NumericParser
     NUMERIC_PATTERN = '((?:\d+(\.\d+)?|\.\d+)(?:(e|E)(\+|-)?\d+)?)\b'.freeze
@@ -5,20 +7,21 @@ module Dentaku
     HEXADECIMAL_PATTERN = '(0x[0-9a-f]+)\b'.freeze
     # e.g:  [0x1A3F]
 
+    NUMERIC_OR_HEXADECIMAL_REGEX = %r{\A(-?(#{ NUMERIC_PATTERN }|#{ HEXADECIMAL_PATTERN }))\z}i
+    NUMERIC_REGEX = %r{\A(#{ NUMERIC_PATTERN })\z}i
+    HEXADECIMAL_REGEX = %r{\A(#{ HEXADECIMAL_PATTERN })\z}i
+
     class << self
       def match(string)
-        regex = %r{\A(-?(#{ NUMERIC_PATTERN }|#{ HEXADECIMAL_PATTERN }))\z}i
-        string.match(regex)
+        string.match(NUMERIC_OR_HEXADECIMAL_REGEX)
       end
 
       def match_numeric(string)
-        regex = %r{\A(#{ NUMERIC_PATTERN })\z}i
-        string.match(regex)
+        string.match(NUMERIC_REGEX)
       end
 
       def match_hexadecimal(string)
-        regex = %r{\A(#{ HEXADECIMAL_PATTERN })\z}i
-        string.match(regex)
+        string.match(HEXADECIMAL_REGEX)
       end
 
       def parse_numeric_string(raw)
@@ -45,13 +48,14 @@ module Dentaku
       end
 
       # @return [Numeric] where possible it returns an Integer otherwise a BigDecimal.
-      # An Exception will be raised if a value is passed that cannot be cast to a Number.
+      # An Exception will be raised if a value is passed that cannot be cast to a Number,
+      # or that has more than NumericLimits::MAX_DIGITS digits.
       def ensure_numeric!(value)
-        return value if value.is_a?(::Numeric)
+        return NumericLimits.check!(value) if value.is_a?(::Numeric)
 
         if value.is_a?(::String)
           number = parse_string(value)
-          return number if number
+          return NumericLimits.check!(number) if number
         end
 
         raise Dentaku::ArgumentError.for(:incompatible_type, actual: value, expected: Numeric),

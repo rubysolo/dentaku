@@ -90,7 +90,7 @@ module Dentaku
 
       evaluated_facts = facts.to_h.each_with_object({}) do |(var_name, ast), h|
         with_rescues(var_name, h, block) do
-          h[var_name] = ast.is_a?(Array) ? ast.map(&:value) : ast.value
+          h[var_name] = fact_value(ast)
         end
       end
 
@@ -114,6 +114,15 @@ module Dentaku
     rescue TSort::Cyclic => ex
       block.call(ex)
       {}
+    end
+
+    # facts can be arrays and hashes nested to any depth, e.g. [{ a: 1 }]
+    def fact_value(ast)
+      case ast
+      when Array then ast.map { |a| fact_value(a) }
+      when Hash then ast.transform_values { |a| fact_value(a) }
+      else ast.value
+      end
     end
 
     def with_rescues(var_name, results, block)
@@ -152,13 +161,45 @@ module Dentaku
       end
     end
 
+    # Stored memory can satisfy a formula's reference to another key being
+    # solved, which hides that edge from `dependencies`. Order those keys first
+    # anyway so the formula sees the solved value rather than the stored one,
+    # unless the edge would close a cycle -- then the stored value is what
+    # breaks it, as for self-referential formulas.
+    def resolve_order_graph
+      graph = dependencies
+      keys = expressions.keys.map { |k| normalized_name(k) }
+
+      hidden = expressions.to_h do |var, expr|
+        own = normalized_name(var)
+        visible = graph.fetch(var, []).map { |d| normalized_name(d) }
+        all = Array(calculator.dependencies(expr, nil)).map { |d| normalized_name(d) }
+        [var, (all & keys) - visible - [own]]
+      end
+      return graph if hidden.values.all?(&:empty?)
+
+      with_hidden = graph.merge(hidden) { |_, deps, extra| deps + extra }
+      cycle_of = {}
+      DependencyResolver.cycles(with_hidden, calculator.case_sensitive).each_with_index do |cycle, i|
+        cycle.each { |name| cycle_of[name] = i }
+      end
+
+      graph.merge(hidden) do |var, deps, extra|
+        cycle = cycle_of[normalized_name(var)]
+        deps + extra.reject { |e| cycle && cycle_of[e] == cycle }
+      end
+    end
+
     def variables_in_resolve_order
-      cache_key = "#{!!calculator.case_sensitive}|#{expressions.keys.map(&:to_s).sort.join("|")}"
-      @ordered_deps ||= self.class.dependency_cache.fetch(cache_key) {
-        DependencyResolver.find_resolve_order(dependencies, calculator.case_sensitive).tap do |d|
-          self.class.dependency_cache[cache_key] = d if calculator.cache_dependency_order?
-        end
-      }
+      @ordered_deps ||= begin
+        dependency_graph = resolve_order_graph
+        cache_key = [!!calculator.case_sensitive, dependency_graph]
+        self.class.dependency_cache.fetch(cache_key) {
+          DependencyResolver.find_resolve_order(dependency_graph, calculator.case_sensitive).tap do |d|
+            self.class.dependency_cache[cache_key] = d if calculator.cache_dependency_order?
+          end
+        }
+      end
     end
   end
 end

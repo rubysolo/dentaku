@@ -25,7 +25,8 @@ module Dentaku
 
       and:      AST::And,
       or:       AST::Or,
-      xor:      AST::Xor,
+      xor:      AST::ExclusiveOr,
+      not:      AST::Not,
     }.freeze
 
     attr_reader :input, :output, :operations, :arities, :case_sensitive
@@ -133,6 +134,8 @@ module Dentaku
         handle_case(token)
       when :access
         handle_access(token)
+      when :member_access
+        handle_member_access(token)
       when :array
         handle_array(token)
       when :grouping
@@ -144,7 +147,9 @@ module Dentaku
 
     def handle_operator(token, lookahead)
       op_class = operation(token).resolve_class(lookahead)
-      if op_class.right_associative?
+      if op_class.prefix?
+        # nothing to fold: the operand comes after
+      elsif op_class.right_associative?
         consume while operations.last && operations.last < AST::Operation && op_class.precedence < operations.last.precedence
       else
         consume while operations.last && operations.last < AST::Operation && op_class.precedence <= operations.last.precedence
@@ -241,6 +246,14 @@ module Dentaku
         fail! :unbalanced_bracket, token: token unless operations.last == AST::Access
         consume
       end
+    end
+
+    # the tokenizer only emits a member access after a complete operand, so
+    # the operand it applies to is on top of the output stack
+    def handle_member_access(token)
+      fail! :invalid_statement if output.empty?
+
+      output << AST::MemberAccess.new(output.pop, token.value, case_sensitive: case_sensitive)
     end
 
     def handle_array(token)

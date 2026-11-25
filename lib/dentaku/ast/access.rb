@@ -23,20 +23,12 @@ module Dentaku
         @index = index
       end
 
+      # nil-safe: accessing into NULL is NULL
       def value(context = {})
         structure = @structure.value(context)
-        index = @index.value(context)
+        return nil if structure.nil?
 
-        unless structure.respond_to?(:[]) && !structure.is_a?(::Numeric)
-          raise Dentaku::ArgumentError.for(:incompatible_type, actual: structure),
-                "#{self.class} requires an indexable structure, but got #{structure.class}"
-        end
-
-        begin
-          structure[index]
-        rescue ::TypeError => e
-          raise Dentaku::ArgumentError.for(:incompatible_type, actual: index), e.message
-        end
+        read(structure, @index.value(context))
       end
 
       def dependencies(context = {})
@@ -52,6 +44,17 @@ module Dentaku
       end
 
       private
+
+      def read(structure, index)
+        unless structure.respond_to?(:[]) && !structure.is_a?(::Numeric)
+          raise Dentaku::ArgumentError.for(:incompatible_type, actual: structure),
+                "#{self.class} requires an indexable structure, but got #{structure.class}"
+        end
+
+        structure[index]
+      rescue ::TypeError => e
+        raise Dentaku::ArgumentError.for(:incompatible_type, actual: index), e.message
+      end
 
       def compute_pure?
         @structure.pure? && @index.pure?

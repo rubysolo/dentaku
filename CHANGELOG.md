@@ -13,6 +13,109 @@
   errors are unchanged; only the number of times a pure function runs
   differs, and volatile functions were never probed
 
+## [v4.2.1] 2026-11-23
+- `ROUNDUP` and `ROUNDDOWN` no longer hang on a very negative precision.
+  Since 4.2.0, `ROUNDUP(7, -1000000000)` built a billion-digit power of ten
+  in a single C call that `Timeout` can't interrupt, so one short formula
+  could tie up a thread. A precision past the number's digits now returns
+  `0` when rounding toward zero, and raises `Dentaku::ArgumentError` when
+  rounding away from zero would need more than 10,000 digits
+- **behavior change:** numbers are limited to 10,000 digits
+  (`Dentaku::NumericLimits::MAX_DIGITS`). Ruby does bignum arithmetic in
+  single C calls that `Timeout` can't interrupt, so `7 ^ 100000000`,
+  `1 << 10000000000`, `ROUND(1e100000000)` or `LEFT("abc", 1e100000000)`
+  could tie up a thread for hours. `^` and `<<` are checked before they run,
+  arithmetic, bitwise and `MUL` results are checked after, and function
+  arguments are checked when coerced. Past the limit they raise
+  `Dentaku::ArgumentError` (`evaluate` returns `nil`)
+
+## [v4.2.0] 2026-11-18
+- `XOR` works as an operator, like `AND` and `OR`: `a XOR b` (#344). It
+  shares their precedence and treats `null` as false, as the function does
+- `NOT` works as a prefix operator, aliased as `!`: `NOT a`, `!(a > 5)`
+  (#345). It binds looser than comparisons, so `NOT a > 5` is
+  `NOT (a > 5)`. `NOT(...)` and `NOT (...)` are still the function
+- `AND (a, b)` and `OR (a, b)` with a space before the parenthesis call the
+  functions, as `XOR (a, b)` already did, instead of failing to parse
+- `-` right after `CASE`, `WHEN`, `THEN` or `ELSE` is a negation:
+  `CASE x WHEN 1 THEN -1 END` failed to parse
+- `ROUNDUP` and `ROUNDDOWN` round the number as written. They scaled by a
+  Float power of ten, so `ROUNDDOWN(x, 2)` with `x = 0.29` returned `0.28`
+  and `ROUNDUP(x, 2)` with `x = 0.07` returned `0.08`. Like `ROUND`, they now
+  return the input's type: a decimal literal gives a BigDecimal rather than a
+  Float (#172)
+- `solve` and `solve!` accept arrays of hashes and nested arrays, e.g.
+  `percents: [{ percent: 75 }, { percent: "30 + bonus" }]`. They raised a
+  `TokenizerError` because each hash was parsed as a formula string (#208).
+  `evaluate` and `evaluate!` also take a hash, solving each of its values.
+  A formula still can't reference another element of its own array
+- `PrintVisitor` keeps the parentheses an index needs, as #268 and #316 did
+  for operators: `(a + b)[0]` printed as `a + b[0]`, which indexes only `b`.
+  `HumanizeVisitor` also groups function calls before an index, so
+  `FILTER(...)[0]` no longer reads as `... greater than 20[0]`
+- `PrintVisitor` prints array literals as written, e.g. `{a, 1 + 2}`.
+  It printed the evaluated Ruby array, so `{1, 2}` became `[1, 2]`, which does
+  not parse, and an array of variables raised `UnboundVariableError`
+- `Calculator#store` skips nested-hash flattening when no value is a Hash,
+  and builds Symbol keys' names from `Symbol#name`. Storing a flat 124-key
+  hash drops from 51µs / 998 allocations to 16µs / 250 allocations
+- `MUL` works: it was added in 3.2.0 (#158) but never loaded, so every call
+  raised "Undefined function mul". `MUL(2, 3, 4)` now returns `24`
+- remove `lib/dentaku/token_matchers.rb`, unused since the 2015 parser
+  rewrite. `require 'dentaku'` never loaded it, so this only affects code that
+  required `dentaku/token_matchers` itself
+- add `Calculator#humanize` and `HumanizeVisitor`, which render a formula as
+  plain English: `humanize('IF(tenure >= 2, base * 1.1, base)')` returns
+  `"if tenure is greater than or equal to 2 then base times 1.1 else base"`.
+  Values passed as the second argument replace their variables in the
+  output. Nodes without a phrase (e.g. custom functions) fall back to
+  `PrintVisitor` (#338)
+- **behavior change:** when a key passed to `solve` / `solve!` is also stored
+  in the calculator's memory, other formulas now see the solved value, no
+  matter what order the keys are in. Previously they could read the stored
+  value instead, depending on hash order (#256). Stored values still break
+  cycles, so self-referential formulas such as `x: "x + 1"` work as before
+- add member access: `.name` directly after `]`, `)` or another member
+  access reads a hash value by name, so `FILTER(users, u, u.age > 20)[0].name`
+  and `users[0].account.year` work (#208, #346). String and symbol keys are
+  accepted (case-insensitively unless `case_sensitive: true`); a missing key
+  or a non-hash operand raises `Dentaku::ArgumentError`. Member names must
+  look like identifiers, whitespace before the dot is not allowed, and dotted
+  identifiers such as `user.age` are unchanged. Custom visitors need a
+  `visit_member_access` method to walk formulas that use it
+- **behavior change:** accessing into `NULL` now returns `NULL` instead of
+  raising, for both `a[0]` and `a.name`, so `FILTER(...)[0][0]` and
+  `FILTER(...)[0].name` are `NULL` when nothing matches. Indexing into other
+  non-indexable values (numbers, booleans) still raises
+
+## [v4.1.0] 2026-10-14
+- `NumericParser` compiles its regular expressions once instead of on every
+  call. `Comparator#cast` runs one per string operand of every comparison,
+  which made the regex compilation the single largest cost of evaluating a
+  typical condition: `country = 'US'` evaluated 30k times drops from 0.47s
+  to 0.07s
+- fix dependency analysis of `AND` / `OR` chains taking exponential time
+  when a short-circuit probe raises (e.g. a zero denominator), a 4.0.0
+  regression on the normal `evaluate!` path (#355)
+- `duration()` only accepts exact unit names (`day`, `days`, `month`,
+  `months`, `year`, `years`); units merely containing one, such as
+  `dayofmonth`, are now rejected
+- `case_sensitive` is no longer shared between calculator instances. The
+  tokenizer read the setting from a class-level variable that every
+  calculator overwrote, so calculators with different settings running in
+  parallel threads could silently fold identifiers to the wrong case and
+  return wrong results. Casing is now applied only by the calculator's own
+  parser; `Tokenizer#tokenize` keeps identifiers' source casing and
+  `TokenScanner.case_sensitive` is removed
+- key the bulk-solver dependency-order cache by the resolved dependency graph,
+  so changing formulas or stored context cannot reuse an incompatible order
+  from another solve with the same variable names.
+- **behavior change:** `XOR` with three or more arguments is now the
+  exclusive OR of all of them (true when an odd number are true), matching
+  Excel and `XOR(XOR(a, b), c)`. It previously returned true only when
+  exactly one argument was true, so `XOR(true, true, true)` changes from
+  `false` to `true`. Results with one or two arguments are unchanged (#349)
+
 ## [v4.0.2] 2026-08-02
 - the 4.0.1 guard against arithmetic that rejects a well-typed operand only
   worked on Ruby 3.4+. Ruby 3.2 and 3.3 do not raise for an oversized

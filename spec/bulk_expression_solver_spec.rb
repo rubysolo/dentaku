@@ -8,6 +8,30 @@ RSpec.describe Dentaku::BulkExpressionSolver do
   let(:calculator) { Dentaku::Calculator.new }
 
   describe "#solve!" do
+    it 'does not reuse a cached order after formulas change with the same variable names' do
+      calculator = Dentaku::Calculator.new(cache_dependency_order: true)
+      calculator.store(seed: 1)
+      expect(calculator.solve!(a: 'b + 1', b: 'seed + 1')).to eq(a: 3, b: 2)
+      expect(calculator.solve!(a: 'seed + 1', b: 'a + 1')).to eq(a: 2, b: 3)
+    end
+
+    it 'does not share a cached order with a calculator using different dependencies' do
+      first = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 1)
+      second = Dentaku::Calculator.new(cache_dependency_order: true).store(seed: 10)
+      expect(first.solve!(left: 'right + 1', right: 'seed + 1')).to eq(left: 3, right: 2)
+      expect(second.solve!(left: 'seed + 1', right: 'left + 1')).to eq(left: 11, right: 12)
+    end
+
+    it 'includes memory-dependent edges in the cached order' do
+      # the stored value decides where the cycle is broken, so each calculator
+      # needs a different order for the same formulas
+      first = Dentaku::Calculator.new(cache_dependency_order: true).store(x: 5)
+      second = Dentaku::Calculator.new(cache_dependency_order: true).store(y: 3)
+      formulas = { x: 'y + 3', y: 'x * 2' }
+      expect(first.solve!(formulas)).to eq(x: 13, y: 10)
+      expect(second.solve!(formulas)).to eq(x: 6, y: 12)
+    end
+
     it "evaluates properly with variables, even if some in memory" do
       expressions = {
         weekly_fruit_budget: "weekly_apple_budget + pear * 4",
@@ -63,6 +87,51 @@ RSpec.describe Dentaku::BulkExpressionSolver do
       expect(solver.solve!).to eq(x: 6, y: 12) # x = 6 by the time y is calculated
     end
 
+    describe "when a key being solved is also stored in memory" do
+      it "gives formulas the solved value regardless of key order" do
+        calculator.store(discount: 20, foo: 20)
+        expected = { discount: 50, discount_not_applicable: true }
+
+        expect(calculator.solve!(
+          discount: "foo + 30",
+          discount_not_applicable: "IF(discount > 30, true, false)"
+        )).to eq(expected)
+
+        expect(calculator.solve!(
+          discount_not_applicable: "IF(discount > 30, true, false)",
+          discount: "foo + 30"
+        )).to eq(expected)
+      end
+
+      it "follows the solved value through a chain of formulas" do
+        calculator.store(seed: 1, middle: 100)
+        expect(calculator.solve!(
+          top: "middle * 2",
+          middle: "bottom + 1",
+          bottom: "seed + 1"
+        )).to eq(top: 6, middle: 3, bottom: 2)
+      end
+
+      it "still uses the stored value to break a cycle elsewhere in the system" do
+        calculator.store(x: 5, y: 3, d: 20, foo: 1)
+        expect(calculator.solve!(
+          z: "d + 1",
+          x: "y + 3",
+          y: "x * 2",
+          d: "foo + 1"
+        )).to eq(z: 3, x: 6, y: 12, d: 2)
+      end
+
+      it "does not change the reported dependencies" do
+        calculator.store(discount: 20, foo: 20)
+        solver = described_class.new(
+          { discount_not_applicable: "IF(discount > 30, true, false)", discount: "foo + 30" },
+          calculator
+        )
+        expect(solver.dependencies).to eq("discount_not_applicable" => [], "discount" => [])
+      end
+    end
+
     it "does not execute functions unnecessarily" do
       calls = 0
       external = ->() { calls += 1 }
@@ -109,6 +178,25 @@ RSpec.describe Dentaku::BulkExpressionSolver do
           pear: 1.50
         },
         discounts: [0.8, 0.6]
+      )
+    end
+
+    it "solves arrays of hashes" do
+      calculator.store(bonus: 5)
+      expressions = {
+        percents: [{ percent: 75 }, { percent: "30 + bonus" }],
+        average: "(percents[0].percent + percents[1].percent) / 2",
+      }
+
+      expect(calculator.solve!(expressions)).to eq(
+        percents: [{ percent: 75 }, { percent: 35 }],
+        average: 55
+      )
+    end
+
+    it "solves nested arrays" do
+      expect(calculator.solve!(grid: [[1, "1 + 1"], [{ cell: "1 + 2" }]])).to eq(
+        grid: [[1, 2], [{ cell: 3 }]]
       )
     end
   end

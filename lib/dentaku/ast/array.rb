@@ -3,6 +3,8 @@ require_relative "./node"
 module Dentaku
   module AST
     class Array < Node
+      attr_reader :elements
+
       def self.arity
       end
 

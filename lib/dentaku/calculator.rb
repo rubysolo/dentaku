@@ -5,6 +5,7 @@ require 'dentaku/flat_hash'
 require 'dentaku/parser'
 require 'dentaku/string_casing'
 require 'dentaku/token'
+require 'dentaku/humanize_visitor'
 
 module Dentaku
   class Calculator
@@ -62,6 +63,7 @@ module Dentaku
     def evaluate(expression, data = {}, &block)
       context = evaluation_context(data, :permissive)
       return evaluate_array(expression, context, &block) if expression.is_a?(Array)
+      return expression.transform_values { |e| evaluate(e, context, &block) } if expression.is_a?(Hash)
 
       evaluate!(expression, context)
     rescue Dentaku::Error => ex
@@ -75,6 +77,7 @@ module Dentaku
     def evaluate!(expression, data = {}, &block)
       context = evaluation_context(data, :strict)
       return evaluate_array!(expression, context, &block) if expression.is_a? Array
+      return expression.transform_values { |e| evaluate!(e, context, &block) } if expression.is_a? Hash
 
       # guards probed while resolving dependencies stay settled for this one
       # evaluation (Node#settled); FlatHash keeps the hash by identity, so the
@@ -115,6 +118,8 @@ module Dentaku
         expression.dependencies(test_context)
       when Array
         expression.flat_map { |e| dependencies(e, context) }
+      when Hash
+        expression.values.flat_map { |e| dependencies(e, context) }
       else
         ast(expression).dependencies(test_context)
       end
@@ -129,14 +134,21 @@ module Dentaku
         expression.dependencies(AST::Node::STATIC_CONTEXT).uniq
       when Array
         expression.flat_map { |e| identifiers(e) }.uniq
+      when Hash
+        expression.values.flat_map { |e| identifiers(e) }.uniq
       else
         ast(expression).dependencies(AST::Node::STATIC_CONTEXT).uniq
       end
     end
 
+    def humanize(expression, data = {})
+      HumanizeVisitor.new(ast(expression), data).to_s
+    end
+
     def ast(expression)
       return expression if expression.is_a?(AST::Node)
       return expression.map { |e| ast(e) } if expression.is_a? Array
+      return expression.transform_values { |e| ast(e) } if expression.is_a? Hash
 
       @ast_cache.fetch(expression) {
         options = {
@@ -213,11 +225,22 @@ module Dentaku
 
     private def pairs_to_store(key_or_hash, value)
       if value.nil?
-        key_or_hash = FlatHash.from_hash_with_intermediates(key_or_hash) if nested_data_support
-        key_or_hash.map { |key, val| [standardize_case(key.to_s), val] }
+        key_or_hash = FlatHash.from_hash_with_intermediates(key_or_hash) if nested_data_support && nested?(key_or_hash)
+        key_or_hash.map { |key, val| [memory_key(key), val] }
       else
-        [[standardize_case(key_or_hash.to_s), value]]
+        [[memory_key(key_or_hash), value]]
       end
+    end
+
+    private def nested?(hash)
+      hash.each_value { |v| return true if v.is_a?(Hash) }
+      false
+    end
+
+    # Symbol#name returns the symbol's interned string, so symbol keys skip
+    # the extra String that to_s would allocate
+    private def memory_key(key)
+      key.is_a?(Symbol) ? standardize_case(key).name : standardize_case(key.to_s)
     end
 
     def store_formula(key, formula)
