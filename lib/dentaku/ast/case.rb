@@ -50,17 +50,19 @@ module Dentaku
       end
 
       def value(context = {})
-        switch_value = @switch.value(context)
-        @conditions.each do |condition|
-          if condition.when.value(context) == switch_value
-            return condition.then.value(context)
+        remembered(context) do
+          switch_value = @switch.value(context)
+          @conditions.each do |condition|
+            if condition.when.value(context) == switch_value
+              return condition.then.value(context)
+            end
           end
-        end
 
-        if @else
-          return @else.value(context)
-        else
-          raise ArgumentError.for(:invalid_value), "No block matched the switch value '#{switch_value}'"
+          if @else
+            return @else.value(context)
+          else
+            raise ArgumentError.for(:invalid_value), "No block matched the switch value '#{switch_value}'"
+          end
         end
       end
 
@@ -68,14 +70,11 @@ module Dentaku
         return all_dependencies(context) if static_mode?(context) || !prunable?
 
         switch_value = @switch.value(context)
-
-        @conditions.each do |condition|
-          if condition.when.value(context) == switch_value
-            return condition.then.dependencies(context)
-          end
-        end
-
-        else_dependencies(context)
+        matched = @conditions.find { |condition| condition.when.value(context) == switch_value }
+        branch = matched ? matched.then : @else
+        branch_deps = matched ? matched.then.dependencies(context) : else_dependencies(context)
+        settle_from(context, branch) if branch && branch_deps.empty? && branch.pure?
+        branch_deps
       rescue Dentaku::Error
         all_dependencies(context)
       end

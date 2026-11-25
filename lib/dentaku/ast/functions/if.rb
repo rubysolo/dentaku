@@ -24,7 +24,9 @@ module Dentaku
       end
 
       def value(context = {})
-        predicate.value(context) ? left.value(context) : right.value(context)
+        remembered(context) do
+          predicate.value(context) ? left.value(context) : right.value(context)
+        end
       end
 
       def node_type
@@ -38,7 +40,10 @@ module Dentaku
       def dependencies(context = {})
         return all_arg_dependencies(context) if static_mode?(context) || !predicate.pure?
 
-        predicate.value(context) ? left.dependencies(context) : right.dependencies(context)
+        branch = predicate.value(context) ? left : right
+        branch_deps = branch.dependencies(context)
+        settle_from(context, branch) if branch_deps.empty? && branch.pure?
+        branch_deps
       rescue Dentaku::Error
         all_arg_dependencies(context)
       end

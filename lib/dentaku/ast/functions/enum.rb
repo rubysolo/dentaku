@@ -39,7 +39,8 @@ module Dentaku
       def mapped_value(expression, context, item_context)
         expression.value(
           context.merge(
-            FlatHash.from_hash_with_intermediates(item_context)
+            FlatHash.from_hash_with_intermediates(item_context),
+            Node::PROBE_CACHE_KEY => nil
           )
         )
       rescue => e

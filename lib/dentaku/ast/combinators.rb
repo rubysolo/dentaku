@@ -33,44 +33,46 @@ module Dentaku
         left_deps = left.dependencies(context)
         right_deps = right.dependencies(context)
 
-        if left_deps.empty? && left.pure?
-          begin
-            return [] if decisive?(left.value(context))
-          rescue Dentaku::Error
-            return (left_deps + right_deps).uniq
+        begin
+          if left_deps.empty? && left.pure?
+            left_value = left.value(context)
+            return settled(context, left_value) if decisive?(left_value)
+            # left is bound but does not decide, so the result is right's value
+            # whenever right is bound as well
+            return settled(context, right.value(context)) if right_deps.empty? && right.pure?
+          elsif right_deps.empty? && right.pure?
+            right_value = right.value(context)
+            return (left.pure? ? settled(context, right_value) : []) if decisive?(right_value)
           end
-        end
-
-        if right_deps.empty? && right.pure?
-          begin
-            return [] if decisive?(right.value(context))
-          rescue Dentaku::Error
-            return (left_deps + right_deps).uniq
-          end
+        rescue Dentaku::Error
+          # a probe that raises cannot prune anything; the union below is what
+          # Operation#dependencies would recompute from the same two walks
         end
 
         (left_deps + right_deps).uniq
       end
 
       def value(context = {})
-        left_value = begin
-          left.value(context)
-        rescue UnboundVariableError => unbound
-          unbound
+        remembered(context) do
+          left_value = begin
+            left.value(context)
+          rescue UnboundVariableError => unbound
+            unbound
+          end
+
+          unless left_value.is_a?(UnboundVariableError)
+            return left_value if decisive?(left_value)
+
+            return right.value(context)
+          end
+
+          # The left operand is unbound; the right operand can still decide the
+          # result on its own. If it does not, the left value was needed.
+          right_value = right.value(context)
+          raise left_value unless decisive?(right_value)
+
+          right_value
         end
-
-        unless left_value.is_a?(UnboundVariableError)
-          return left_value if decisive?(left_value)
-
-          return right.value(context)
-        end
-
-        # The left operand is unbound; the right operand can still decide the
-        # result on its own. If it does not, the left value was needed.
-        right_value = right.value(context)
-        raise left_value unless decisive?(right_value)
-
-        right_value
       end
 
       private
@@ -116,6 +118,12 @@ module Dentaku
     class ExclusiveOr < Combinator
       def operator
         :xor
+      end
+
+      # both operands are always needed, so there is no guard to probe; the
+      # Combinator probe would settle this node to its right operand's value
+      def dependencies(context = {})
+        (left.dependencies(context) + right.dependencies(context)).uniq
       end
 
       # both operands are always needed, so nothing short-circuits

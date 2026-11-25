@@ -45,7 +45,8 @@ module Dentaku
         collection.reduce(initial_value) do |memo, item|
           expression.value(
             context.merge(
-              FlatHash.from_hash_with_intermediates(memo_identifier => memo, item_identifier => item)
+              FlatHash.from_hash_with_intermediates(memo_identifier => memo, item_identifier => item),
+              Node::PROBE_CACHE_KEY => nil
             )
           )
         end

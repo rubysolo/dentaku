@@ -79,7 +79,10 @@ module Dentaku
       return evaluate_array!(expression, context, &block) if expression.is_a? Array
       return expression.transform_values { |e| evaluate!(e, context, &block) } if expression.is_a? Hash
 
-      store(context) do
+      # guards probed while resolving dependencies stay settled for this one
+      # evaluation (Node#settled); FlatHash keeps the hash by identity, so the
+      # nodes write into the object stored here
+      store(context.merge(AST::Node::PROBE_CACHE_KEY => {})) do
         node = ast(expression)
         unbound = node.dependencies(memory)
 
@@ -107,7 +110,8 @@ module Dentaku
     def dependencies(expression, context = {})
       # dup inside the block: `store` now restores in place, so the caller
       # needs its own copy of the merged context rather than the live memory
-      test_context = context.nil? ? {} : store(context) { memory.dup }
+      probe_cache = { AST::Node::PROBE_CACHE_KEY => {} }
+      test_context = context.nil? ? probe_cache : store(context.merge(probe_cache)) { memory.dup }
 
       case expression
       when Dentaku::AST::Node

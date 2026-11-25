@@ -1,5 +1,18 @@
 # Change Log
 
+## Unreleased
+- dependency resolution no longer evaluates a settled guard more than once.
+  `AND` / `OR`, `IF` and `CASE` probe a guard whose own dependencies are
+  bound in order to prune the branches it rules out; every enclosing `AND` /
+  `OR` repeated that probe over its whole left subtree, and `evaluate!` then
+  repeated all of them during evaluation, so the work grew with the square
+  of a chain's length -- a 16-term `AND` took 3x longer than on 3.5.8, and
+  `Calculator#dependencies` grew the same way. Probe results are now kept
+  for the rest of the resolution and the evaluation that follows, so each
+  subexpression is evaluated at most once per `evaluate!`. Results and
+  errors are unchanged; only the number of times a pure function runs
+  differs, and volatile functions were never probed
+
 ## [v4.2.1] 2026-11-23
 - `ROUNDUP` and `ROUNDDOWN` no longer hang on a very negative precision.
   Since 4.2.0, `ROUNDUP(7, -1000000000)` built a billion-digit power of ten
